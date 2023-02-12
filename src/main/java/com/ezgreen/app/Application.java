@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.ezgreen.connection.Arduino;
 
+
 @SpringBootApplication
 public class Application
 {
@@ -15,9 +16,16 @@ public class Application
 		
 		Arduino test = new Arduino();
 		
-		test.open();
-		test.write("I am god.");
-		System.out.println(test.read());
-		test.close();
+		try
+		{
+			test.open();
+			test.write("uP;12;22.31");
+			System.out.println(test.read());
+			//test.close();
+		}
+		catch (Exception ex)
+		{
+			System.out.println(ex);
+		}
 	}
 }

@@ -1,76 +1,62 @@
 package com.ezgreen.connection;
 
-import jssc.SerialPortException;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Base64;
 
-import jssc.SerialPort;
+import com.fazecast.jSerialComm.SerialPort;
 
 public class Arduino
 {
-	private SerialPort serialPort;
+	private SerialPort port;
 	
 	public Arduino()
 	{
+		SerialPort[] ports = SerialPort.getCommPorts();
 		
+		for (SerialPort port: ports) {
+			System.out.println(port.getSystemPortName());
+		}
 	}
 	
 	public void open()
 	{
-		if(serialPort == null) serialPort = new SerialPort("COM1");
+		if(port == null)
+		{
+			port = SerialPort.getCommPorts()[0];
+			
+			port.openPort();
+			port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 50, 50);
+			port.setComPortParameters(115200, 8, 1, 0);
+		}
 		
-		try
-		{
-	        serialPort.openPort();//Open serial port
-	        serialPort.setParams(SerialPort.BAUDRATE_9600, 
-	                             SerialPort.DATABITS_8,
-	                             SerialPort.STOPBITS_1,
-	                             SerialPort.PARITY_NONE);//Set params. Also you can set params by this string: serialPort.setParams(9600, 8, 1, 0);
-	    }
-	    catch (SerialPortException ex)
-		{
-	        System.out.println(ex);
-	    }
 	}
 	
 	public void close()
 	{
-		try
-		{
-			if(serialPort != null) serialPort.closePort();
-	    }
-	    catch (SerialPortException ex)
-		{
-	        System.out.println(ex);
-	    }
+		if(port != null) port.closePort();
 	}
 	
-	public void write(String command)
+	public void write(String command) throws IOException
 	{
-	    try
-	    {
-	        serialPort.writeBytes(command.getBytes());//Write data to port
-	    }
-	    catch (SerialPortException ex)
-	    {
-	        System.out.println(ex);
-	    }
+	    OutputStream out = port.getOutputStream();
+	    
+	    out.write(command.getBytes());
 	}
 	
-	public String read()
+	public String read() throws IOException
 	{
-		String value = null;
+		String value = "";
+		InputStream in = port.getInputStream();
+		int b;
 		
-		try
+		do
 		{
-			byte[] buffer = serialPort.readBytes(10);//Read 10 bytes from serial port
+			b = in.read();
 			
-			value = Base64.getEncoder().encodeToString(buffer);
-	    }
-	    catch (SerialPortException ex)
-		{
-	        System.out.println(ex);
-	    }
+			if(b != -1) value = value + (char)b;
+		}while(b != -1);
 		
 		return value;
 	}
