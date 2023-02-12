@@ -19,8 +19,13 @@ public class Application
 		try
 		{
 			test.open();
-			test.write("uP;12;22.31");
-			System.out.println(test.read());
+			test.write("uM;12;22.31;");
+//			Thread.sleep(5000);
+//			String result = test.read();
+//			
+//			if(result == null) System.out.println("Nothing was read from the Audrino.");
+//			else System.out.println(result);
+			
 			//test.close();
 		}
 		catch (Exception ex)
