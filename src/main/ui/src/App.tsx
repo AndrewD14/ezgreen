@@ -1,57 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+//import { Counter } from './features/counter/Counter';
 import './App.css';
 
+import { configRoutes } from './service/ApiService';
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+   const [configs, setConfigs] = useState([]);
+
+   const fetchData = async () => {
+      let data = [];
+      
+      try
+      {
+         data = await configRoutes.fetchFields();
+
+         setConfigs(data);
+         console.log(data);
+      }
+      catch(error: any)
+      {
+         console.log(error.message);
+         console.log(error.stack);
+      }
+    };
+
+   useEffect(() => {
+      fetchData();
+   }, []);
+
+   return (
+      <div className="App">
+         <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+         </header>
+         <div>
+            <ul>
+               {configs.map((config:any) => (<li key={config.id}>{config.name}</li>))}
+            </ul>
+         </div>
+      </div>
   );
 }
 
