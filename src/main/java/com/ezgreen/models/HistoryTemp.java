@@ -3,30 +3,38 @@ package com.ezgreen.models;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name= "Config")
-@Table(name="config")
+@Entity(name= "HistoryTemp")
+@Table(name="historytemp")
 @Setter
 @Getter
-public class Config implements Serializable
+public class HistoryTemp implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
 	private Integer id;
+	
+	@Column(name = "read", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
+	private LocalDateTime read;
+	
+	@Column(name="temp", nullable = false)
+	private Double temp;
 
-	@Column(name="name")
-	private String name;
-
-	@Column(name = "created_by")
+	@Column(name = "created_by", nullable = false)
 	private String createBy;
 	
-	@Column(name = "updated_by")
+	@Column(name = "updated_by", nullable = false)
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
@@ -35,18 +43,19 @@ public class Config implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime  updateTs;
 	
-	public Config()
+	public HistoryTemp()
 	{
 		
 	}
 	
-	public Config(Integer id, String name, String createBy, String updateBy, LocalDateTime createTs,
-			LocalDateTime updateTs)
+	public HistoryTemp(Integer id, LocalDateTime read, Double temp,
+			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
 		this.id = id;
-		this.name = name;
+		this.read = read;
+		this.temp = temp;
 		this.createBy = createBy;
 		this.updateBy = updateBy;
 		this.createTs = createTs;
