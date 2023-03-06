@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name= "HistorySoilMoisture")
-@Table(name="historysoilmoisture")
+@Table(name="history_soil_moisture")
 @Setter
 @Getter
 public class HistorySoilMoisture implements Serializable
@@ -63,7 +63,7 @@ public class HistorySoilMoisture implements Serializable
 		super();
 
 		this.id = id;
-		this.id = id;
+		this.plantId = plantId;
 		this.read = read;
 		this.volt = volt;
 		this.lowCalibration = lowCalibration;

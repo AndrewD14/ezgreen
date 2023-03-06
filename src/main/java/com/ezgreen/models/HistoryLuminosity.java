@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name= "HistoryLuminosity")
-@Table(name="historyluminosity")
+@Table(name="history_luminosity")
 @Setter
 @Getter
 public class HistoryLuminosity implements Serializable

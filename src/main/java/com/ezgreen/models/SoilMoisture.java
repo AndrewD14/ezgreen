@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name= "SoilMoisture")
-@Table(name="soilmoisture")
+@Table(name="soil_moisture")
 @Setter
 @Getter
 public class SoilMoisture implements Serializable

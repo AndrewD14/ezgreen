@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name= "HistoryWaterLevel")
-@Table(name="historywaterlevel")
+@Table(name="history_water_level")
 @Setter
 @Getter
 public class HistoryWaterLevel implements Serializable

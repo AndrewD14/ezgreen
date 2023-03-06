@@ -5,18 +5,18 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.ezgreen.models.Config;
+import com.ezgreen.models.PotSize;
 
-public interface ConfigRepository extends JpaRepository<Config, Integer>
+public interface PotSizeRepository extends JpaRepository<PotSize, Integer>
 {
-	@Query("SELECT new com.ezgreen.models.Config(" +
+	@Query("SELECT new com.ezgreen.models.PotSize(" +
 			"id," +
-			"name," +
+			"size," +
 			"createBy," +
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM Config " +
+			") FROM pot_size " +
 			"ORDER BY updateTs DESC")
-	List<Config> fetchAllConfigs();
+	List<PotSize> fetchAllPotSizes();
 }

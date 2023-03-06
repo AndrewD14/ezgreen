@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name= "HistoryTemp")
-@Table(name="historytemp")
+@Table(name="history_temp")
 @Setter
 @Getter
 public class HistoryTemp implements Serializable
