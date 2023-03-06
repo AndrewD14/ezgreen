@@ -2,14 +2,14 @@ package com.ezgreen.responses;
 
 import java.util.List;
 
-import com.ezgreen.models.Config;
+import com.ezgreen.models.PotSize;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class ConfigResponse extends EZGreenResponse
+public class PotSizeResponse extends EZGreenResponse
 {
-	List<Config> configs;
+	List<PotSize> potSizes;
 }
