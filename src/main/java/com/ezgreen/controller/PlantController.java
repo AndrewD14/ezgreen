@@ -23,7 +23,7 @@ public class PlantController
 	}
 	
 	@GetMapping(value="/", produces = "application/json")
-	public ResponseEntity<?> getConfigFields() throws Throwable
+	public ResponseEntity<?> getPlants() throws Throwable
 	{
 		PlantResponse response = new PlantResponse();
 		
@@ -32,7 +32,7 @@ public class PlantController
 			response.setPlants(plantRepository.fetchAllPlants());
 
 			response.setStatusCode(HttpStatus.OK);
-			response.setResponseMessage("Successfully pulled all configs.");
+			response.setResponseMessage("Successfully pulled all plants.");
 		}
 		catch (Exception e)
 		{

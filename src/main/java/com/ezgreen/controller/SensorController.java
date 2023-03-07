@@ -23,7 +23,7 @@ public class SensorController
 	}
 	
 	@GetMapping(value="/", produces = "application/json")
-	public ResponseEntity<?> getConfigFields() throws Throwable
+	public ResponseEntity<?> getSensors() throws Throwable
 	{
 		SensorResponse response = new SensorResponse();
 		
@@ -32,7 +32,7 @@ public class SensorController
 			response.setSensors(sensorRepository.fetchAllSensors());
 
 			response.setStatusCode(HttpStatus.OK);
-			response.setResponseMessage("Successfully pulled all configs.");
+			response.setResponseMessage("Successfully pulled all sensors.");
 		}
 		catch (Exception e)
 		{

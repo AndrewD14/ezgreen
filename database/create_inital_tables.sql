@@ -11,7 +11,7 @@ CREATE TABLE public.sensor(
    updated_ts        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE public.greenhouse(
+CREATE TABLE public.environment(
    id          SMALLSERIAL PRIMARY KEY,
    location    VARCHAR(100) NOT NULL,
    sensor_id   SMALLSERIAL NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE public.plant(
    sensor_id      SMALLINT NOT NULL,
    date_obtain    DATE,
    dead           SMALLINT NOT NULL,
-   delete         SMALLINT,
+   delete         SMALLINT NOT NULL,
    created_by     VARCHAR(100) NOT NULL,
    updated_by     VARCHAR(100) NOT NULL,
    created_ts     TIMESTAMP WITHOUT TIME ZONE NOT NULL,

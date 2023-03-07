@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import App from './App';
 import Home from './features/home/Home';
 import Sensor from './features/sensor/Sensor';
+import Environment from './features/environment/Environment';
 import Error from './features/error/Error';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
          {
             path: "/sensors",
             element: <Sensor />,
+          },
+          {
+            path: "/environments",
+            element: <Environment />,
           },
        ],
    },

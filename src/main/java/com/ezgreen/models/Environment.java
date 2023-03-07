@@ -12,11 +12,11 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name= "Greenhouse")
-@Table(name="greenhouse")
+@Entity(name= "Environment")
+@Table(name="environment")
 @Setter
 @Getter
-public class Greenhouse implements Serializable
+public class Environment implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -43,12 +43,12 @@ public class Greenhouse implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime  updateTs;
 	
-	public Greenhouse()
+	public Environment()
 	{
 		
 	}
 	
-	public Greenhouse(Integer id, String location, Integer sensorId,
+	public Environment(Integer id, String location, Integer sensorId,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
