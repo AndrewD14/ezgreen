@@ -1,4 +1,4 @@
-import ConfigRoutes from './routes/ConfigRoutes';
+import PlantRoutes from './routes/PlantRoutes';
 
 const headers: any = {
    'Content-Type': 'application/json',
@@ -9,8 +9,8 @@ let host = 'http://localhost:' + process.env.REACT_APP_SERVER_PORT + '/api';
 
 if(process.env.NODE_ENV === "production") host = '/api';
 
-const configRoutes = new ConfigRoutes(host, headers);
+const plantRoutes = new PlantRoutes(host, headers);
 
 export {
-   configRoutes,
+   plantRoutes,
 };

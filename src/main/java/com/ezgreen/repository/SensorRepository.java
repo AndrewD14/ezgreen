@@ -20,7 +20,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer>
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM sensor " +
+			") FROM Sensor " +
 			"ORDER BY updateTs DESC")
 	List<Sensor> fetchAllSensors();
 }

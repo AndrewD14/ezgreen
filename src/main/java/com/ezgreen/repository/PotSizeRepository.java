@@ -16,7 +16,7 @@ public interface PotSizeRepository extends JpaRepository<PotSize, Integer>
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM pot_size " +
+			") FROM PotSize " +
 			"ORDER BY updateTs DESC")
 	List<PotSize> fetchAllPotSizes();
 }

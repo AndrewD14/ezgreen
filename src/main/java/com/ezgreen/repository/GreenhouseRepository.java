@@ -17,7 +17,7 @@ public interface GreenhouseRepository extends JpaRepository<Greenhouse, Integer>
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM greenhouse " +
+			") FROM Greenhouse " +
 			"ORDER BY updateTs DESC")
 	List<Greenhouse> fetchAllGreenhouse();
 }

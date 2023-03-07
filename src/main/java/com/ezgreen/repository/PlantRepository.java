@@ -24,7 +24,7 @@ public interface PlantRepository extends JpaRepository<Plant, Integer>
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM plant " +
+			") FROM Plant " +
 			"ORDER BY updateTs DESC")
 	List<Plant> fetchAllPlants();
 }

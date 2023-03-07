@@ -17,7 +17,7 @@ public interface HistoryHumidityRepository extends JpaRepository<HistoryHumidity
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM history_humidity " +
+			") FROM HistoryHumidity " +
 			"ORDER BY updateTs DESC")
 	List<HistoryHumidity> fetchAllHistoryHumidities();
 }

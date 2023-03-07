@@ -1,6 +1,6 @@
-const baseRoute = '/config/';
+const baseRoute = '/plant/';
 
-class ConfigRoutes
+class PlantRoutes
 {
    host: String;
    headers: any;
@@ -12,7 +12,7 @@ class ConfigRoutes
    }
    
    // this call is for to fetch senor configs
-   async fetchFields()
+   async fetchPlants()
    {
       const response = await fetch(this.host + baseRoute, {
          method: 'GET',
@@ -25,8 +25,8 @@ class ConfigRoutes
 
       console.log(data)
 
-      return await data.configs;
+      return await data.plants;
    }
 }
 
-export default ConfigRoutes;
+export default PlantRoutes;

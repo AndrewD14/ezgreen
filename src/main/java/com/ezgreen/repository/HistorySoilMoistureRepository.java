@@ -20,7 +20,7 @@ public interface HistorySoilMoistureRepository  extends JpaRepository<HistorySoi
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM history_soil_moisture " +
+			") FROM HistorySoilMoisture " +
 			"ORDER BY updateTs DESC")
 	List<HistorySoilMoisture> fetchAllHistorySoilMoistures();
 }

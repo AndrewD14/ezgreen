@@ -17,7 +17,7 @@ public interface HistoryTempRepository extends JpaRepository<HistoryTemp, Intege
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM history_temp " +
+			") FROM HistoryTemp " +
 			"ORDER BY updateTs DESC")
 	List<HistoryTemp> fetchAllHistoryTemps();
 }

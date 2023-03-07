@@ -19,7 +19,7 @@ public interface HistoryWaterLevelRepository extends JpaRepository<HistoryWaterL
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM history_water_level " +
+			") FROM HistoryWaterLevel " +
 			"ORDER BY updateTs DESC")
 	List<HistoryWaterLevel> fetchAllHistoryWaterLevels();
 }

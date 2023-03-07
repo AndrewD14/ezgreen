@@ -17,7 +17,7 @@ public interface HistoryLuminosityRepository extends JpaRepository<HistoryLumino
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM history_luminosity " +
+			") FROM HistoryLuminosity " +
 			"ORDER BY updateTs DESC")
 	List<HistoryLuminosity> fetchAllHistoryLuminosities();
 }

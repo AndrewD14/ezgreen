@@ -1,40 +1,43 @@
 package com.ezgreen.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ezgreen.repository.ConfigRepository;
-import com.ezgreen.responses.ConfigResponse;
+import com.ezgreen.repository.PlantRepository;
+import com.ezgreen.responses.PlantResponse;
 
 @RestController
-@RequestMapping("/api/config")
-public class ConfigController
+@RequestMapping("/api/plant")
+public class PlantController
 {
-	private ConfigRepository configRepository;
 	
-	public ConfigController(ConfigRepository configRepository)
+	private PlantRepository plantRepository;
+	
+	@Autowired
+	public PlantController(PlantRepository plantRepository)
 	{
-		this.configRepository = configRepository;
+		this.plantRepository = plantRepository;
 	}
 	
 	@GetMapping(value="/", produces = "application/json")
 	public ResponseEntity<?> getConfigFields() throws Throwable
 	{
-		ConfigResponse response = new ConfigResponse();
+		PlantResponse response = new PlantResponse();
 		
 		try
 		{
-			response.setConfigs(configRepository.fetchAllConfigs());
+			response.setPlants(plantRepository.fetchAllPlants());
 
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage("Successfully pulled all configs.");
 		}
 		catch (Exception e)
 		{
-			response.setResponseMessage("getConfigFields error occur: " + e.getCause());
+			response.setResponseMessage("getAllPlants error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
