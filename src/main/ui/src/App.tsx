@@ -1,17 +1,20 @@
-import React from 'react';
+import { Outlet, useLocation } from "react-router-dom";
+import { Grid } from '@mui/material';
+import Header from './features/common/header/Header';
+import Navbar from './features/common/navbar/Navbar';
 import './App.css';
-import Home from './features/home/Home';
-import logo from './logo.svg';
 
 function App() {
+   const location = useLocation();
 
    return (
-      <div className="App">
-         <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-         </header>
-         <Home />
-      </div>
+      <Grid container >
+         {(location.pathname !== "/test") ? <Header /> : null}
+         {(location.pathname !== "/test") ? <Navbar /> : null}
+         <Grid container id="wrapper">
+            <Outlet />
+         </Grid>
+      </Grid>
   );
 }
 
