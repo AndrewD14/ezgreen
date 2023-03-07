@@ -7,36 +7,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ezgreen.repository.PlantRepository;
-import com.ezgreen.responses.PlantResponse;
+import com.ezgreen.repository.SensorRepository;
+import com.ezgreen.responses.SensorResponse;
 
 @RestController
-@RequestMapping("/api/plant")
-public class PlantController
+@RequestMapping("/api/sensor")
+public class SensorController
 {
-	private PlantRepository plantRepository;
+	private SensorRepository sensorRepository;
 	
 	@Autowired
-	public PlantController(PlantRepository plantRepository)
+	public SensorController(SensorRepository sensorRepository)
 	{
-		this.plantRepository = plantRepository;
+		this.sensorRepository = sensorRepository;
 	}
 	
 	@GetMapping(value="/", produces = "application/json")
 	public ResponseEntity<?> getConfigFields() throws Throwable
 	{
-		PlantResponse response = new PlantResponse();
+		SensorResponse response = new SensorResponse();
 		
 		try
 		{
-			response.setPlants(plantRepository.fetchAllPlants());
+			response.setSensors(sensorRepository.fetchAllSensors());
 
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage("Successfully pulled all configs.");
 		}
 		catch (Exception e)
 		{
-			response.setResponseMessage("getAllPlants error occur: " + e.getCause());
+			response.setResponseMessage("getAllSensors error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 

@@ -5,6 +5,7 @@ import { store } from './app/store';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 import Home from './features/home/Home';
+import Sensor from './features/sensor/Sensor';
 import Error from './features/error/Error';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
            path: "/",
            element: <Home />,
          },
+         {
+            path: "/sensors",
+            element: <Sensor />,
+          },
        ],
    },
    ]);

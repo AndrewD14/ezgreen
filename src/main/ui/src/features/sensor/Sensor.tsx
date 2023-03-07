@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MyTable from '../common/table/MyTable';
-import { plantRoutes } from '../../service/ApiService';
+import { sensorRoutes } from '../../service/ApiService';
 
 interface Column {
-   id: 'name' | 'number' | 'potSizeId' | 'dateObtain' | 'dead' | 'delete';
+   id: 'type' | 'board' | 'port' | 'lowCalibration' | 'highCalibration';
    label: string;
    minWidth?: number;
    align?: 'right';
@@ -11,46 +11,35 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-   { id: 'name', label: 'Name', minWidth: 170 },
-   { id: 'number', label: 'Number', minWidth: 100 },
+   { id: 'type', label: 'Type', minWidth: 170, },
+   { id: 'board', label: 'Board', minWidth: 100, align: 'right', },
+   { id: 'port', label: 'Port', minWidth: 170, align: 'right', },
    {
-      id: 'potSizeId',
-      label: 'Pot Size ID',
-      minWidth: 170,
-      align: 'right',
-   },
-   {
-      id: 'dateObtain',
-      label: 'Date Obtain',
+      id: 'lowCalibration',
+      label: 'Low Calibration',
       minWidth: 170,
       align: 'right',
       format: (value: number) => value.toLocaleString('en-US'),
    },
    {
-      id: 'dead',
-      label: 'Dead',
-      minWidth: 170,
-      align: 'right',
-   },
-   {
-      id: 'delete',
-      label: 'Deleted',
+      id: 'highCalibration',
+      label: 'High Calibration',
       minWidth: 170,
       align: 'right',
    }
 ];
 
-function Home() {
-   const [plants, setPlants] = useState<any[]>([]);
+function Sensors() {
+   const [sensors, setSensors] = useState<any[]>([]);
 
    const fetchData = async () => {
       let data = [];
       
       try
       {
-         data = await plantRoutes.fetchPlants();
+         data = await sensorRoutes.fetchSensors();
 
-         setPlants(data);
+         setSensors(data);
          console.log(data);
       }
       catch(error: any)
@@ -65,8 +54,8 @@ function Home() {
    }, []);
 
    return (
-      <MyTable value={plants} columns={columns} />
+      <MyTable value={sensors} columns={columns} />
    );
 }
 
-export default Home;
+export default Sensors;

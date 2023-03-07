@@ -1,5 +1,4 @@
 import Grid from '@mui/material/Unstable_Grid2';
-import { Avatar } from '@mui/material';
 import logo from '../../../logo.svg';
 
 function Header() {
