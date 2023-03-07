@@ -14,8 +14,10 @@ public interface PlantRepository extends JpaRepository<Plant, Integer>
 			"name," +
 			"number," +
 			"potSizeId," +
+			"highMoisture," +
+			"lowMoisture," +
+			"sensorId," +
 			"dateObtain," +
-			"soilMoisture," +
 			"dead," +
 			"delete," +
 			"createBy," +

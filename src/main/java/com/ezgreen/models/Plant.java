@@ -35,16 +35,22 @@ public class Plant implements Serializable
 	@Column(name="pot_size_id", nullable = false)
 	private Integer potSizeId;
 	
+	@Column(name="high_moisture", nullable = false)
+	private Double highMoisture;
+	
+	@Column(name="low_moisture", nullable = false)
+	private Double lowMoisture;
+	
+	@Column(name="sensor_id")
+	private Integer sensorId;
+	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
-	
-	@Column(name="soil_moisture", nullable = false)
-	private Integer soilMoisture;
-	
-	@Column(name="dead")
+		
+	@Column(name="dead", nullable = false)
 	private Integer dead;
 	
-	@Column(name="delete")
+	@Column(name="delete", nullable = false)
 	private Integer delete;
 
 	@Column(name = "created_by", nullable = false)
@@ -64,8 +70,8 @@ public class Plant implements Serializable
 		
 	}
 	
-	public Plant(Integer id, String name, Integer number, Integer potSizeId,
-			LocalDate dateObtain, Integer soilMoisture, Integer dead, Integer delete,
+	public Plant(Integer id, String name, Integer number, Integer potSizeId, Double highMoisture,
+			Double lowMoisture, Integer sensorId, LocalDate dateObtain, Integer dead, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
@@ -74,8 +80,10 @@ public class Plant implements Serializable
 		this.name = name;
 		this.number = number;
 		this.potSizeId = potSizeId;
+		this.highMoisture = highMoisture;
+		this.lowMoisture = lowMoisture;
+		this.sensorId = sensorId;
 		this.dateObtain = dateObtain;
-		this.soilMoisture = soilMoisture;
 		this.dead = dead;
 		this.delete = delete;
 		this.createBy = createBy;
