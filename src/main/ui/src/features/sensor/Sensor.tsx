@@ -19,7 +19,6 @@ const columns: readonly Column[] = [
       label: 'Low Calibration',
       minWidth: 170,
       align: 'right',
-      format: (value: number) => value.toLocaleString('en-US'),
    },
    {
       id: 'highCalibration',
