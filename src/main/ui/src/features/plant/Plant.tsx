@@ -29,7 +29,7 @@ function Plant() {
 
    return (
       <div>
-         <h3>Plant: {plant.name}</h3>
+         <h3>Plant: {plant?.name}</h3>
       </div>
    );
 }
