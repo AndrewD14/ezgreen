@@ -28,7 +28,9 @@ function Plant() {
    }, []);
 
    return (
-      <div></div>
+      <div>
+         <h3>Plant: {plant.name}</h3>
+      </div>
    );
 }
 
