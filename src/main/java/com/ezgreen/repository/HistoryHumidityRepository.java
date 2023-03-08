@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.HistoryHumidity;
 
-public interface HistoryHumidityRepository extends JpaRepository<HistoryHumidity, Integer>
+public interface HistoryHumidityRepository extends JpaRepository<HistoryHumidity, Long>
 {
 	@Query("SELECT new com.ezgreen.models.HistoryHumidity(" +
 			"id," +

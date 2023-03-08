@@ -23,7 +23,7 @@ public class HistoryLuminosity implements Serializable
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
-	private Integer id;
+	private Long id;
 	
 	@Column(name = "read", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime read;
@@ -38,17 +38,17 @@ public class HistoryLuminosity implements Serializable
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  createTs;
+	private LocalDateTime createTs;
 	
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  updateTs;
+	private LocalDateTime updateTs;
 	
 	public HistoryLuminosity()
 	{
 		
 	}
 	
-	public HistoryLuminosity(Integer id, LocalDateTime read, Double lux,
+	public HistoryLuminosity(Long id, LocalDateTime read, Double lux,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

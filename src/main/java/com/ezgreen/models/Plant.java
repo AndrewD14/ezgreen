@@ -24,7 +24,7 @@ public class Plant implements Serializable
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name="name", nullable = false)
 	private String name;
@@ -32,7 +32,7 @@ public class Plant implements Serializable
 	@Column(name="number")
 	private Integer number;
 	
-	@Column(name="pot_size_id", nullable = false)
+	@Column(name="pot_size_id")
 	private Integer potSizeId;
 	
 	@Column(name="high_moisture", nullable = false)
@@ -42,7 +42,7 @@ public class Plant implements Serializable
 	private Double lowMoisture;
 	
 	@Column(name="sensor_id")
-	private Integer sensorId;
+	private Integer sensorId;	
 	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
@@ -60,17 +60,12 @@ public class Plant implements Serializable
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  createTs;
+	private LocalDateTime createTs;
 	
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  updateTs;
+	private LocalDateTime updateTs;
 	
-	public Plant()
-	{
-		
-	}
-	
-	public Plant(Integer id, String name, Integer number, Integer potSizeId, Double highMoisture,
+	public Plant(Long id, String name, Integer number, Integer potSizeId, Double highMoisture,
 			Double lowMoisture, Integer sensorId, LocalDate dateObtain, Integer dead, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{

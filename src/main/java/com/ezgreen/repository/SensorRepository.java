@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.Sensor;
 
-public interface SensorRepository extends JpaRepository<Sensor, Integer>
+public interface SensorRepository extends JpaRepository<Sensor, Long>
 {
 	@Query("SELECT new com.ezgreen.models.Sensor(" +
 			"id," +

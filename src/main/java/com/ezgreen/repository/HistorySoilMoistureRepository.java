@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.HistorySoilMoisture;
 
-public interface HistorySoilMoistureRepository  extends JpaRepository<HistorySoilMoisture, Integer>
+public interface HistorySoilMoistureRepository  extends JpaRepository<HistorySoilMoisture, Long>
 {
 	@Query("SELECT new com.ezgreen.models.HistorySoilMoisture(" +
 			"id," +

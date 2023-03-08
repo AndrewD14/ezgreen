@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.HistoryLuminosity;
 
-public interface HistoryLuminosityRepository extends JpaRepository<HistoryLuminosity, Integer>
+public interface HistoryLuminosityRepository extends JpaRepository<HistoryLuminosity, Long>
 {
 	@Query("SELECT new com.ezgreen.models.HistoryLuminosity(" +
 			"id," +

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.HistoryWaterLevel;
 
-public interface HistoryWaterLevelRepository extends JpaRepository<HistoryWaterLevel, Integer>
+public interface HistoryWaterLevelRepository extends JpaRepository<HistoryWaterLevel, Long>
 {
 	@Query("SELECT new com.ezgreen.models.HistoryWaterLevel(" +
 			"id," +

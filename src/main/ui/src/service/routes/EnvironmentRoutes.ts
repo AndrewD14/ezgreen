@@ -11,7 +11,7 @@ class EnvironmentRoutes
       this.headers = headers;
    }
    
-   // this call is for to fetch senor configs
+   // this call is to fetch environment configurations
    async fetchEnvironments()
    {
       const response = await fetch(this.host + baseRoute, {
@@ -22,8 +22,6 @@ class EnvironmentRoutes
       if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
       
       const data: any = await response.json();
-
-      console.log(data)
 
       return await data.environments;
    }

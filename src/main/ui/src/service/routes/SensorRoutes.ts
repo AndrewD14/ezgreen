@@ -11,7 +11,7 @@ class SensorRoutes
       this.headers = headers;
    }
    
-   // this call is for to fetch senor configs
+   // this call is to fetch senor configs
    async fetchSensors()
    {
       const response = await fetch(this.host + baseRoute, {
@@ -22,8 +22,6 @@ class SensorRoutes
       if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
       
       const data: any = await response.json();
-
-      console.log(data)
 
       return await data.sensors;
    }

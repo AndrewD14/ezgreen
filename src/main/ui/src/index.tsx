@@ -5,6 +5,7 @@ import { store } from './app/store';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 import Home from './features/home/Home';
+import Plant from './features/plant/Plant';
 import Sensor from './features/sensor/Sensor';
 import Environment from './features/environment/Environment';
 import Error from './features/error/Error';
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
            path: "/",
            element: <Home />,
          },
+         {
+            path: "/plant/:id",
+            element: <Plant />,
+          },
          {
             path: "/sensors",
             element: <Sensor />,

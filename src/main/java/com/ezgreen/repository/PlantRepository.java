@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import com.ezgreen.models.Plant;
 
-public interface PlantRepository extends JpaRepository<Plant, Integer>
+public interface PlantRepository extends JpaRepository<Plant, Long>
 {
 	@Query("SELECT new com.ezgreen.models.Plant(" +
 			"id," +

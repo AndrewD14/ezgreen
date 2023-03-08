@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.HistoryTemp;
 
-public interface HistoryTempRepository extends JpaRepository<HistoryTemp, Integer>
+public interface HistoryTempRepository extends JpaRepository<HistoryTemp, Long>
 {
 	@Query("SELECT new com.ezgreen.models.HistoryTemp(" +
 			"id," +

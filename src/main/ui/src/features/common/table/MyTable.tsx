@@ -58,8 +58,8 @@ function MyTable(props: any) {
                         const value = row[column.id];
                         return (
                            <TableCell key={column.id} align={column.align}>
-                           {column.format && typeof value === 'number'
-                              ? column.format(value)
+                           {column.format
+                              ? column.format(row, column.id)
                               : value}
                            </TableCell>
                         );

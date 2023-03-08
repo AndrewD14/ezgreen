@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ezgreen.models.Environment;
 
-public interface EnvironmentRepository extends JpaRepository<Environment, Integer>
+public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 {
 	@Query("SELECT new com.ezgreen.models.Environment(" +
 			"id," +

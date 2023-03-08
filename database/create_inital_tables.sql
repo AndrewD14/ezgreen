@@ -37,7 +37,7 @@ CREATE TABLE public.plant(
    pot_size_id    SMALLSERIAL NOT NULL,
    high_moisture  REAL NOT NULL,
    low_moisture   REAL NOT NULL,
-   sensor_id      SMALLINT NOT NULL,
+   sensor_id      SMALLINT,
    date_obtain    DATE,
    dead           SMALLINT NOT NULL,
    delete         SMALLINT NOT NULL,

@@ -23,7 +23,7 @@ public class HistorySoilMoisture implements Serializable
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
-	private Integer id;
+	private Long id;
 	
 	@Column(name="plant_id", nullable = false)
 	private Integer plantId;
@@ -47,17 +47,17 @@ public class HistorySoilMoisture implements Serializable
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  createTs;
+	private LocalDateTime createTs;
 	
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  updateTs;
+	private LocalDateTime updateTs;
 	
 	public HistorySoilMoisture()
 	{
 		
 	}
 	
-	public HistorySoilMoisture(Integer id, Integer plantId, LocalDateTime read, Double volt, Double lowCalibration,
+	public HistorySoilMoisture(Long id, Integer plantId, LocalDateTime read, Double volt, Double lowCalibration,
 			Double highCalibration, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

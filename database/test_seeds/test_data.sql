@@ -19,7 +19,7 @@ VALUES
 (12,'plant moister',2,7,1.42,3.8,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 (13,'plant moister',3,1,1.39,3.82,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 
-INSERT INTO public.greenhouse
+INSERT INTO public.environment
 (location,sensor_id,created_by,updated_by,created_ts,updated_ts)
 VALUES
 ('North',2,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),

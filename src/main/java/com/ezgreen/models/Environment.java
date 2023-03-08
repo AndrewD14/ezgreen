@@ -23,7 +23,7 @@ public class Environment implements Serializable
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name="location", nullable = false)
 	private String location;
@@ -38,17 +38,17 @@ public class Environment implements Serializable
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  createTs;
+	private LocalDateTime createTs;
 	
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  updateTs;
+	private LocalDateTime updateTs;
 	
 	public Environment()
 	{
 		
 	}
 	
-	public Environment(Integer id, String location, Integer sensorId,
+	public Environment(Long id, String location, Integer sensorId,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

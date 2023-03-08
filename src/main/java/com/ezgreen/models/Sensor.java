@@ -2,12 +2,14 @@ package com.ezgreen.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +25,7 @@ public class Sensor implements Serializable
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name="type", nullable = false)
 	private String type;
@@ -47,17 +49,16 @@ public class Sensor implements Serializable
 	private String updateBy;
 	
 	@Column(name = "created_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  createTs;
+	private LocalDateTime createTs;
 	
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
-	private LocalDateTime  updateTs;
+	private LocalDateTime updateTs;
 	
-	public Sensor()
-	{
-		
-	}
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="sensor_id")
+	private PlantJoin plant;
 	
-	public Sensor(Integer id, String type, Integer port, Integer board, Double lowCalibration,
+	public Sensor(Long id, String type, Integer port, Integer board, Double lowCalibration,
 			Double highCalibration, String createBy, String updateBy,
 			LocalDateTime createTs, LocalDateTime updateTs)
 	{
