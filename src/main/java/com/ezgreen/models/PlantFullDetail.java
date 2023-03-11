@@ -18,6 +18,7 @@ public class PlantFullDetail
 	private Double highMoisture;
 	private Double lowMoisture;
 	private LocalDate dateObtain;
+	private Integer monitor;
 	private Integer dead;
 	private Integer delete;
 	private String createBy;
@@ -34,8 +35,8 @@ public class PlantFullDetail
 	}
 
 	public PlantFullDetail(Long id, String name, Integer number, Double highMoisture, Double lowMoisture, LocalDate dateObtain,
-			Integer dead, Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs,
-			String size, Long sensorId, String type)
+			Integer monitor, Integer dead, Integer delete, String createBy, String updateBy, LocalDateTime createTs,
+			LocalDateTime updateTs, String size, Long sensorId, String type)
 	{
 		super();
 		
@@ -45,6 +46,7 @@ public class PlantFullDetail
 		this.highMoisture = highMoisture;
 		this.lowMoisture = lowMoisture;
 		this.dateObtain = dateObtain;
+		this.monitor = monitor;
 		this.dead = dead;
 		this.delete = delete;
 		this.createBy = createBy;
@@ -73,6 +75,7 @@ public class PlantFullDetail
 		json.put("highMoisture", highMoisture);
 		json.put("lowMoisture", lowMoisture);
 		if(dateObtain != null) json.put("dateObtain", dateObtain.toString());
+		json.put("monitor", monitor);
 		json.put("dead", dead);
 		json.put("delete", delete);
 		json.put("createBy", createBy);

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Stack } from '@mui/material';
-//import moment from 'moment';
 import moment from 'moment-timezone';
 import { plantRoutes } from '../../service/ApiService';
 
@@ -40,7 +39,7 @@ function Plant() {
             <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Name</label></Grid2>
-                  <Grid2 xs>{plant?.name}{' ('}{plant?.number}{')'}</Grid2>
+                  <Grid2 xs>{plant?.name}{plant?.number ? ' (' + plant?.number + ')' : ''}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Date Obtained</label></Grid2>

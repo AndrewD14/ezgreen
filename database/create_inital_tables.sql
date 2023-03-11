@@ -39,6 +39,7 @@ CREATE TABLE public.plant(
    low_moisture   REAL NOT NULL,
    sensor_id      SMALLINT,
    date_obtain    DATE,
+   monitor        SMALLINT NOT NULL,
    dead           SMALLINT NOT NULL,
    delete         SMALLINT NOT NULL,
    created_by     VARCHAR(100) NOT NULL,

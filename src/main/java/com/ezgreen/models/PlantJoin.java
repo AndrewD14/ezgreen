@@ -42,7 +42,10 @@ public class PlantJoin implements Serializable
 	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
-		
+	
+	@Column(name="monitor", nullable = false)
+	private Integer monitor;
+	
 	@Column(name="dead", nullable = false)
 	private Integer dead;
 	
@@ -75,7 +78,7 @@ public class PlantJoin implements Serializable
 	}
 	
 	public PlantJoin(Long id, String name, Integer number, Double highMoisture,
-			Double lowMoisture, LocalDate dateObtain, Integer dead, Integer delete,
+			Double lowMoisture, LocalDate dateObtain, Integer monitor, Integer dead, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
@@ -86,6 +89,7 @@ public class PlantJoin implements Serializable
 		this.highMoisture = highMoisture;
 		this.lowMoisture = lowMoisture;
 		this.dateObtain = dateObtain;
+		this.monitor = monitor;
 		this.dead = dead;
 		this.delete = delete;
 		this.createBy = createBy;

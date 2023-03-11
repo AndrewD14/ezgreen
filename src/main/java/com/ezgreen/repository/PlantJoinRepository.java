@@ -10,7 +10,7 @@ import com.ezgreen.models.PlantFullDetail;
 import com.ezgreen.models.PlantJoin;
 
 public interface PlantJoinRepository extends JpaRepository<PlantJoin, Long>
-{
+{	
 	@Query("SELECT new com.ezgreen.models.PlantFullDetail(" +
 			"p.id," +
 			"p.name," +
@@ -18,6 +18,7 @@ public interface PlantJoinRepository extends JpaRepository<PlantJoin, Long>
 			"p.highMoisture," +
 			"p.lowMoisture," +
 			"p.dateObtain," +
+			"p.monitor," +
 			"p.dead," +
 			"p.delete," +
 			"p.createBy," +
@@ -41,6 +42,7 @@ public interface PlantJoinRepository extends JpaRepository<PlantJoin, Long>
 			"p.highMoisture," +
 			"p.lowMoisture," +
 			"p.dateObtain," +
+			"p.monitor," +
 			"p.dead," +
 			"p.delete," +
 			"p.createBy," +

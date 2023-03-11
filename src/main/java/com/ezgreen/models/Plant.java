@@ -46,6 +46,9 @@ public class Plant implements Serializable
 	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
+	
+	@Column(name="monitor", nullable = false)
+	private Integer monitor;
 		
 	@Column(name="dead", nullable = false)
 	private Integer dead;
@@ -65,9 +68,14 @@ public class Plant implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime updateTs;
 	
+	public Plant()
+	{
+		
+	}
+	
 	public Plant(Long id, String name, Integer number, Integer potSizeId, Double highMoisture,
-			Double lowMoisture, Integer sensorId, LocalDate dateObtain, Integer dead, Integer delete,
-			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
+			Double lowMoisture, Integer sensorId, LocalDate dateObtain, Integer monitor, Integer dead,
+			Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
@@ -79,6 +87,7 @@ public class Plant implements Serializable
 		this.lowMoisture = lowMoisture;
 		this.sensorId = sensorId;
 		this.dateObtain = dateObtain;
+		this.monitor = monitor;
 		this.dead = dead;
 		this.delete = delete;
 		this.createBy = createBy;
