@@ -143,7 +143,7 @@ function Home() {
                   >
                      <EditIcon />
                   </Link>
-                  {/* <Link key={'delete-' + row['id']}
+                  <Link key={'delete-' + row['id']}
                      to={''}
                      title="Delete plant"
                      style={{ textDecoration: 'none', color: '#1e1e1e' }}
@@ -192,7 +192,7 @@ function Home() {
                      }}
                   >
                      <DeleteIcon />
-                  </Link> */}
+                  </Link>
                </React.Fragment>
                
 
