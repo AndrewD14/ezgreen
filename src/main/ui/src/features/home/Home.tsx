@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import moment from 'moment-timezone';
 import MyTable from '../common/table/MyTable';
 import { plantRoutes } from '../../service/ApiService';
 
@@ -55,9 +56,10 @@ const columns: readonly Column[] = [
    },
    {
       id: 'updateTs',
-      label: 'Updated',
+      label: 'Updated (' + Intl.DateTimeFormat().resolvedOptions().timeZone + ')',
       minWidth: 170,
       align: 'right',
+      format: (row, id) => moment.utc(row[id]).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('YYYY-MM-DD hh:mm:ss A')
    }
 ];
 

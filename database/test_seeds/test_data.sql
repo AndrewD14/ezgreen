@@ -37,6 +37,6 @@ VALUES
 ('Fiddle-Leaf Fig',NULL,3,75,35,9,NULL,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('Philodendron',1,2,70,30,10,'2023-01-10',0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('Philodendron',2,2,70,30,11,'2023-02-02',0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('Orchid',1,2,65,30,12,NULL,1,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('Orchid',1,2,65,30,NULL,NULL,1,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('Orchid',2,2,65,30,13,'2023-02-02',0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('African Mask',NULL,2,60,20,13,'2022-11-12',1,1,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+('African Mask',NULL,2,60,20,NULL,'2022-11-12',1,1,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);

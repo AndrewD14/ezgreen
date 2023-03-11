@@ -1,0 +1,8 @@
+.labels {
+   /* font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', */
+   font-weight: bold;
+}
+
+.labels::after {
+   content: ":";
+}
