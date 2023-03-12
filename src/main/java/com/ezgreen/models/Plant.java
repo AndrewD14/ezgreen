@@ -32,8 +32,8 @@ public class Plant implements Serializable
 	@Column(name="number")
 	private Integer number;
 	
-	@Column(name="pot_size_id")
-	private Integer potSizeId;
+	@Column(name="pot_size_id", nullable = false)
+	private Long potSizeId;
 	
 	@Column(name="high_moisture", nullable = false)
 	private Double highMoisture;
@@ -42,7 +42,7 @@ public class Plant implements Serializable
 	private Double lowMoisture;
 	
 	@Column(name="sensor_id")
-	private Integer sensorId;	
+	private Long sensorId;	
 	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
@@ -73,8 +73,8 @@ public class Plant implements Serializable
 		
 	}
 	
-	public Plant(Long id, String name, Integer number, Integer potSizeId, Double highMoisture,
-			Double lowMoisture, Integer sensorId, LocalDate dateObtain, Integer monitor, Integer dead,
+	public Plant(Long id, String name, Integer number, Long potSizeId, Double highMoisture,
+			Double lowMoisture, Long sensorId, LocalDate dateObtain, Integer monitor, Integer dead,
 			Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

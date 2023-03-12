@@ -1,5 +1,7 @@
 package com.ezgreen.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,37 @@ public class SensorController
 	{
 		this.sensorRepository = sensorRepository;
 	}
+	
+//	@GetMapping(value="/withplants", produces = "application/json")
+//	public ResponseEntity<?> getSensorsWithPlant() throws Throwable
+//	{
+//		SensorResponse response = new SensorResponse();
+//		
+//		try
+//		{
+//			List<Object[]> results = sensorRepository.fetchAllSensorsWithPlant();
+//			
+//			for(Object[] o : results)
+//			{
+//				System.out.println(o.);
+//			}
+//			
+//			response.setSensors(null);
+//
+//			response.setStatusCode(HttpStatus.OK);
+//			response.setResponseMessage("Successfully pulled all sensors and their plant info.");
+//			System.out.println("Success!!!");
+//		}
+//		catch (Exception e)
+//		{
+//			System.out.println("Error!!! " + e.getMessage());
+//			System.out.println("Error!!! " + e.getCause());
+//			response.setResponseMessage("getAllSensors error occur: " + e.getCause());
+//			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//
+//		return ResponseEntity.status(response.getStatusCode()).body(response);
+//	}
 	
 	@GetMapping(value="/", produces = "application/json")
 	public ResponseEntity<?> getSensors() throws Throwable

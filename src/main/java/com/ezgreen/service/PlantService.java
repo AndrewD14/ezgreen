@@ -5,14 +5,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.ezgreen.models.Plant;
+import com.ezgreen.models.Sensor;
+import com.ezgreen.repository.HistorySoilMoistureRepository;
 import com.ezgreen.repository.PlantRepository;
+import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 
 @Service
@@ -20,6 +26,12 @@ public class PlantService
 {
 	@Autowired
 	private PlantRepository plantRepository;
+	
+	@Autowired
+	private SensorRepository sensorRepository;
+	
+	@Autowired
+	private HistorySoilMoistureRepository historySoilMoisterRepository;
 	
 	public EZGreenResponse saveAndEditPlant(String request, Long plantId) throws IOException
 	{
@@ -44,8 +56,8 @@ public class PlantService
 		plant.setLowMoisture(requestJson.getDouble("low"));
 		plant.setName(requestJson.getString("name"));
 		plant.setNumber(!requestJson.isNull("number") ? requestJson.getInt("number") : null);
-		plant.setPotSizeId(requestJson.getInt("potSizeId"));
-		plant.setSensorId(!requestJson.isNull("sensorId") ? requestJson.getInt("sensorId") : null);
+		plant.setPotSizeId(requestJson.getLong("potSizeId"));
+		plant.setSensorId(!requestJson.isNull("sensorId") ? requestJson.getLong("sensorId") : null);
 		plant.setUpdateBy(requestJson.getString("username"));
 		plant.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		
@@ -143,5 +155,21 @@ public class PlantService
 		}
 		
 		return response;
+	}
+	
+	@Async
+	public CompletableFuture<List<Plant>> fetchNonDeletedPlants()
+	{
+		List<Plant> plants = plantRepository.fetchAllNonDeletedPlants();
+
+		return CompletableFuture.completedFuture(plants);
+	}
+	
+	@Async
+	public CompletableFuture<List<Sensor>> fetchPlantSensors()
+	{
+		List<Sensor> sensors = sensorRepository.fetchAllPlantSensors();
+
+		return CompletableFuture.completedFuture(sensors);
 	}
 }

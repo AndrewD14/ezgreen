@@ -10,17 +10,17 @@ import com.ezgreen.models.Plant;
 
 public interface PlantRepository extends JpaRepository<Plant, Long>
 {
-	@Query("SELECT plant FROM Plant plant WHERE plant.id = :plantId")
+	@Query("SELECT p FROM Plant p WHERE p.id = :plantId")
 	Plant fetchPlantById(@Param("plantId") Long plantId);
 	
 	@Query("SELECT new com.ezgreen.models.Plant(" +
 			"id," +
 			"name," +
 			"number," +
-			"potSize," +
+			"potSizeId," +
 			"highMoisture," +
 			"lowMoisture," +
-			"sensor," +
+			"sensorId," +
 			"dateObtain," +
 			"monitor," +
 			"dead," +
@@ -29,7 +29,28 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			"updateBy," +
 			"createTs," +
 			"updateTs" +
-			") FROM PlantJoin " +
+			") FROM Plant " +
 			"ORDER BY updateTs DESC")
 	List<Plant> fetchAllPlants();
+	
+	@Query("SELECT new com.ezgreen.models.Plant(" +
+			"id," +
+			"name," +
+			"number," +
+			"potSizeId," +
+			"highMoisture," +
+			"lowMoisture," +
+			"sensorId," +
+			"dateObtain," +
+			"monitor," +
+			"dead," +
+			"delete," +
+			"createBy," +
+			"updateBy," +
+			"createTs," +
+			"updateTs" +
+			") FROM Plant " +
+			" WHERE delete != 1 " +
+			" ORDER BY updateTs DESC")
+	List<Plant> fetchAllNonDeletedPlants();
 }

@@ -2,16 +2,11 @@ package com.ezgreen.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,17 +39,13 @@ public class PotSize implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime updateTs;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="pot_size_id")
-	private List<PlantJoin> plants;
-	
 	public PotSize()
 	{
 		
 	}
 	
-	public PotSize(Long id, String size, String createBy, String updateBy, LocalDateTime createTs,
-			LocalDateTime updateTs)
+	public PotSize(Long id, String size, String createBy, String updateBy,
+			LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 

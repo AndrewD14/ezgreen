@@ -1,6 +1,8 @@
 package com.ezgreen.controller;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,27 +14,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ezgreen.models.PlantFullDetail;
-import com.ezgreen.repository.PlantJoinRepository;
+import com.ezgreen.models.Plant;
+import com.ezgreen.models.PotSize;
+import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.PlantRepository;
+import com.ezgreen.repository.PotSizeRepository;
+import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.PlantDetailResponse;
+import com.ezgreen.responses.PlantsDetailResponse;
 import com.ezgreen.responses.PlantResponse;
 import com.ezgreen.service.PlantService;
+import com.ezgreen.service.PotSizeService;
 
 @RestController
 @RequestMapping("/api/plant")
 public class PlantController
 {
 	private PlantRepository plantRepository;
-	private PlantJoinRepository plantJoinRepository;
 	private PlantService plantService;
+	private PotSizeService potSizeService;
+	private SensorRepository sensorRepository;
+	private PotSizeRepository potSizeRepository;
 	
-	public PlantController(PlantRepository plantRepository, PlantJoinRepository plantJoinRepository, PlantService plantService)
+	public PlantController(PlantRepository plantRepository, PlantService plantService, PotSizeService potSizeService,
+			SensorRepository sensorRepository, PotSizeRepository potSizeRepository)
 	{
 		this.plantRepository = plantRepository;
-		this.plantJoinRepository = plantJoinRepository;
 		this.plantService = plantService;
+		this.potSizeService = potSizeService;
+		this.sensorRepository = sensorRepository;
+		this.potSizeRepository = potSizeRepository;
 	}
 	
 	@PostMapping("/")
@@ -128,43 +140,63 @@ public class PlantController
 	}
 	
 	@GetMapping(value="/{id}", produces = "application/json")
-	public ResponseEntity<?> getPlantFullById(@PathVariable(value = "id") Long plantId)
+	public ResponseEntity<?> getPlantDetailById(@PathVariable(value = "id") Long plantId)
 	{
-		EZGreenResponse response = new EZGreenResponse();
+		PlantDetailResponse response = new PlantDetailResponse();
 
 		try
 		{
-			PlantFullDetail plant = plantJoinRepository.fetchPlantFullById(plantId);
+			Plant plant = plantRepository.fetchPlantById(plantId);
+			Sensor sensor  = sensorRepository.fetchSensorWithPlantId(plantId);
+			PotSize potSize = potSizeRepository.fetchPotSizeWithPlantId(plantId);
 
-			if(plant != null) response.setResponseMessage(plant.toString());
-			else response.setResponseMessage("{}");
+			if(plant != null) response.setPlant(plant);
+			if(sensor != null) response.setSensor(sensor);
+			if(potSize != null) response.setPotSize(potSize);
 			
 			response.setStatusCode(HttpStatus.OK);
 		}
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage());
+			System.out.println(e.getCause());
 			response.setResponseMessage("Failed pulling plant with detail with id: " + plantId + "; " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
+		return ResponseEntity.status(response.getStatusCode()).body(response);
 	}
 	
 	@GetMapping(value="/alldetails", produces = "application/json")
 	public ResponseEntity<?> getPlantFullDetails() throws Throwable
 	{
-		PlantDetailResponse response = new PlantDetailResponse();
+		PlantsDetailResponse response = new PlantsDetailResponse();
 		
 		try
 		{
-			response.setPlants(plantJoinRepository.fetchAllPlantFullDetails());
+			//Kicks of multiple, asynchronous calls
+			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
+			CompletableFuture<List<Sensor>> sensors = plantService.fetchPlantSensors();
+			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
+			
+			//Wait until they are all done
+			CompletableFuture.allOf(
+					plants,
+					sensors,
+					potSizes
+			).join();
+			
+			response.setPlants(plants.get());
+			response.setSensors(sensors.get());
+			response.setPotSizes(potSizes.get());
 			
 			response.setResponseMessage("Pulled all plants with details.");
 			response.setStatusCode(HttpStatus.OK);
 		}
 		catch (Exception e)
 		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
 			response.setResponseMessage("getAllPlants error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

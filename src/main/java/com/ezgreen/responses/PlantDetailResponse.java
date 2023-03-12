@@ -1,14 +1,19 @@
 package com.ezgreen.responses;
 
-import java.util.List;
-import com.ezgreen.models.PlantFullDetail;
+import com.ezgreen.models.Plant;
+import com.ezgreen.models.PotSize;
+import com.ezgreen.models.Sensor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlantDetailResponse extends EZGreenResponse
 {
-	List<PlantFullDetail> plants;
+	Plant plant;
+	Sensor sensor;
+	PotSize potSize;
 }

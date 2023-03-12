@@ -8,10 +8,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 import ShowerIcon from '@mui/icons-material/Shower';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
-import { Stack } from '@mui/material';
+import { CircularProgress, Stack } from '@mui/material';
 import MyTable from '../common/table/MyTable';
 import Alert from '../common/alert/Alert';
 import { plantRoutes } from '../../service/ApiService';
+import { formatAll } from '../../service/utils/plantformat';
 
 interface Column {
    id: 'name' | 'size' | 'type' | 'dateObtain' | 'highMoisture' | 'lowMoisture' | 'monitor' | 'dead' | 'updateBy' | 'updateTs' | 'actions';
@@ -24,6 +25,7 @@ interface Column {
 function Home() {
    const [plants, setPlants] = useState<any[]>([]);
    const [alert, setAlert] = useState<any>(null);
+   const [loading, setLoading] = useState(true);
    const mounted = useRef(true);
 
    const columns: readonly Column[] = [
@@ -33,12 +35,17 @@ function Home() {
          minWidth: 170,
          format: (row, id) => <Link to={'/plant/' + row['id']} state={{plantId: row['id']}}>{row['number'] ? row[id] + ' (' + row['number'] + ')' : row[id]}</Link>,
       },
-      { id: 'size', label: 'Pot size', minWidth: 100 },
+      {
+         id: 'size',
+         label: 'Pot size',
+         minWidth: 100,
+         format: (row, id) => row.potSize[id]
+      },
       {
          id: 'type',
          label: 'Sensor type',
          minWidth: 170,
-         format: (row, id) => row[id]
+         format: (row, id) => row.sensor?.id
       },
       {
          id: 'dateObtain',
@@ -194,10 +201,6 @@ function Home() {
                      <DeleteIcon />
                   </Link>
                </React.Fragment>
-               
-
-      
-      
             )
          }
       },
@@ -211,8 +214,8 @@ function Home() {
       {
          data = await plantRoutes.fetchPlantsWithDetails();
 
-         setPlants(data);
-         console.log(data);
+         setPlants(formatAll(data));
+         setLoading(false);
       }
       catch(error: any)
       {
@@ -227,8 +230,17 @@ function Home() {
 
    return (
       <React.Fragment>
-         {(alert) ? alert : null}
-         <MyTable value={plants} columns={columns} />
+         {(loading) ?
+            <Grid2 justifyContent="center" alignItems="center" style={{height: '30rem'}}>
+               <Grid2  xs={5}>
+                  <CircularProgress />
+               </Grid2>
+            </Grid2>
+         : <React.Fragment>
+            {(alert) ? alert : null}
+            <MyTable value={plants} columns={columns} />
+         </React.Fragment>
+         }
       </React.Fragment>
    );
 }

@@ -38,7 +38,7 @@ class PlantRoutes
       
       const data: any = await response.json();
 
-      return await data.plants;
+      return await data;
    }
 
    // this call is to fetch  a plant with other tables joined
@@ -69,7 +69,6 @@ class PlantRoutes
       if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
       
       const data: any = await response.json();
-      console.log(data);
 
       return await data;
    }
@@ -86,7 +85,6 @@ class PlantRoutes
       if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
       
       const data: any = await response.json();
-      console.log(data);
 
       return await data;
    }
@@ -103,7 +101,6 @@ class PlantRoutes
       if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
       
       const data: any = await response.json();
-      console.log(data);
 
       return await data;
    }

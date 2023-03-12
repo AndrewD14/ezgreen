@@ -54,9 +54,10 @@ public class Sensor implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime updateTs;
 	
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="sensor_id")
-	private PlantJoin plant;
+	public Sensor()
+	{
+		
+	}
 	
 	public Sensor(Long id, String type, Integer port, Integer board, Double lowCalibration,
 			Double highCalibration, String createBy, String updateBy,
