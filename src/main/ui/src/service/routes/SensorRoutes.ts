@@ -25,6 +25,21 @@ class SensorRoutes
 
       return await data.sensors;
    }
+
+   // this call is to fetch senor configs
+   async fetchSensorsWithPlants()
+   {
+      const response = await fetch(this.host + baseRoute + 'withplants', {
+         method: 'GET',
+         headers: this.headers
+      });
+
+      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
+      
+      const data: any = await response.json();
+
+      return await data;
+   }
 }
 
 export default SensorRoutes;

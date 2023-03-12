@@ -53,4 +53,6 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			" WHERE delete != 1 " +
 			" ORDER BY updateTs DESC")
 	List<Plant> fetchAllNonDeletedPlants();
+	
+	List<Plant> findBySensorIdIsNotNull();
 }

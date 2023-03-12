@@ -12,7 +12,7 @@ import { CircularProgress, Stack } from '@mui/material';
 import MyTable from '../common/table/MyTable';
 import Alert from '../common/alert/Alert';
 import { plantRoutes } from '../../service/ApiService';
-import { formatAll } from '../../service/utils/plantformat';
+import { formatAll } from '../../service/utils/plantFormat';
 
 interface Column {
    id: 'name' | 'size' | 'type' | 'dateObtain' | 'highMoisture' | 'lowMoisture' | 'monitor' | 'dead' | 'updateBy' | 'updateTs' | 'actions';
@@ -45,7 +45,7 @@ function Home() {
          id: 'type',
          label: 'Sensor type',
          minWidth: 170,
-         format: (row, id) => row.sensor?.id
+         format: (row, id) => row.sensor?.type
       },
       {
          id: 'dateObtain',
