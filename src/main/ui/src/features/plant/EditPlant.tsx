@@ -2,6 +2,8 @@ import React, { useState, useEffect} from 'react';
 import { Card, CardContent, CircularProgress, Checkbox,
          Fab, FormControl, FormControlLabel, InputLabel,
          MenuItem, Select, Stack, TextField } from '@mui/material';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -66,7 +68,16 @@ function EditPlant(props: any) {
                            </Select>
                         </FormControl>
                         <FormControl>
-                           date obtained
+                           <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
+                              <FormControlLabel
+                                 control={<DesktopDatePicker
+                                             // defaultValue={dayjs('2022-04-17')}
+                                          />
+                                          }
+                                 label="Date obtained"
+                                 labelPlacement="start"
+                              />
+                           </LocalizationProvider>
                         </FormControl>
                         <FormControl>
                            <TextField
@@ -92,8 +103,8 @@ function EditPlant(props: any) {
                         </FormControl>
                         <FormControl>
                            <FormControlLabel
-                              value="start"
                               control={<Checkbox
+                                          id='monitor'
                                           // checked={checked}
                                           // onChange={handleChange}
                                           inputProps={{ 'aria-label': 'controlled' }}/>
