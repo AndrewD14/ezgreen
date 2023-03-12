@@ -1,5 +1,5 @@
 TRUNCATE TABLE public.plant;
-TRUNCATE TABLE public.greenhouse;
+TRUNCATE TABLE public.environment;
 TRUNCATE TABLE public.sensor;
 
 INSERT INTO public.sensor
@@ -10,14 +10,14 @@ VALUES
 (3,'Humidity/Temperature',1,3,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 (4,'Humidity/Temperature',1,4,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 (5,'Humidity/Temperature',1,5,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(6,'Luminosity',1,6,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(7,'Luminosity',1,7,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(8,'Luminosity',1,8,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(9,'Plant moisture indicator',2,1,1.4,3.8,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(10,'Plant moisture indicator',2,3,1.44,3.9,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(11,'Plant moisture indicator',2,5,1.38,3.78,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(12,'Plant moisture indicator',2,7,1.42,3.8,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-(13,'Plant moisture indicator',3,1,1.39,3.82,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+(6,'Light',1,6,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(7,'Light',1,7,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(8,'Light',1,8,NULL,NULL,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(9,'Soil moisture',2,1,1.4,3.8,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(10,'Soil moisture',2,3,1.44,3.9,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(11,'Soil moisture',2,5,1.38,3.78,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(12,'Soil moisture',2,7,1.42,3.8,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(13,'Soil moisture',3,1,1.39,3.82,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 
 INSERT INTO public.environment
 (location,sensor_id,created_by,updated_by,created_ts,updated_ts)

@@ -14,17 +14,20 @@ import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.SensorsDetailResponse;
+import com.ezgreen.service.PlantService;
 import com.ezgreen.service.SensorService;
 
 @RestController
 @RequestMapping("/api/sensor")
 public class SensorController
 {
+	private PlantService plantService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
 	
-	public SensorController(SensorRepository sensorRepository, SensorService sensorService)
+	public SensorController(PlantService plantService, SensorRepository sensorRepository, SensorService sensorService)
 	{
+		this.plantService = plantService;
 		this.sensorRepository = sensorRepository;
 		this.sensorService = sensorService;
 	}
@@ -37,7 +40,7 @@ public class SensorController
 		try
 		{
 			//Kicks of multiple, asynchronous calls
-			CompletableFuture<List<Plant>> plants = sensorService.fetchPlantSensors();
+			CompletableFuture<List<Plant>> plants = plantService.fetchPlantsWithSensor();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllSensors();
 			
 			//Wait until they are all done

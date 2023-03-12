@@ -26,6 +26,21 @@ class PlantRoutes
       return await data.plants;
    }
 
+   // this call is to fetch create plant options
+   async fetchPlantOptions()
+   {
+      const response = await fetch(this.host + baseRoute + "configoptions", {
+         method: 'GET',
+         headers: this.headers
+      });
+
+      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
+      
+      const data: any = await response.json();
+
+      return await data;
+   }
+
    // this call is to fetch plant table with other tables joined
    async fetchPlantsWithDetails()
    {

@@ -26,6 +26,7 @@ import com.ezgreen.responses.PlantsDetailResponse;
 import com.ezgreen.responses.PlantResponse;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.PotSizeService;
+import com.ezgreen.service.SensorService;
 
 @RestController
 @RequestMapping("/api/plant")
@@ -34,17 +35,20 @@ public class PlantController
 	private PlantRepository plantRepository;
 	private PlantService plantService;
 	private PotSizeService potSizeService;
-	private SensorRepository sensorRepository;
 	private PotSizeRepository potSizeRepository;
+	private SensorRepository sensorRepository;
+	private SensorService sensorService;
 	
-	public PlantController(PlantRepository plantRepository, PlantService plantService, PotSizeService potSizeService,
-			SensorRepository sensorRepository, PotSizeRepository potSizeRepository)
+	public PlantController(PlantRepository plantRepository, PlantService plantService,
+			PotSizeService potSizeService, PotSizeRepository potSizeRepository,
+			SensorRepository sensorRepository, SensorService sensorService)
 	{
 		this.plantRepository = plantRepository;
 		this.plantService = plantService;
 		this.potSizeService = potSizeService;
-		this.sensorRepository = sensorRepository;
 		this.potSizeRepository = potSizeRepository;
+		this.sensorRepository = sensorRepository;
+		this.sensorService = sensorService;
 	}
 	
 	@PostMapping("/")
@@ -176,7 +180,7 @@ public class PlantController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
-			CompletableFuture<List<Sensor>> sensors = plantService.fetchPlantSensors();
+			CompletableFuture<List<Sensor>> sensors = sensorService.fetchPlantSensors();
 			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
 			
 			//Wait until they are all done
@@ -191,6 +195,40 @@ public class PlantController
 			response.setPotSizes(potSizes.get());
 			
 			response.setResponseMessage("Pulled all plants with details.");
+			response.setStatusCode(HttpStatus.OK);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+			response.setResponseMessage("getAllPlants error occur: " + e.getCause());
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
+	
+	@GetMapping(value="/configoptions", produces = "application/json")
+	public ResponseEntity<?> getConfigOptions() throws Throwable
+	{
+		PlantsDetailResponse response = new PlantsDetailResponse();
+		
+		try
+		{
+			//Kicks of multiple, asynchronous calls
+			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAvailablePlantSensors();
+			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
+			
+			//Wait until they are all done
+			CompletableFuture.allOf(
+					sensors,
+					potSizes
+			).join();
+			
+			response.setSensors(sensors.get());
+			response.setPotSizes(potSizes.get());
+			
+			response.setResponseMessage("Pulled all plant config options.");
 			response.setStatusCode(HttpStatus.OK);
 		}
 		catch (Exception e)

@@ -1,6 +1,6 @@
 CREATE TABLE public.sensor(
    id                SMALLSERIAL PRIMARY KEY,
-   type              VARCHAR(25) NOT NULL,
+   type              VARCHAR(20) NOT NULL,
    port              INTEGER NOT NULL,
    board             INTEGER NOT NULL,
    low_calibration   REAL,

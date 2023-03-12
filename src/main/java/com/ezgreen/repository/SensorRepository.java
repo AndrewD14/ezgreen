@@ -52,6 +52,24 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
+			" FROM Sensor s " +
+			" LEFT OUTER JOIN plant p ON s.id = p.sensor_id " +
+			" WHERE s.type = 'Soil moisture' " +
+			" AND p.id IS NULL",
+			nativeQuery = true)
+	List<Sensor> fetchAllAvailablePlantSensors();
+	
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.type," +
+			"s.port," +
+			"s.board," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
 			" FROM sensor s " +
 			" INNER JOIN plant p ON p.sensor_id = s.id " +
 			" WHERE p.id = :plantId",

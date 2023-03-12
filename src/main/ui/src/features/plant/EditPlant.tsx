@@ -1,19 +1,44 @@
 import React, { useState, useEffect} from 'react';
-import { Card, CardContent, CircularProgress, Checkbox,
-         Fab, FormControl, FormControlLabel, InputLabel,
+import { CircularProgress, Checkbox,
+         Fab, FormControl, FormControlLabel, FormLabel,
          MenuItem, Select, Stack, TextField } from '@mui/material';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Link, useLocation } from 'react-router-dom';
-
+import { plantRoutes } from '../../service/ApiService';
+import { formatOne } from '../../service/utils/plantFormat';
 
 function EditPlant(props: any) {
    const [plant, setPlant] = useState<any>([]);
+   const [options, setOptions] = useState<any>({});
    const [loading, setLoading] = useState(false);
    const [errors, setError] = useState<any[]>([]);
    const [pageError, setPageError] = useState<string>("");
    const location: any = useLocation();
+
+   const fetchData = async () => {
+      let data = {};
+      
+      try
+      {
+         data = await plantRoutes.fetchPlantOptions();
+
+         console.log(data);
+         setOptions(data);
+      }
+      catch(error: any)
+      {
+         console.log(error.message);
+         console.log(error.stack);
+      }
+   };
+
+   useEffect(() => {
+      fetchData();
+   },
+   //eslint-disable-next-line
+   []);
 
    return (
       <React.Fragment>
@@ -31,18 +56,17 @@ function EditPlant(props: any) {
                   <Grid2 container xl={6}>
                      <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
                         <FormControl>
+                           <FormLabel required>Plant name</FormLabel>
                            <TextField
                               id="name"
-                              label="Plant name"
-                              defaultValue="Default Value"
-                              helperText="Some important text"
+                              defaultValue={plant.name}
                               variant="standard"
                            />
                         </FormControl>
                         <FormControl>
+                           <FormLabel>Number</FormLabel>
                            <TextField
                               id="number"
-                              label="Number"
                               type="number"
                               InputLabelProps={{
                                  shrink: true,
@@ -51,38 +75,37 @@ function EditPlant(props: any) {
                            />
                         </FormControl>
                         <FormControl>
-                           pot size
-                        </FormControl>
-                        <FormControl>
-                           <InputLabel id="sensor-label" variant='standard'>Sensor</InputLabel>
+                           <FormLabel required>Pot size</FormLabel>
                            <Select
-                              labelId="sensor-label"
-                              id="sensorId"
+                              id="potSizeId"
                               // value={age}
-                              label="Age"
                               // onChange={handleChange}
                            >
-                              <MenuItem value={10}>10</MenuItem>
-                              <MenuItem value={20}>20</MenuItem>
-                              <MenuItem value={30}>30</MenuItem>
+                              {options.potSizes?.map((potSize: any) => <MenuItem value={potSize.id}>{potSize.size}</MenuItem>)}
                            </Select>
                         </FormControl>
                         <FormControl>
+                           <FormLabel required>Sensor</FormLabel>
+                           <Select
+                              id="sensorId"
+                              // value={age}
+                              // onChange={handleChange}
+                           >
+                              {options.sensors?.map((sensor: any) => <MenuItem value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
+                           </Select>
+                        </FormControl>
+                        <FormControl>
+                           <FormLabel>Date obtained</FormLabel>
                            <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
-                              <FormControlLabel
-                                 control={<DesktopDatePicker
-                                             // defaultValue={dayjs('2022-04-17')}
-                                          />
-                                          }
-                                 label="Date obtained"
-                                 labelPlacement="start"
+                              <DesktopDatePicker
+                                 // defaultValue={dayjs('2022-04-17')}
                               />
                            </LocalizationProvider>
                         </FormControl>
                         <FormControl>
+                           <FormLabel required>Low moisture (%)</FormLabel>
                            <TextField
                               id="lowMoisture"
-                              label="Low moisture (%)"
                               type="number"
                               InputLabelProps={{
                                  shrink: true,
@@ -91,9 +114,9 @@ function EditPlant(props: any) {
                            />
                         </FormControl>
                         <FormControl>
+                           <FormLabel required>High moisture (%)</FormLabel>
                            <TextField
                               id="highMoisture"
-                              label="High moisture (%)"
                               type="number"
                               InputLabelProps={{
                                  shrink: true,
@@ -102,16 +125,12 @@ function EditPlant(props: any) {
                            />
                         </FormControl>
                         <FormControl>
-                           <FormControlLabel
-                              control={<Checkbox
-                                          id='monitor'
-                                          // checked={checked}
-                                          // onChange={handleChange}
-                                          inputProps={{ 'aria-label': 'controlled' }}/>
-                                       }
-                              label="Monitor"
-                              labelPlacement="start"
-                           />
+                           <FormLabel required>Monitor</FormLabel>
+                           <Checkbox
+                              id='monitor'
+                              // checked={checked}
+                              // onChange={handleChange}
+                              inputProps={{ 'aria-label': 'controlled' }}/>
                         </FormControl>
                      </Stack>
                   </Grid2>

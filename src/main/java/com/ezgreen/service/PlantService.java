@@ -15,10 +15,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.ezgreen.models.Plant;
-import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.HistorySoilMoistureRepository;
 import com.ezgreen.repository.PlantRepository;
-import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 
 @Service
@@ -26,9 +24,6 @@ public class PlantService
 {
 	@Autowired
 	private PlantRepository plantRepository;
-	
-	@Autowired
-	private SensorRepository sensorRepository;
 	
 	@Autowired
 	private HistorySoilMoistureRepository historySoilMoisterRepository;
@@ -166,10 +161,10 @@ public class PlantService
 	}
 	
 	@Async
-	public CompletableFuture<List<Sensor>> fetchPlantSensors()
+	public CompletableFuture<List<Plant>> fetchPlantsWithSensor()
 	{
-		List<Sensor> sensors = sensorRepository.fetchAllPlantSensors();
+		List<Plant> plants = plantRepository.findBySensorIdIsNotNull();
 
-		return CompletableFuture.completedFuture(sensors);
+		return CompletableFuture.completedFuture(plants);
 	}
 }
