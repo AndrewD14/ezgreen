@@ -9,19 +9,20 @@ import { Link, useLocation } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
+import _ from 'lodash';
 
 const initialState: any = {
    dateObtain: null,
    dead: 0,
    delete: 0,
-   highMoisture: null,
+   highMoisture: 0,
    id: null,
-   lowMoisture: null,
+   lowMoisture: 0,
    monitor: 0,
    name: '',
    number: '',
-   potSizeId: null,
-   sensorId: null
+   potSizeId: '',
+   sensorId: ''
 }
 
 function reducer(state: any, action: any)
@@ -53,6 +54,7 @@ function EditPlant(props: any) {
    let id = location.state?.plantId || null;
 
    const onChange = (event: any) => {
+      console.log(event)
       setPlant({
          type: event.target.id,
          payload: event.target.value
@@ -87,7 +89,7 @@ function EditPlant(props: any) {
 
    const fetchData = async () => {
       let data = {};
-      let edit = null;
+      let edit = {};
 
       try
       {
@@ -101,8 +103,7 @@ function EditPlant(props: any) {
             setPlant({
                type: 'setup',
                payload: {
-                  ...edit,
-                  loading: false,
+                  ...edit
                }
             });
          }
@@ -111,6 +112,7 @@ function EditPlant(props: any) {
             edit = {...initPlant};
          }
 
+         setOptions(data);
          setLoading(false);
          setPageError("");
       }
@@ -169,10 +171,9 @@ function EditPlant(props: any) {
                            <FormLabel required>Pot size</FormLabel>
                            <Select
                               id="setPotSizeId"
-                              onChange={onChange}
+                              onChange={(event: any) => setPlant({type: 'setPotSizeId', payload: event.target.value})}
                               value={plant.potSizeId}
                            >
-                              {id != null ? <MenuItem key={'potSize-'  + initPlant?.potSizeId} value={initPlant?.potSizeId}>{initPlant?.potSize?.size}</MenuItem> : null}
                               {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.size}</MenuItem>)}
                            </Select>
                         </FormControl>
@@ -180,7 +181,7 @@ function EditPlant(props: any) {
                            <FormLabel required>Sensor</FormLabel>
                            <Select
                               id="setSensorId"
-                              onChange={onChange}
+                              onChange={(event: any) => setPlant({type: 'setSensorId', payload: event.target.value})}
                               value={plant.sensorId}
                            >
                               {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
