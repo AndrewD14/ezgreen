@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useReducer, useEffect} from 'react';
 import { CircularProgress, Checkbox,
          Fab, FormControl, FormControlLabel, FormLabel,
          MenuItem, Select, Stack, TextField } from '@mui/material';
@@ -10,9 +10,40 @@ import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
 
+const initialState: any = {
+   dateObtain: null,
+   dead: 0,
+   delete: 0,
+   highMoisture: null,
+   id: null,
+   lowMoisture: null,
+   monitor: 0,
+   name: '',
+   number: '',
+   potSizeId: null,
+   sensorId: null
+}
+
+function reducer(state: any, action: any)
+{
+   switch(action.type)
+   {
+      case 'setup': return {...state, ...action.payload}
+      case 'setName': return {...state, name: action.payload};
+      case 'setNumber': return {...state, number: action.payload};
+      case 'setLowMoisture': return {...state, lowMoisture: action.payload};
+      case 'setHighMoisture': return {...state, highMoisture: action.payload};
+      case 'setMonitor': return {...state, monitor: action.payload};
+      case 'setPotSizeId': return {...state, potSizeId: action.payload};
+      case 'setSensorId': return {...state, sensorId: action.payload};
+      case 'setDateObtain': return {...state, dateObtain: action.payload};
+      default: throw new Error(action.type + " is not supported.");
+   }
+}
+
 function EditPlant(props: any) {
-   const [plant, setPlant] = useState<any>({});
-   const [initPlant, setInitPlant] = useState<any>({});
+   const [plant, setPlant] = useReducer(reducer, initialState);
+   const [initPlant, setInitPlant] = useState<any>(initialState);
    const [options, setOptions] = useState<any>({});
    const [loading, setLoading] = useState(true);
    const [errors, setError] = useState<any[]>([]);
@@ -21,10 +52,43 @@ function EditPlant(props: any) {
 
    let id = location.state?.plantId || null;
 
+   const onChange = (event: any) => {
+      setPlant({
+         type: event.target.id,
+         payload: event.target.value
+      });
+   }
+
+   const onMonitor = (event: any) => {
+      setPlant({
+         type: event.target.id,
+         payload: event.target.checked ? 1 : 0
+      });
+   }
+
+   const onDateChange = (event: any) => {
+      setPlant({
+         type: 'setDateObtain',
+         payload: event
+      });
+   }
+
+   const undo = () => {
+      setPlant({
+         type: 'setup',
+         payload: {
+            ...initPlant
+         }
+      });
+
+      setError([]);
+      setPageError("");
+   }
+
    const fetchData = async () => {
       let data = {};
       let edit = null;
-      console.log("id: " + id)
+
       try
       {
          data = await plantRoutes.fetchPlantOptions();
@@ -33,19 +97,28 @@ function EditPlant(props: any) {
          {
             edit = formatOne(await plantRoutes.fetchOnePlantWithDetails(id));
 
-            setInitPlant(edit);
-            setPlant(edit);
-            console.log(edit);
+            setInitPlant({...initialState, ...edit});
+            setPlant({
+               type: 'setup',
+               payload: {
+                  ...edit,
+                  loading: false,
+               }
+            });
+         }
+         else
+         {
+            edit = {...initPlant};
          }
 
-         console.log(data);
-         setOptions(data);
          setLoading(false);
+         setPageError("");
       }
       catch(error: any)
       {
          console.log(error.message);
          console.log(error.stack);
+         setPageError("There was an error retrieving data.");
       }
    };
 
@@ -61,7 +134,7 @@ function EditPlant(props: any) {
             {(pageError) ? <div className="error-message">{pageError}</div> : null}
             {(loading) ?
                <Grid2 justifyContent="center" alignItems="center" style={{height: '30rem'}}>
-                  <Grid2  xs={5}>
+                  <Grid2 xs={5}>
                      <CircularProgress />
                   </Grid2>
                </Grid2>
@@ -70,62 +143,65 @@ function EditPlant(props: any) {
                   <h2>Plant info</h2>
                   <Grid2 container xl={6}>
                      <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
-                        <FormControl>
+                        <FormControl key={'name'}>
                            <FormLabel required>Plant name</FormLabel>
                            <TextField
-                              id="name"
+                              id="setName"
                               value={plant.name}
+                              onChange={onChange}
                               variant="standard"
                            />
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'number'}>
                            <FormLabel>Number</FormLabel>
                            <TextField
-                              id="number"
+                              id="setNumber"
                               type="number"
                               value={plant.number}
+                              onChange={onChange}
                               InputLabelProps={{
                                  shrink: true,
                               }}
                               variant="standard"
                            />
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'potSize'}>
                            <FormLabel required>Pot size</FormLabel>
                            <Select
-                              id="potSizeId"
-                              // onChange={handleChange}
+                              id="setPotSizeId"
+                              onChange={onChange}
                               value={plant.potSizeId}
                            >
-                              {id != null ? <MenuItem value={initPlant?.potSizeId}>{initPlant?.potSize?.size}</MenuItem> : null}
-                              {options.potSizes?.map((potSize: any) => <MenuItem value={potSize.id}>{potSize.size}</MenuItem>)}
+                              {id != null ? <MenuItem key={'potSize-'  + initPlant?.potSizeId} value={initPlant?.potSizeId}>{initPlant?.potSize?.size}</MenuItem> : null}
+                              {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.size}</MenuItem>)}
                            </Select>
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'sensor'}>
                            <FormLabel required>Sensor</FormLabel>
                            <Select
-                              id="sensorId"
-                              // value={age}
-                              // onChange={handleChange}
+                              id="setSensorId"
+                              onChange={onChange}
                               value={plant.sensorId}
                            >
-                              {(id != null && initPlant?.sensor ) ? <MenuItem value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
-                              {options.sensors?.map((sensor: any) => <MenuItem value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
+                              {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
+                              {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
                            </Select>
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'dateObtain'}>
                            <FormLabel>Date obtained</FormLabel>
                            <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
                               <DesktopDatePicker
                                  value={plant.dateObtain ? moment(plant.dateObtain) : null}
+                                 onChange={onDateChange}
                               />
                            </LocalizationProvider>
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'lowMoisture'}>
                            <FormLabel required>Low moisture (%)</FormLabel>
                            <TextField
-                              id="lowMoisture"
+                              id="setLowMoisture"
                               type="number"
+                              onChange={onChange}
                               value={plant.lowMoisture}
                               InputLabelProps={{
                                  shrink: true,
@@ -133,24 +209,25 @@ function EditPlant(props: any) {
                               variant="standard"
                            />
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'highMoisture'}>
                            <FormLabel required>High moisture (%)</FormLabel>
                            <TextField
-                              id="highMoisture"
+                              id="setHighMoisture"
                               type="number"
                               value={plant.highMoisture}
+                              onChange={onChange}
                               InputLabelProps={{
                                  shrink: true,
                               }}
                               variant="standard"
                            />
                         </FormControl>
-                        <FormControl>
+                        <FormControl key={'monitor'}>
                            <FormLabel required>Monitor</FormLabel>
                            <Checkbox
-                              id='monitor'
+                              id='setMonitor'
                               checked={(plant.monitor === 1) ? true : false}
-                              // onChange={handleChange}
+                              onChange={onMonitor}
                               inputProps={{ 'aria-label': 'controlled' }}/>
                         </FormControl>
                      </Stack>
@@ -161,7 +238,7 @@ function EditPlant(props: any) {
                            <Fab variant='extended' value="178">Cancel</Fab>
                         </Link>
                         <Grid2 style={{ flex: 1 }}>
-                           <Fab variant='extended' color="primary" /*onClick={}*/>Undo</Fab>
+                           <Fab variant='extended' color="primary" onClick={undo}>Undo</Fab>
                         </Grid2>
                         <Link to={{pathname: ''}} style={{ textDecoration: 'none' }} /*onClick={}*/>
                            <Fab variant='extended' color="primary">Save</Fab>
