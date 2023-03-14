@@ -5,6 +5,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import Button from '@mui/joy/Button';
 import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 import ShowerIcon from '@mui/icons-material/Shower';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
@@ -238,6 +239,7 @@ function Home() {
             </Grid2>
          : <React.Fragment>
             {(alert) ? alert : null}
+            <Link to={'/plant/edit/'} style={{ textDecoration: 'none' }}><Button>Add Plant</Button></Link>
             <MyTable value={plants} columns={columns} />
          </React.Fragment>
          }

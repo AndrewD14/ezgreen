@@ -8,24 +8,39 @@ import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Link, useLocation } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
+import moment from 'moment-timezone';
 
 function EditPlant(props: any) {
-   const [plant, setPlant] = useState<any>([]);
+   const [plant, setPlant] = useState<any>({});
+   const [initPlant, setInitPlant] = useState<any>({});
    const [options, setOptions] = useState<any>({});
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true);
    const [errors, setError] = useState<any[]>([]);
    const [pageError, setPageError] = useState<string>("");
    const location: any = useLocation();
 
+   let id = location.state?.plantId || null;
+
    const fetchData = async () => {
       let data = {};
-      
+      let edit = null;
+      console.log("id: " + id)
       try
       {
          data = await plantRoutes.fetchPlantOptions();
 
+         if(id != null)
+         {
+            edit = formatOne(await plantRoutes.fetchOnePlantWithDetails(id));
+
+            setInitPlant(edit);
+            setPlant(edit);
+            console.log(edit);
+         }
+
          console.log(data);
          setOptions(data);
+         setLoading(false);
       }
       catch(error: any)
       {
@@ -42,7 +57,7 @@ function EditPlant(props: any) {
 
    return (
       <React.Fragment>
-            <h1>{(props.location?.state?.id) ? "Edit Plant" : "Create plant"}</h1>
+            <h1>{(id) ? "Edit Plant" : "Create plant"}</h1>
             {(pageError) ? <div className="error-message">{pageError}</div> : null}
             {(loading) ?
                <Grid2 justifyContent="center" alignItems="center" style={{height: '30rem'}}>
@@ -59,7 +74,7 @@ function EditPlant(props: any) {
                            <FormLabel required>Plant name</FormLabel>
                            <TextField
                               id="name"
-                              defaultValue={plant.name}
+                              value={plant.name}
                               variant="standard"
                            />
                         </FormControl>
@@ -68,6 +83,7 @@ function EditPlant(props: any) {
                            <TextField
                               id="number"
                               type="number"
+                              value={plant.number}
                               InputLabelProps={{
                                  shrink: true,
                               }}
@@ -78,9 +94,10 @@ function EditPlant(props: any) {
                            <FormLabel required>Pot size</FormLabel>
                            <Select
                               id="potSizeId"
-                              // value={age}
                               // onChange={handleChange}
+                              value={plant.potSizeId}
                            >
+                              {id != null ? <MenuItem value={initPlant?.potSizeId}>{initPlant?.potSize?.size}</MenuItem> : null}
                               {options.potSizes?.map((potSize: any) => <MenuItem value={potSize.id}>{potSize.size}</MenuItem>)}
                            </Select>
                         </FormControl>
@@ -90,7 +107,9 @@ function EditPlant(props: any) {
                               id="sensorId"
                               // value={age}
                               // onChange={handleChange}
+                              value={plant.sensorId}
                            >
+                              {(id != null && initPlant?.sensor ) ? <MenuItem value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
                               {options.sensors?.map((sensor: any) => <MenuItem value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
                            </Select>
                         </FormControl>
@@ -98,7 +117,7 @@ function EditPlant(props: any) {
                            <FormLabel>Date obtained</FormLabel>
                            <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
                               <DesktopDatePicker
-                                 // defaultValue={dayjs('2022-04-17')}
+                                 value={plant.dateObtain ? moment(plant.dateObtain) : null}
                               />
                            </LocalizationProvider>
                         </FormControl>
@@ -107,6 +126,7 @@ function EditPlant(props: any) {
                            <TextField
                               id="lowMoisture"
                               type="number"
+                              value={plant.lowMoisture}
                               InputLabelProps={{
                                  shrink: true,
                               }}
@@ -118,6 +138,7 @@ function EditPlant(props: any) {
                            <TextField
                               id="highMoisture"
                               type="number"
+                              value={plant.highMoisture}
                               InputLabelProps={{
                                  shrink: true,
                               }}
@@ -128,7 +149,7 @@ function EditPlant(props: any) {
                            <FormLabel required>Monitor</FormLabel>
                            <Checkbox
                               id='monitor'
-                              // checked={checked}
+                              checked={(plant.monitor === 1) ? true : false}
                               // onChange={handleChange}
                               inputProps={{ 'aria-label': 'controlled' }}/>
                         </FormControl>

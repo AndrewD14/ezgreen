@@ -31,7 +31,7 @@ const router = createBrowserRouter([
             element: <Plant />,
           },
           {
-            path: "/plant/edit/:id",
+            path: "/plant/edit/:id?",
             element: <EditPlant />,
           },
          {
