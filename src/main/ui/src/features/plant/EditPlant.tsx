@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect} from 'react';
 import { CircularProgress, Checkbox,
-         Fab, FormControl, FormControlLabel, FormLabel,
+         Fab, FormControl, FormLabel,
          MenuItem, Select, Stack, TextField } from '@mui/material';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
@@ -9,7 +9,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
-import _ from 'lodash';
 
 const initialState: any = {
    dateObtain: null,
@@ -54,7 +53,6 @@ function EditPlant(props: any) {
    let id = location.state?.plantId || null;
 
    const onChange = (event: any) => {
-      console.log(event)
       setPlant({
          type: event.target.id,
          payload: event.target.value

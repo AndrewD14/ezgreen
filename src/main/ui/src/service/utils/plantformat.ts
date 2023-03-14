@@ -29,7 +29,6 @@ export function formatAll(data: any)
       return plant;
    });
 
-   console.log(plants)
    return plants;
 }
 
