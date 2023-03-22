@@ -49,6 +49,7 @@ public class PlantService
 		plant.setDelete(requestJson.getInt("delete"));
 		plant.setHighMoisture(requestJson.getDouble("high"));
 		plant.setLowMoisture(requestJson.getDouble("low"));
+		plant.setMonitor(requestJson.getInt("monitor"));
 		plant.setName(requestJson.getString("name"));
 		plant.setNumber(!requestJson.isNull("number") ? requestJson.getInt("number") : null);
 		plant.setPotSizeId(requestJson.getLong("potSizeId"));

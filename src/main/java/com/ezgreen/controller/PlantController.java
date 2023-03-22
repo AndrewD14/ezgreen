@@ -51,7 +51,7 @@ public class PlantController
 		this.sensorService = sensorService;
 	}
 	
-	@PostMapping("/")
+	@PutMapping("/")
 	public ResponseEntity<?> createPlant(@RequestBody String request)
 	{
 		EZGreenResponse response = new EZGreenResponse();

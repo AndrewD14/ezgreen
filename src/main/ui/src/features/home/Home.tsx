@@ -58,12 +58,14 @@ function Home() {
          label: 'High Moisture (%)',
          minWidth: 170,
          align: 'right',
+         format: (row, id) => parseFloat(row[id]).toFixed(2)
       },
       {
          id: 'lowMoisture',
          label: 'Low Moisture (%)',
          minWidth: 170,
          align: 'right',
+         format: (row, id) => parseFloat(row[id]).toFixed(2)
       },
       {
          id: 'monitor',
@@ -98,7 +100,7 @@ function Home() {
             return(
                <React.Fragment>
                   <Link key={"monitor-" + row['id']}
-                     style={{ textDecoration: 'none', color: '#1e1e1e', pointerEvents: row['dead'] === 1 ? 'none' : 'auto'}}
+                     style={{ textDecoration: 'none', color: '#1e1e1e', pointerEvents: (row['dead'] === 1 || !row['sensorId']) ? 'none' : 'auto'}}
                      to={''}
                      title="Monitor/Disable plant"
                      onClick={() => {
@@ -141,7 +143,7 @@ function Home() {
                         }
                      }}
                   >
-                     { row['monitor'] === 1 ? <FormatColorResetIcon className={row['dead'] === 1 ? 'disabled-link ' : ''}/> : <ShowerIcon className={row['dead'] === 1 ? 'disabled-link ' : ''}/> }
+                     { row['monitor'] === 1 ? <FormatColorResetIcon /> : <ShowerIcon className={(row['dead'] === 1 || !row['sensorId']) ? 'disabled-link ' : ''}/> }
                   </Link>
                   <Link key={"edit-" + row['id']}
                      style={{ textDecoration: 'none', color: '#1e1e1e' }}
@@ -214,7 +216,7 @@ function Home() {
       try
       {
          data = await plantRoutes.fetchPlantsWithDetails();
-
+console.log(formatAll(data))
          setPlants(formatAll(data));
          setLoading(false);
       }

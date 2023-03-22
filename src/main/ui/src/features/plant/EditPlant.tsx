@@ -5,10 +5,11 @@ import { CircularProgress, Checkbox,
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
+import _ from 'lodash';
 
 const initialState: any = {
    dateObtain: null,
@@ -30,9 +31,9 @@ function reducer(state: any, action: any)
    {
       case 'setup': return {...state, ...action.payload}
       case 'setName': return {...state, name: action.payload};
-      case 'setNumber': return {...state, number: action.payload};
-      case 'setLowMoisture': return {...state, lowMoisture: action.payload};
-      case 'setHighMoisture': return {...state, highMoisture: action.payload};
+      case 'setNumber': return {...state, number: parseInt(action.payload)};
+      case 'setLowMoisture': return {...state, lowMoisture: parseFloat(action.payload).toFixed(2)};
+      case 'setHighMoisture': return {...state, highMoisture: parseFloat(action.payload).toFixed(2)};
       case 'setMonitor': return {...state, monitor: action.payload};
       case 'setPotSizeId': return {...state, potSizeId: action.payload};
       case 'setSensorId': return {...state, sensorId: action.payload};
@@ -48,7 +49,9 @@ function EditPlant(props: any) {
    const [loading, setLoading] = useState(true);
    const [errors, setError] = useState<any[]>([]);
    const [pageError, setPageError] = useState<string>("");
+   const [saving, setSaving] = useState<boolean>(false);
    const location: any = useLocation();
+   const navigate: any = useNavigate();
 
    let id = location.state?.plantId || null;
 
@@ -57,37 +60,46 @@ function EditPlant(props: any) {
          type: event.target.id,
          payload: event.target.value
       });
-   }
+   };
+
+   const onSensorChange = (event: any) => {
+      if(event.target.value === '') setPlant({ type: 'setMonitor', payload: 0});
+      
+      setPlant({type: 'setSensorId', payload: event.target.value});
+   };
 
    const onMonitor = (event: any) => {
       setPlant({
          type: event.target.id,
-         payload: event.target.checked ? 1 : 0
+         payload: (plant.sensorId!== '' && event.target.checked) ? 1 : 0
       });
-   }
+   };
 
    const onDateChange = (event: any) => {
       setPlant({
          type: 'setDateObtain',
          payload: event
       });
-   }
+   };
 
    const undo = () => {
       setPlant({
          type: 'setup',
          payload: {
-            ...initPlant
+            ...initPlant,
          }
       });
 
       setError([]);
       setPageError("");
-   }
+   };
 
    const save = async () => {
+      setSaving(true);
+
       try
       {
+         let dateObtain = (plant.dateObtain ? plant.dateObtain.format('YYYY-MM-DD') : null);
          let newErrors: any[] = [];
 
          if(plant.name === '') newErrors.push("name");
@@ -99,25 +111,43 @@ function EditPlant(props: any) {
          setError(newErrors);
          setPageError("");
 
-         console.log(newErrors);
-         console.log(plant)
-
          if(newErrors.length > 0) return;
 
-         // await Api.thresholds.save(group, insurance, state.queue.cccQueueName, state.customScore, state.advisorScore, state.guidelineScore, state.insuranceScore, user.username, cancelToken, state.id);
+         await plantRoutes.save(dateObtain, plant.dead, plant.delete, plant.highMoisture, plant.lowMoisture, plant.monitor, plant.name,
+            (plant.number === '' ? null: plant.number), plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId), 'adamico', plant.id);
 
-         // history.push("/thresholds");
+         navigate("/");
       }
       catch(error)
       {
          setPageError("Failed to update database.");
+         setSaving(false);
          console.log(error);
       }
+   };
+
+   const checkChange = () => {
+      let change = false;
+      let plantDate = null;
+      let initDate = null;
+
+      if(plant?.dateObtain !== null) plantDate = plant.dateObtain.format('YYYY-MM-DD');
+      if(initPlant?.dateObtain !== null) initDate = initPlant.dateObtain.format('YYYY-MM-DD');
+      if(plantDate !== initDate){console.log("date change"); change = true;}
+      if(plant.highMoisture !== initPlant.highMoisture){console.log("highMoisture");  change = true;}
+      if(plant.lowMoisture !== initPlant.lowMoisture){console.log("lowMoisture");  change = true;}
+      if(plant.monitor !== initPlant.monitor){console.log("monitor");  change = true;}
+      if(plant.name !== initPlant.name){console.log("name change");  change = true;}
+      if(plant.number !== initPlant.number){console.log("number change");  change = true;}
+      if(plant.potSizeId !== initPlant.potSizeId){console.log("potSizeId change");  change = true;}
+      if(plant.sensorId !== initPlant.sensorId){console.log("sensorId change");  change = true;}
+
+      return change;
    }
 
    const fetchData = async () => {
-      let data = {};
-      let edit = {};
+      let data: any = {};
+      let edit: any = {};
 
       try
       {
@@ -126,6 +156,13 @@ function EditPlant(props: any) {
          if(id != null)
          {
             edit = formatOne(await plantRoutes.fetchOnePlantWithDetails(id));
+
+            if(edit?.dateObtain) edit.dateObtain = moment(edit.dateObtain);
+
+            edit = {...edit,
+               highMoisture: parseFloat(edit.highMoisture).toFixed(2),
+               lowMoisture: parseFloat(edit.lowMoisture).toFixed(2)
+            };
 
             setInitPlant({...initialState, ...edit});
             setPlant({
@@ -220,12 +257,13 @@ function EditPlant(props: any) {
                               {(errors.indexOf("pot") !== -1) ? <span>You must select a pot size.</span> : null}
                            </Grid2>
                            <FormControl key={'sensor'}>
-                              <FormLabel required>Sensor</FormLabel>
+                              <FormLabel>Sensor</FormLabel>
                               <Select
                                  id="setSensorId"
-                                 onChange={(event: any) => setPlant({type: 'setSensorId', payload: event.target.value})}
+                                 onChange={onSensorChange}
                                  value={plant.sensorId}
                               >
+                                 <MenuItem key={'sensor-null'} value={''}>Remove</MenuItem>
                                  {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
                                  {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
                               </Select>
@@ -234,7 +272,7 @@ function EditPlant(props: any) {
                               <FormLabel>Date obtained</FormLabel>
                               <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
                                  <DesktopDatePicker
-                                    value={plant.dateObtain ? moment(plant.dateObtain) : null}
+                                    value={plant.dateObtain}
                                     onChange={onDateChange}
                                  />
                               </LocalizationProvider>
@@ -293,7 +331,7 @@ function EditPlant(props: any) {
                                  <Fab variant='extended' color="primary" onClick={undo}>Undo</Fab>
                               </Grid2>
                               <Link to={{pathname: ''}} style={{ textDecoration: 'none' }} onClick={save}>
-                                 <Fab variant='extended' color="primary">Save</Fab>
+                                 <Fab variant='extended' color="primary" disabled={saving || !checkChange()}>Save</Fab>
                               </Link>
                            </Grid2>
                         </Grid2>

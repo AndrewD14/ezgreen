@@ -71,6 +71,31 @@ class PlantRoutes
       return await data;
    }
 
+   //this will save the new or edit of a plant
+   async save(dateObtain: string | null, dead: number, deleted: number, highMoisture: number, lowMoisture: number,
+      monitor: number, name: string, number: string | null, potSizeId: number, sensorId: number, username: string, id: string)
+   {
+      const response = await fetch(this.host + baseRoute + (id ? id : ''), {
+         method: 'PUT',
+         headers: this.headers,
+         body: JSON.stringify({
+            dateObtain: dateObtain,
+            dead: dead,
+            delete: deleted,
+            high: highMoisture,
+            low: lowMoisture,
+            monitor: monitor,
+            name: name,
+            number: number,
+            potSizeId: potSizeId,
+            sensorId: sensorId,
+            username: username
+         })
+      });
+
+      return response;
+   }
+
    //this is to soft delete a plant
    async delete(id: number, username: string)
    {
