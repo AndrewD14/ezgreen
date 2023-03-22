@@ -255,7 +255,7 @@ function EditPlant(props: any) {
                               </Select>
                            </FormControl>
                            <Grid2 container className="error-text">
-                              {(errors.indexOf("pot") !== -1) ? <span>You must select a pot size.</span> : null}
+                              {(errors.indexOf("pot") !== -1) ? <span>Pot size cannot be blank.</span> : null}
                            </Grid2>
                            <FormControl key={'sensor'}>
                               <FormLabel>Sensor</FormLabel>
