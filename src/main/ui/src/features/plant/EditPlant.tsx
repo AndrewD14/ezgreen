@@ -30,7 +30,7 @@ function reducer(state: any, action: any)
    {
       case 'setup': return {...state, ...action.payload}
       case 'setName': return {...state, name: action.payload};
-      case 'setNumber': return {...state, number: parseInt(action.payload)};
+      case 'setNumber': return {...state, number: action.payload};
       case 'setLowMoisture': return {...state, lowMoisture: parseFloat(action.payload).toFixed(2)};
       case 'setHighMoisture': return {...state, highMoisture: parseFloat(action.payload).toFixed(2)};
       case 'setMonitor': return {...state, monitor: action.payload};
@@ -52,9 +52,24 @@ function EditPlant(props: any) {
    const location: any = useLocation();
    const navigate: any = useNavigate();
 
-   let id = location.state?.plantId || null;
-
    const onChange = (event: any) => {
+      setPlant({
+         type: event.target.id,
+         payload: event.target.value
+      });
+   };
+
+   const onIntChange = (event: any) => {
+      let value = parseInt(event.target.value);
+      let id = event.target.id;
+
+      setPlant({
+         type: id,
+         payload: value.toString()
+      });
+   };
+
+   const onFloatChange = (event: any) => {
       setPlant({
          type: event.target.id,
          payload: event.target.value
@@ -107,7 +122,6 @@ function EditPlant(props: any) {
          if(plant.potSizeId === '') newErrors.push("pot");
          if(parseFloat(plant.lowMoisture) === 0 || parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("low");
          if(parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("high");
-         
 
          setError(newErrors);
          setPageError("");
@@ -138,14 +152,14 @@ function EditPlant(props: any) {
 
       if(plant?.dateObtain !== null) plantDate = plant.dateObtain.format('YYYY-MM-DD');
       if(initPlant?.dateObtain !== null) initDate = initPlant.dateObtain.format('YYYY-MM-DD');
-      if(plantDate !== initDate){console.log("date change"); change = true;}
-      if(plant.highMoisture !== initPlant.highMoisture){console.log("highMoisture");  change = true;}
-      if(plant.lowMoisture !== initPlant.lowMoisture){console.log("lowMoisture");  change = true;}
-      if(plant.monitor !== initPlant.monitor){console.log("monitor");  change = true;}
-      if(plant.name !== initPlant.name){console.log("name change");  change = true;}
-      if(plant.number !== initPlant.number){console.log("number change");  change = true;}
-      if(plant.potSizeId !== initPlant.potSizeId){console.log("potSizeId change");  change = true;}
-      if(plant.sensorId !== initPlant.sensorId){console.log("sensorId change");  change = true;}
+      if(plantDate !== initDate) change = true;
+      if(plant.highMoisture !== initPlant.highMoisture) change = true;
+      if(plant.lowMoisture !== initPlant.lowMoisture) change = true;
+      if(plant.monitor !== initPlant.monitor) change = true;
+      if(plant.name !== initPlant.name) change = true;
+      if(plant.number !== initPlant.number) change = true;
+      if(plant.potSizeId !== initPlant.potSizeId) change = true;
+      if(plant.sensorId !== initPlant.sensorId) change = true;
 
       return change;
    }
@@ -153,6 +167,7 @@ function EditPlant(props: any) {
    const fetchData = async () => {
       let data: any = {};
       let edit: any = {};
+      let id = location?.state?.plantId || null;
 
       try
       {
@@ -165,24 +180,20 @@ function EditPlant(props: any) {
             if(edit?.dateObtain) edit.dateObtain = moment(edit.dateObtain);
 
             edit = {
-               ...initPlant,
+               ...initialState,
                ...edit,
                highMoisture: parseFloat(edit.highMoisture).toFixed(2),
                lowMoisture: parseFloat(edit.lowMoisture).toFixed(2),
-               number: (edit.number === null ? '' : edit.number)
+               number: (edit.number === undefined ? '' : edit.number)
             };
 
-            setInitPlant({...initialState, ...edit});
+            setInitPlant({...edit});
             setPlant({
                type: 'setup',
                payload: {
                   ...edit
                }
             });
-         }
-         else
-         {
-            edit = {...initPlant};
          }
 
          setOptions(data);
@@ -207,7 +218,7 @@ function EditPlant(props: any) {
       <React.Fragment>
          <Grid2 container direction="column" justifyContent="flex-start" alignItems="flex-start" style={{minHeight: '100%'}}>
             <Grid2 xs={2}>
-               <h1>{(id) ? "Edit Plant" : "Create plant"}</h1>
+               <h1>{(plant.id) ? "Edit Plant" : "Create plant"}</h1>
             </Grid2>
             <Grid2 xs={3}>
                {(pageError) ? <div className="error-message">{pageError}</div> : null}
@@ -244,7 +255,7 @@ function EditPlant(props: any) {
                                  id="setNumber"
                                  type="number"
                                  value={plant.number}
-                                 onChange={onChange}
+                                 onChange={onIntChange}
                                  InputLabelProps={{
                                     shrink: true,
                                  }}
@@ -272,7 +283,7 @@ function EditPlant(props: any) {
                                  value={plant.sensorId}
                               >
                                  <MenuItem key={'sensor-null'} value={''}>Remove</MenuItem>
-                                 {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
+                                 {(plant.id !== null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
                                  {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
                               </Select>
                            </FormControl>
@@ -290,7 +301,7 @@ function EditPlant(props: any) {
                               <TextField
                                  id="setLowMoisture"
                                  type="number"
-                                 onChange={onChange}
+                                 onChange={onFloatChange}
                                  value={plant.lowMoisture}
                                  InputLabelProps={{
                                     shrink: true,
@@ -307,7 +318,7 @@ function EditPlant(props: any) {
                                  id="setHighMoisture"
                                  type="number"
                                  value={plant.highMoisture}
-                                 onChange={onChange}
+                                 onChange={onFloatChange}
                                  InputLabelProps={{
                                     shrink: true,
                                  }}

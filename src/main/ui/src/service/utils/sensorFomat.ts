@@ -1,6 +1,5 @@
 export function formatAll(data: any)
 {
-   console.log(data)
    let sensors: any = [];
 
    sensors = data.sensors.map((sensor: any) => {
@@ -19,7 +18,6 @@ export function formatAll(data: any)
       return sensor;
    });
 
-   console.log(sensors)
    return sensors;
 }
 
