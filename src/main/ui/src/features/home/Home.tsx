@@ -216,7 +216,7 @@ function Home() {
       try
       {
          data = await plantRoutes.fetchPlantsWithDetails();
-console.log(formatAll(data))
+
          setPlants(formatAll(data));
          setLoading(false);
       }
@@ -241,7 +241,9 @@ console.log(formatAll(data))
             </Grid2>
          : <React.Fragment>
             {(alert) ? alert : null}
-            <Link to={'/plant/edit/'} style={{ textDecoration: 'none' }}><Button>Add Plant</Button></Link>
+            <Grid2 container justifyContent="flex-end">
+               <Link to={'/plant/edit/'} style={{ textDecoration: 'none' }}><Button>Add Plant</Button></Link>
+            </Grid2>
             <MyTable value={plants} columns={columns} />
          </React.Fragment>
          }
