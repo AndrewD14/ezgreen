@@ -70,7 +70,7 @@ function EditPlant(props: any) {
    const onMonitor = (event: any) => {
       setPlant({
          type: event.target.id,
-         payload: (plant.sensorId!== '' && event.target.checked) ? 1 : 0
+         payload: (plant.sensorId !== '' && event.target.checked) ? 1 : 0
       });
    };
 
@@ -164,9 +164,12 @@ function EditPlant(props: any) {
 
             if(edit?.dateObtain) edit.dateObtain = moment(edit.dateObtain);
 
-            edit = {...edit,
+            edit = {
+               ...initPlant,
+               ...edit,
                highMoisture: parseFloat(edit.highMoisture).toFixed(2),
-               lowMoisture: parseFloat(edit.lowMoisture).toFixed(2)
+               lowMoisture: parseFloat(edit.lowMoisture).toFixed(2),
+               number: (edit.number === null ? '' : edit.number)
             };
 
             setInitPlant({...initialState, ...edit});
