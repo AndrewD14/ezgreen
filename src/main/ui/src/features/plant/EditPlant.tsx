@@ -182,6 +182,7 @@ function EditPlant(props: any) {
                ...edit,
                highMoisture: parseFloat(edit.highMoisture).toFixed(2),
                lowMoisture: parseFloat(edit.lowMoisture).toFixed(2),
+               dateObtain: (edit?.dateObtain ? moment(edit.dateObtain) : null) 
             };
 
             setInitPlant({...edit});
