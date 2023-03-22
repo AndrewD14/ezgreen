@@ -2,6 +2,7 @@ package com.ezgreen.responses;
 
 import java.util.List;
 
+import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.Sensor;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,4 +17,5 @@ public class SensorsDetailResponse extends EZGreenResponse
 {
 	List<Sensor> sensors;
 	List<Plant> plants;
+	List<Environment> environments;
 }

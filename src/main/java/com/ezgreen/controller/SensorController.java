@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.SensorsDetailResponse;
+import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.SensorService;
 
@@ -24,15 +26,17 @@ public class SensorController
 	private PlantService plantService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
+	private EnvironmentService environmentService;
 	
-	public SensorController(PlantService plantService, SensorRepository sensorRepository, SensorService sensorService)
+	public SensorController(PlantService plantService, SensorRepository sensorRepository, SensorService sensorService, EnvironmentService environmentService)
 	{
 		this.plantService = plantService;
 		this.sensorRepository = sensorRepository;
 		this.sensorService = sensorService;
+		this.environmentService = environmentService;
 	}
 	
-	@GetMapping(value="/withplants", produces = "application/json")
+	@GetMapping(value="/withalldetails", produces = "application/json")
 	public ResponseEntity<?> getSensorsWithPlant() throws Throwable
 	{
 		SensorsDetailResponse response = new SensorsDetailResponse();
@@ -42,23 +46,24 @@ public class SensorController
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Plant>> plants = plantService.fetchPlantsWithSensor();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllSensors();
+			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironmentWithSensors();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					plants,
-					sensors
+					sensors,
+					environments
 			).join();
 			
 			response.setPlants(plants.get());
 			response.setSensors(sensors.get());
+			response.setEnvironments(environments.get());
 			
-			response.setResponseMessage("Pulled all sensors with plants that have sensors.");
+			response.setResponseMessage("Pulled all sensors with details that have sensors.");
 			response.setStatusCode(HttpStatus.OK);
 		}
 		catch (Exception e)
 		{
-			System.out.println("Error!!! " + e.getMessage());
-			System.out.println("Error!!! " + e.getCause());
 			response.setResponseMessage("getAllSensors error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -18,6 +18,19 @@ public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 			"createTs," +
 			"updateTs" +
 			") FROM Environment " +
+			" WHERE sensorId IS NOT NULL " +
+			"ORDER BY updateTs DESC")
+	List<Environment> fetchAllEnvironmentWithSensor();
+	
+	@Query("SELECT new com.ezgreen.models.Environment(" +
+			"id," +
+			"location," +
+			"sensorId," +
+			"createBy," +
+			"updateBy," +
+			"createTs," +
+			"updateTs" +
+			") FROM Environment " +
 			"ORDER BY updateTs DESC")
 	List<Environment> fetchAllEnvironment();
 }

@@ -27,9 +27,9 @@ class SensorRoutes
    }
 
    // this call is to fetch senor configs
-   async fetchSensorsWithPlants()
+   async fetchSensorsWithDetails()
    {
-      const response = await fetch(this.host + baseRoute + 'withplants', {
+      const response = await fetch(this.host + baseRoute + 'withalldetails', {
          method: 'GET',
          headers: this.headers
       });

@@ -28,7 +28,7 @@ public class Environment implements Serializable
 	@Column(name="location", nullable = false)
 	private String location;
 	
-	@Column(name="sensor_id", nullable = false)
+	@Column(name="sensor_id")
 	private Integer sensorId;
 
 	@Column(name = "created_by", nullable = false)

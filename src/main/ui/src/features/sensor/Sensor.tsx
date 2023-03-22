@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import _ from 'lodash';
@@ -8,7 +9,7 @@ import { sensorRoutes } from '../../service/ApiService';
 import { formatAll } from '../../service/utils/sensorFomat';
 
 interface Column {
-   id: 'type' | 'board' | 'port' | 'inUse' | 'lowCalibration' | 'highCalibration' | 'updateBy' | 'updateTs' | 'actions';
+   id: 'type' | 'board' | 'port' | 'inUse' | 'lowCalibration' | 'highCalibration' | 'usedBy' | 'updateBy' | 'updateTs' | 'actions';
    label: string;
    minWidth?: number;
    align?: 'right';
@@ -16,7 +17,12 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-   { id: 'type', label: 'Type', minWidth: 170, },
+   {
+      id: 'type',
+      label: 'Type',
+      minWidth: 170,
+      format: (row, id) => <Link to={'/sensor/' + row['id']} state={{sensorId: row['id']}}>{row['type']}</Link>
+   },
    { id: 'board', label: 'Board', minWidth: 100, align: 'right', },
    { id: 'port', label: 'Port', minWidth: 170, align: 'right', },
    {
@@ -24,7 +30,7 @@ const columns: readonly Column[] = [
       label: 'In use',
       minWidth: 170,
       align: 'right', 
-      format: (row, id) => _.isEmpty(row['plant']) ? <BlockIcon style={{color: '#e3272b'}}/> : <CheckIcon style={{color: '#7db856'}}/>
+      format: (row, id) => !_.isEmpty(row['plant']) || !_.isEmpty('environment') ? <CheckIcon style={{color: '#7db856'}}/> : <BlockIcon style={{color: '#e3272b'}}/>
    },
    {
       id: 'lowCalibration',
@@ -39,6 +45,16 @@ const columns: readonly Column[] = [
       minWidth: 170,
       align: 'right',
       format: (row, id) => !isNaN(row[id]) ? parseFloat(row[id]).toFixed(2) : ''
+   },
+   {
+      id: 'usedBy',
+      label: 'Used by',
+      minWidth: 170,
+      format: (row, id) => row['plant'] ? <Link to={'/plant/' + row['plant']['id']} state={{plantId: row['plant']['id']}}>{row['plant']['number'] ? row['plant']['name'] + ' (' + row['plant']['number'] + ')' : row['plant']['name']}</Link>
+                           :
+                           row['environment'] ? <Link to={'/environment/' + row['environment']['id']} state={{environmentId: row['environment']['id']}}>{row['environment']['location']}</Link>
+                           :
+                           null
    },
    {
       id: 'updateBy',
@@ -62,7 +78,7 @@ function Sensors() {
       
       try
       {
-         data = await sensorRoutes.fetchSensorsWithPlants();
+         data = await sensorRoutes.fetchSensorsWithDetails();
 
          setSensors(formatAll(data));
          console.log(formatAll(data));

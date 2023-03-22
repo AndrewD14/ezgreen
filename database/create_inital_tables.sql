@@ -14,7 +14,7 @@ CREATE TABLE public.sensor(
 CREATE TABLE public.environment(
    id          SMALLSERIAL PRIMARY KEY,
    location    VARCHAR(100) NOT NULL,
-   sensor_id   SMALLSERIAL NOT NULL,
+   sensor_id   SMALLSERIAL,
    created_by  VARCHAR(100) NOT NULL,
    updated_by  VARCHAR(100) NOT NULL,
    created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,

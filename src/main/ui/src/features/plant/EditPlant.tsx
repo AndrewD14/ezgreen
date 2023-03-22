@@ -9,7 +9,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
-import _ from 'lodash';
 
 const initialState: any = {
    dateObtain: null,
