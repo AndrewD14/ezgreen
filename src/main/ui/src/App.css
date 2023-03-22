@@ -15,3 +15,8 @@
    color: grey;
    opacity: 50%;
 }
+
+.error-text {
+   color: red;
+   min-height: 1.5rem;
+}

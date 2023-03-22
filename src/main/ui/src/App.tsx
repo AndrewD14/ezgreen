@@ -8,7 +8,7 @@ function App() {
    const location = useLocation();
 
    return (
-      <Container maxWidth={false}>
+      <Container maxWidth={false} sx={{ height:'85vh'}}>
          {(location.pathname !== "/test") ? <Header /> : null}
          {(location.pathname !== "/test") ? <Navbar /> : null}
          <Outlet />

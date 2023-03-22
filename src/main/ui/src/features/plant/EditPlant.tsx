@@ -85,6 +85,36 @@ function EditPlant(props: any) {
       setPageError("");
    }
 
+   const save = async () => {
+      try
+      {
+         let newErrors: any[] = [];
+
+         if(plant.name === '') newErrors.push("name");
+         if(plant.potSizeId === '') newErrors.push("pot");
+         if(parseFloat(plant.lowMoisture) === 0 || parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("low");
+         if(parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("high");
+         
+
+         setError(newErrors);
+         setPageError("");
+
+         console.log(newErrors);
+         console.log(plant)
+
+         if(newErrors.length > 0) return;
+
+         // await Api.thresholds.save(group, insurance, state.queue.cccQueueName, state.customScore, state.advisorScore, state.guidelineScore, state.insuranceScore, user.username, cancelToken, state.id);
+
+         // history.push("/thresholds");
+      }
+      catch(error)
+      {
+         setPageError("Failed to update database.");
+         console.log(error);
+      }
+   }
+
    const fetchData = async () => {
       let data = {};
       let edit = {};
@@ -130,8 +160,13 @@ function EditPlant(props: any) {
 
    return (
       <React.Fragment>
-            <h1>{(id) ? "Edit Plant" : "Create plant"}</h1>
-            {(pageError) ? <div className="error-message">{pageError}</div> : null}
+         <Grid2 container direction="column" justifyContent="flex-start" alignItems="flex-start" style={{minHeight: '100%'}}>
+            <Grid2 xs={2}>
+               <h1>{(id) ? "Edit Plant" : "Create plant"}</h1>
+            </Grid2>
+            <Grid2 xs={3}>
+               {(pageError) ? <div className="error-message">{pageError}</div> : null}
+            </Grid2>
             {(loading) ?
                <Grid2 justifyContent="center" alignItems="center" style={{height: '30rem'}}>
                   <Grid2 xs={5}>
@@ -140,112 +175,134 @@ function EditPlant(props: any) {
                </Grid2>
             :
                <React.Fragment>
-                  <h2>Plant info</h2>
-                  <Grid2 container xl={6}>
-                     <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
-                        <FormControl key={'name'}>
-                           <FormLabel required>Plant name</FormLabel>
-                           <TextField
-                              id="setName"
-                              value={plant.name}
-                              onChange={onChange}
-                              variant="standard"
-                           />
-                        </FormControl>
-                        <FormControl key={'number'}>
-                           <FormLabel>Number</FormLabel>
-                           <TextField
-                              id="setNumber"
-                              type="number"
-                              value={plant.number}
-                              onChange={onChange}
-                              InputLabelProps={{
-                                 shrink: true,
-                              }}
-                              variant="standard"
-                           />
-                        </FormControl>
-                        <FormControl key={'potSize'}>
-                           <FormLabel required>Pot size</FormLabel>
-                           <Select
-                              id="setPotSizeId"
-                              onChange={(event: any) => setPlant({type: 'setPotSizeId', payload: event.target.value})}
-                              value={plant.potSizeId}
-                           >
-                              {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.size}</MenuItem>)}
-                           </Select>
-                        </FormControl>
-                        <FormControl key={'sensor'}>
-                           <FormLabel required>Sensor</FormLabel>
-                           <Select
-                              id="setSensorId"
-                              onChange={(event: any) => setPlant({type: 'setSensorId', payload: event.target.value})}
-                              value={plant.sensorId}
-                           >
-                              {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
-                              {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
-                           </Select>
-                        </FormControl>
-                        <FormControl key={'dateObtain'}>
-                           <FormLabel>Date obtained</FormLabel>
-                           <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
-                              <DesktopDatePicker
-                                 value={plant.dateObtain ? moment(plant.dateObtain) : null}
-                                 onChange={onDateChange}
-                              />
-                           </LocalizationProvider>
-                        </FormControl>
-                        <FormControl key={'lowMoisture'}>
-                           <FormLabel required>Low moisture (%)</FormLabel>
-                           <TextField
-                              id="setLowMoisture"
-                              type="number"
-                              onChange={onChange}
-                              value={plant.lowMoisture}
-                              InputLabelProps={{
-                                 shrink: true,
-                              }}
-                              variant="standard"
-                           />
-                        </FormControl>
-                        <FormControl key={'highMoisture'}>
-                           <FormLabel required>High moisture (%)</FormLabel>
-                           <TextField
-                              id="setHighMoisture"
-                              type="number"
-                              value={plant.highMoisture}
-                              onChange={onChange}
-                              InputLabelProps={{
-                                 shrink: true,
-                              }}
-                              variant="standard"
-                           />
-                        </FormControl>
-                        <FormControl key={'monitor'}>
-                           <FormLabel required>Monitor</FormLabel>
-                           <Checkbox
-                              id='setMonitor'
-                              checked={(plant.monitor === 1) ? true : false}
-                              onChange={onMonitor}
-                              inputProps={{ 'aria-label': 'controlled' }}/>
-                        </FormControl>
-                     </Stack>
+                  <Grid2 xs={2}>
+                     <h2>Plant info</h2>
                   </Grid2>
-                  <Grid2 className="edit-rule-buttons" justifyContent="center">
-                     <Grid2 container direction="row" className="padding1rem">
-                        <Link to={{pathname:`/`}} style={{ textDecoration: 'none' }}>
-                           <Fab variant='extended' value="178">Cancel</Fab>
-                        </Link>
-                        <Grid2 style={{ flex: 1 }}>
-                           <Fab variant='extended' color="primary" onClick={undo}>Undo</Fab>
+                  <Grid2 xs container direction="column" justifyContent="flex-end" alignItems="flex-start" style={{width: '100%'}}>
+                     <Grid2 xs>
+                        <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
+                           <FormControl key={'name'}>
+                              <FormLabel required>Plant name</FormLabel>
+                              <TextField
+                                 id="setName"
+                                 value={plant.name}
+                                 onChange={onChange}
+                                 variant="standard"
+                              />
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("name") !== -1) ? <span>You enter a name for the plant.</span> : null}
+                           </Grid2>
+                           <FormControl key={'number'}>
+                              <FormLabel>Number</FormLabel>
+                              <TextField
+                                 id="setNumber"
+                                 type="number"
+                                 value={plant.number}
+                                 onChange={onChange}
+                                 InputLabelProps={{
+                                    shrink: true,
+                                 }}
+                                 variant="standard"
+                              />
+                           </FormControl>
+                           <FormControl key={'potSize'}>
+                              <FormLabel required>Pot size</FormLabel>
+                              <Select
+                                 id="setPotSizeId"
+                                 onChange={(event: any) => setPlant({type: 'setPotSizeId', payload: event.target.value})}
+                                 value={plant.potSizeId}
+                              >
+                                 {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.size}</MenuItem>)}
+                              </Select>
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("pot") !== -1) ? <span>You must select a pot size.</span> : null}
+                           </Grid2>
+                           <FormControl key={'sensor'}>
+                              <FormLabel required>Sensor</FormLabel>
+                              <Select
+                                 id="setSensorId"
+                                 onChange={(event: any) => setPlant({type: 'setSensorId', payload: event.target.value})}
+                                 value={plant.sensorId}
+                              >
+                                 {(id != null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
+                                 {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
+                              </Select>
+                           </FormControl>
+                           <FormControl key={'dateObtain'}>
+                              <FormLabel>Date obtained</FormLabel>
+                              <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en">
+                                 <DesktopDatePicker
+                                    value={plant.dateObtain ? moment(plant.dateObtain) : null}
+                                    onChange={onDateChange}
+                                 />
+                              </LocalizationProvider>
+                           </FormControl>
+                           <FormControl key={'lowMoisture'}>
+                              <FormLabel required>Low moisture (%)</FormLabel>
+                              <TextField
+                                 id="setLowMoisture"
+                                 type="number"
+                                 onChange={onChange}
+                                 value={plant.lowMoisture}
+                                 InputLabelProps={{
+                                    shrink: true,
+                                 }}
+                                 variant="standard"
+                              />
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("low") !== -1) ? <span>You must enter a value greater than 0, but less than the high moisture.</span> : null}
+                           </Grid2>
+                           <FormControl key={'highMoisture'}>
+                              <FormLabel required>High moisture (%)</FormLabel>
+                              <TextField
+                                 id="setHighMoisture"
+                                 type="number"
+                                 value={plant.highMoisture}
+                                 onChange={onChange}
+                                 InputLabelProps={{
+                                    shrink: true,
+                                 }}
+                                 variant="standard"
+                              />
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("high") !== -1) ? <span>You must enter a value greater than low moisture value.</span> : null}
+                           </Grid2>
+                           <FormControl key={'monitor'}>
+                              <Grid2 display="flex" justifyContent="flex-start" alignItems="center">
+                                 <FormLabel>Monitor</FormLabel>
+                                 <Checkbox
+                                    id='setMonitor'
+                                    checked={(plant.monitor === 1) ? true : false}
+                                    onChange={onMonitor}
+                                    inputProps={{ 'aria-label': 'controlled' }}/>
+                              </Grid2>
+                           </FormControl>
+                        </Stack>
+                     </Grid2>
+                     <Grid2 xs={3} style={{width: '100%'}}>
+                        <Grid2 justifyContent="center">
+                           <Grid2 container direction="row" className="error-text">
+                              <Link to={{pathname:`/`}} style={{ textDecoration: 'none' }}>
+                                 <Fab variant='extended' value="178">Cancel</Fab>
+                              </Link>
+                              <Grid2 style={{ flex: 1 }}>
+                                 <Fab variant='extended' color="primary" onClick={undo}>Undo</Fab>
+                              </Grid2>
+                              <Link to={{pathname: ''}} style={{ textDecoration: 'none' }} onClick={save}>
+                                 <Fab variant='extended' color="primary">Save</Fab>
+                              </Link>
+                           </Grid2>
                         </Grid2>
-                        <Link to={{pathname: ''}} style={{ textDecoration: 'none' }} /*onClick={}*/>
-                           <Fab variant='extended' color="primary">Save</Fab>
-                        </Link>
                      </Grid2>
                   </Grid2>
                </React.Fragment>
             }
+         </Grid2>
+            
       </React.Fragment>
    );
 }
