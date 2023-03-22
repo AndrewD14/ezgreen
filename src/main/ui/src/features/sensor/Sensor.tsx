@@ -37,14 +37,14 @@ const columns: readonly Column[] = [
       label: 'Low Calibration',
       minWidth: 170,
       align: 'right',
-      format: (row, id) => row[id] && !isNaN(row[id]) ? parseFloat(row[id]).toFixed(2) : ''
+      format: (row, id) => !isNaN(row[id]) ? parseFloat(row[id]).toFixed(2) : ''
    },
    {
       id: 'highCalibration',
       label: 'High Calibration',
       minWidth: 170,
       align: 'right',
-      format: (row, id) => row[id] && !isNaN(row[id]) ? parseFloat(row[id]).toFixed(2) : ''
+      format: (row, id) => !isNaN(row[id]) ? parseFloat(row[id]).toFixed(2) : ''
    },
    {
       id: 'usedBy',

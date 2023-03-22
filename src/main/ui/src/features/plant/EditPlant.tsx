@@ -177,14 +177,11 @@ function EditPlant(props: any) {
          {
             edit = formatOne(await plantRoutes.fetchOnePlantWithDetails(id));
 
-            if(edit?.dateObtain) edit.dateObtain = moment(edit.dateObtain);
-
             edit = {
                ...initialState,
                ...edit,
                highMoisture: parseFloat(edit.highMoisture).toFixed(2),
                lowMoisture: parseFloat(edit.lowMoisture).toFixed(2),
-               number: (edit.number === undefined ? '' : edit.number)
             };
 
             setInitPlant({...edit});
