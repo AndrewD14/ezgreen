@@ -112,7 +112,11 @@ function EditPlant(props: any) {
          setError(newErrors);
          setPageError("");
 
-         if(newErrors.length > 0) return;
+         if(newErrors.length > 0)
+         {
+            setSaving(false);
+            return;
+         }
 
          await plantRoutes.save(dateObtain, plant.dead, plant.delete, plant.highMoisture, plant.lowMoisture, plant.monitor, plant.name,
             (plant.number === '' ? null: plant.number), plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId), 'adamico', plant.id);
