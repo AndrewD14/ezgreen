@@ -94,6 +94,8 @@ function EditPlant(props: any) {
    };
 
    const save = async () => {
+      if(saving || !checkChange()) return;
+
       setSaving(true);
 
       try
@@ -227,7 +229,7 @@ function EditPlant(props: any) {
                               />
                            </FormControl>
                            <Grid2 container className="error-text">
-                              {(errors.indexOf("name") !== -1) ? <span>You enter a name for the plant.</span> : null}
+                              {(errors.indexOf("name") !== -1) ? <span>Name for the plant is required.</span> : null}
                            </Grid2>
                            <FormControl key={'number'}>
                               <FormLabel>Number</FormLabel>
@@ -290,7 +292,7 @@ function EditPlant(props: any) {
                               />
                            </FormControl>
                            <Grid2 container className="error-text">
-                              {(errors.indexOf("low") !== -1) ? <span>You must enter a value greater than 0, but less than the high moisture.</span> : null}
+                              {(errors.indexOf("low") !== -1) ? <span>Enter a value greater than 0 and less than the high moisture.</span> : null}
                            </Grid2>
                            <FormControl key={'highMoisture'}>
                               <FormLabel required>High moisture (%)</FormLabel>
@@ -306,7 +308,7 @@ function EditPlant(props: any) {
                               />
                            </FormControl>
                            <Grid2 container className="error-text">
-                              {(errors.indexOf("high") !== -1) ? <span>You must enter a value greater than low moisture value.</span> : null}
+                              {(errors.indexOf("high") !== -1) ? <span>Enter a value greater than low moisture value.</span> : null}
                            </Grid2>
                            <FormControl key={'monitor'}>
                               <Grid2 display="flex" justifyContent="flex-start" alignItems="center">
