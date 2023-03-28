@@ -13,6 +13,9 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 	@Query("SELECT p FROM Plant p WHERE p.id = :plantId")
 	Plant fetchPlantById(@Param("plantId") Long plantId);
 	
+	@Query("SELECT p FROM Plant p WHERE p.sensorId = :sensorId")
+	Plant fetchPlantBySensorId(@Param("sensorId") Long sensorId);
+	
 	@Query("SELECT new com.ezgreen.models.Plant(" +
 			"id," +
 			"name," +

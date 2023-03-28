@@ -10,6 +10,9 @@ import com.ezgreen.models.Sensor;
 
 public interface SensorRepository extends JpaRepository<Sensor, Long>
 {	
+	@Query("SELECT s FROM Sensor s WHERE id = :sensorId")
+	Sensor fetchById(@Param("sensorId") Long sensorId);
+	
 	@Query("SELECT new com.ezgreen.models.Sensor(" +
 			"id," +
 			"type," +

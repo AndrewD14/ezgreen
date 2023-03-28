@@ -154,6 +154,14 @@ public class PlantService
 	}
 	
 	@Async
+	public CompletableFuture<Plant> fetchPlantBySensor(Long sensorId)
+	{
+		Plant plant = plantRepository.fetchPlantBySensorId(sensorId);
+
+		return CompletableFuture.completedFuture(plant);
+	}
+	
+	@Async
 	public CompletableFuture<List<Plant>> fetchNonDeletedPlants()
 	{
 		List<Plant> plants = plantRepository.fetchAllNonDeletedPlants();

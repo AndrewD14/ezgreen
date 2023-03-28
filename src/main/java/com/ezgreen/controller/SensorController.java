@@ -1,19 +1,25 @@
 package com.ezgreen.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
-import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
+import com.ezgreen.responses.EZGreenResponse;
+import com.ezgreen.responses.SensorDetailResponse;
 import com.ezgreen.responses.SensorsDetailResponse;
 import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
@@ -36,8 +42,67 @@ public class SensorController
 		this.environmentService = environmentService;
 	}
 	
+	@PutMapping("/")
+	public ResponseEntity<?> createPlant(@RequestBody String request)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+
+		if (request == null || request.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
+
+		try
+		{
+			response = sensorService.saveAndEditSensor(request, (long) 0);
+		}
+		catch (IOException e)
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+		
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> editPlant(@RequestBody String request, @PathVariable(value = "id") Long sensorId)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+
+		if (request == null || request.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
+		
+		try
+		{
+			response = sensorService.saveAndEditSensor(request, (long) sensorId);
+		}
+		catch (Exception e)
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
+	}
+	
+	@PostMapping(value="/calibration", produces = "application/json")
+	public ResponseEntity<?> getSensorCalibration(@RequestBody String request)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+		
+		try
+		{
+			double reading = sensorService.getCalibration();
+			
+			response.setResponseMessage(Double.toString(reading));
+			response.setStatusCode(HttpStatus.OK);
+		}
+		catch (Exception e)
+		{
+			response.setResponseMessage("getSensorCalibration error occur: " + e.getCause());
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
+	
 	@GetMapping(value="/withalldetails", produces = "application/json")
-	public ResponseEntity<?> getSensorsWithPlant() throws Throwable
+	public ResponseEntity<?> getSensorsWithDetails() throws Throwable
 	{
 		SensorsDetailResponse response = new SensorsDetailResponse();
 		
@@ -68,6 +133,39 @@ public class SensorController
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
+	
+	@GetMapping(value="/{id}", produces = "application/json")
+	public ResponseEntity<?> getSensor(@PathVariable(value = "id") Long sensorId) throws Throwable
+	{
+		SensorDetailResponse response = new SensorDetailResponse();
+		
+		try
+		{
+			CompletableFuture<Environment> environment = environmentService.fetchEnvironmentBySensor(sensorId);
+			CompletableFuture<Plant> plant = plantService.fetchPlantBySensor(sensorId);
+			CompletableFuture<Sensor> sensor = sensorService.fetchSensorWithId(sensorId);
+			
+			CompletableFuture.allOf(
+					plant,
+					sensor,
+					environment
+			).join();
+			
+			response.setEnvironment(environment.get());
+			response.setPlant(plant.get());
+			response.setSensor(sensor.get());
+			
+			response.setResponseMessage("Pulled sensor with details.");
+			response.setStatusCode(HttpStatus.OK);
+		}
+		catch (Exception e)
+		{
+			response.setResponseMessage("getSensor error occur: " + e.getCause());
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 		return ResponseEntity.status(response.getStatusCode()).body(response);
 	}
 	

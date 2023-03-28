@@ -71,7 +71,7 @@ public class PlantController
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> editPlant(@RequestBody String request, @PathVariable(value = "id") Long ruleId)
+	public ResponseEntity<?> editPlant(@RequestBody String request, @PathVariable(value = "id") Long plantId)
 	{
 		EZGreenResponse response = new EZGreenResponse();
 
@@ -79,7 +79,7 @@ public class PlantController
 		
 		try
 		{
-			response = plantService.saveAndEditPlant(request, ruleId);
+			response = plantService.saveAndEditPlant(request, plantId);
 		}
 		catch (Exception e)
 		{

@@ -29,7 +29,7 @@ public class Environment implements Serializable
 	private String location;
 	
 	@Column(name="sensor_id")
-	private Integer sensorId;
+	private Long sensorId;
 
 	@Column(name = "created_by", nullable = false)
 	private String createBy;
@@ -48,7 +48,7 @@ public class Environment implements Serializable
 		
 	}
 	
-	public Environment(Long id, String location, Integer sensorId,
+	public Environment(Long id, String location, Long sensorId,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

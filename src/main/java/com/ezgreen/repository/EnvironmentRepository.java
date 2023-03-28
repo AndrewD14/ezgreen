@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ezgreen.models.Environment;
 
 public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 {
+	@Query("SELECT e FROM Environment e WHERE e.sensorId = :sensorId")
+	Environment fetchEnvironmentBySensor(@Param("sensorId") Long sensorId);
+	
 	@Query("SELECT new com.ezgreen.models.Environment(" +
 			"id," +
 			"location," +

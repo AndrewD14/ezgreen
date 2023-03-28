@@ -8,6 +8,7 @@ import Home from './features/home/Home';
 import Plant from './features/plant/Plant';
 import EditPlant from './features/plant/EditPlant';
 import Sensor from './features/sensor/Sensor';
+import EditSensor from './features/sensor/EditSensor';
 import Environment from './features/environment/Environment';
 import Error from './features/error/Error';
 import './index.css';
@@ -35,8 +36,12 @@ const router = createBrowserRouter([
             element: <EditPlant />,
           },
          {
-            path: "/sensors",
+            path: "/sensor",
             element: <Sensor />,
+          },
+          {
+            path: "/sensor/edit/:id?",
+            element: <EditSensor />,
           },
           {
             path: "/environments",

@@ -21,7 +21,28 @@ export function formatAll(data: any)
    return sensors;
 }
 
+export function formatOptions(data: any)
+{
+   let portsUsed: any = {};
+
+   data.sensors.forEach((sensor: any) => {
+      if(portsUsed[sensor.board] === undefined) portsUsed[sensor.board] = {};
+      
+      portsUsed[sensor.board][sensor.port] = {
+         type: sensor.type,
+         multiple: (sensor.type === 'Light' ? true : false)
+      }
+   });
+
+   return portsUsed;
+}
+
 export function formatOne(data: any)
 {
-   //???
+   let sensor: any = {...data.sensor};
+
+   if(data.plant !== undefined) sensor.plant = {...data.plant};
+   else if(data.environment !== undefined) sensor.environment = {...data.environment};
+
+   return sensor;
 }
