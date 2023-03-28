@@ -32,7 +32,7 @@ public class SensorService
 		return rand.nextDouble(upperbound);
 	}
 	
-	public EZGreenResponse saveAndEditPlant(String request, Long sensorId) throws IOException
+	public EZGreenResponse saveAndEditSensor(String request, Long sensorId) throws IOException
 	{
 		EZGreenResponse response = new EZGreenResponse();
 		Sensor sensor = new Sensor();

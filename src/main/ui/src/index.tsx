@@ -7,6 +7,7 @@ import App from './App';
 import Home from './features/home/Home';
 import Plant from './features/plant/Plant';
 import EditPlant from './features/plant/EditPlant';
+import Sensors from './features/sensor/Sensors';
 import Sensor from './features/sensor/Sensor';
 import EditSensor from './features/sensor/EditSensor';
 import Environment from './features/environment/Environment';
@@ -30,23 +31,27 @@ const router = createBrowserRouter([
          {
             path: "/plant/:id",
             element: <Plant />,
-          },
-          {
+         },
+         {
             path: "/plant/edit/:id?",
             element: <EditPlant />,
-          },
+         },
          {
             path: "/sensor",
+            element: <Sensors />,
+         },
+         {
+            path: "/sensor/:id",
             element: <Sensor />,
-          },
-          {
+         },
+         {
             path: "/sensor/edit/:id?",
             element: <EditSensor />,
-          },
-          {
+         },
+         {
             path: "/environments",
             element: <Environment />,
-          },
+         },
        ],
    },
    ]);
