@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
@@ -25,10 +29,16 @@ import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.SensorService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/api/sensor")
 public class SensorController
 {
+	@Autowired
+	private HttpServletResponse httpServletResponse;
+	
 	private PlantService plantService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
@@ -43,7 +53,7 @@ public class SensorController
 	}
 	
 	@PutMapping("/")
-	public ResponseEntity<?> createPlant(@RequestBody String request)
+	public ResponseEntity<?> createSensor(@RequestBody String request)
 	{
 		EZGreenResponse response = new EZGreenResponse();
 
@@ -62,7 +72,7 @@ public class SensorController
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> editPlant(@RequestBody String request, @PathVariable(value = "id") Long sensorId)
+	public ResponseEntity<?> editSensor(@RequestBody String request, @PathVariable(value = "id") Long sensorId)
 	{
 		EZGreenResponse response = new EZGreenResponse();
 
@@ -81,24 +91,26 @@ public class SensorController
 	}
 	
 	@PostMapping(value="/calibration", produces = "application/json")
-	public ResponseEntity<?> getSensorCalibration(@RequestBody String request)
+	public void getSensorCalibration(HttpServletResponse response, @RequestBody String request)
 	{
-		EZGreenResponse response = new EZGreenResponse();
-		
 		try
 		{
-			double reading = sensorService.getCalibration();
 			
-			response.setResponseMessage(Double.toString(reading));
-			response.setStatusCode(HttpStatus.OK);
+			sensorService.getCalibration(response, request);
 		}
 		catch (Exception e)
 		{
-			response.setResponseMessage("getSensorCalibration error occur: " + e.getCause());
-			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			
+			try
+			{
+				response.getWriter().println("getSensorCalibration error occur: " + e.getCause());
+			}
+			catch(Exception error)
+			{
+				System.out.println("Error sending error to http response: " + error.getCause());
+			}
 		}
-		
-		return ResponseEntity.status(response.getStatusCode()).body(response);
 	}
 	
 	@GetMapping(value="/withalldetails", produces = "application/json")

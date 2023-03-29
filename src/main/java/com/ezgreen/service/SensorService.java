@@ -13,23 +13,44 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.ezgreen.connection.Arduino;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Service
 public class SensorService
 {	
-	@Autowired
 	private SensorRepository sensorRepository;
+	private Arduino arduino;
 	
-	public Double getCalibration()
+	public SensorService(SensorRepository sensorRepository, Arduino arduino)
 	{
-		Random rand = new Random();
+		this.sensorRepository = sensorRepository;
+		this.arduino = arduino;
+	}
+	
+	public void getCalibration(HttpServletResponse response, String request) throws IOException
+	{
+		JSONObject requestJson = new JSONObject(request);
+		String command = "";
+		
+		command = command + requestJson.getString("type") + ";";
+		command = command + requestJson.getInt("serialBus") + ";";
+		command = command + requestJson.getInt("board") + ";";
+		command = command + requestJson.getInt("port") + ";";
+		command = command + "\n";
+		
+		arduino.writeCallCalibration(command, response);
+		
+		/*Random rand = new Random();
 		
 		double upperbound = 3.5;
 		
 		return rand.nextDouble(upperbound);
+		*/
 	}
 	
 	public EZGreenResponse saveAndEditSensor(String request, Long sensorId) throws IOException
