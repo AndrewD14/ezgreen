@@ -93,9 +93,16 @@ public class SensorController
 	@PostMapping(value="/calibration", produces = "application/json")
 	public void getSensorCalibration(HttpServletResponse response, @RequestBody String request)
 	{
+		boolean done = false;
+		
 		try
 		{
 			sensorService.getCalibration(response, request);
+			
+			do
+			{
+				done = response.isCommitted();
+			}while(!done);
 		}
 		catch (Exception e)
 		{
@@ -109,7 +116,7 @@ public class SensorController
 			{
 				System.out.println("Error sending error to http response: " + error.getCause());
 			}
-		}
+		}		
 	}
 	
 	@GetMapping(value="/withalldetails", produces = "application/json")

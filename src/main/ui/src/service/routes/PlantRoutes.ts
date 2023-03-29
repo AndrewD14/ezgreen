@@ -2,83 +2,65 @@ const baseRoute = '/plant/';
 
 class PlantRoutes
 {
-   host: String;
-   headers: any;
+   client: any;
 
-   constructor(host: String, headers: any)
+   constructor(client: any)
    {
-      this.host = host;
-      this.headers = headers;
+      this.client = client;
    }
    
    // this call is to fetch plant table
    async fetchPlants()
    {
-      const response = await fetch(this.host + baseRoute, {
+      const response = (await this.client({
+         url: baseRoute,
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data.plants;
+      return response.plants;
    }
 
    // this call is to fetch create plant options
    async fetchPlantOptions()
    {
-      const response = await fetch(this.host + baseRoute + "configoptions", {
+      const response = (await this.client({
+         url: baseRoute + "configoptions",
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 
    // this call is to fetch plant table with other tables joined
    async fetchPlantsWithDetails()
    {
-      const response = await fetch(this.host + baseRoute + "alldetails", {
+      const response = (await this.client({
+         url: baseRoute + "alldetails",
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 
    // this call is to fetch  a plant with other tables joined
    async fetchOnePlantWithDetails(id: number)
    {
-      const response = await fetch(this.host + baseRoute + id, {
+      const response = (await this.client({
+         url: baseRoute + id,
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 
    //this will save the new or edit of a plant
    async save(dateObtain: string | null, dead: number, deleted: number, highMoisture: number, lowMoisture: number,
       monitor: number, name: string, number: string | null, potSizeId: number, sensorId: number, username: string, id: string)
    {
-      const response = await fetch(this.host + baseRoute + (id ? id : ''), {
+      const response = (await this.client({
+         url: baseRoute + (id ? id : ''),
          method: 'PUT',
-         headers: this.headers,
-         body: JSON.stringify({
+         data: JSON.stringify({
             dateObtain: dateObtain,
             dead: dead,
             delete: deleted,
@@ -91,7 +73,7 @@ class PlantRoutes
             sensorId: sensorId,
             username: username
          })
-      });
+      })).data;
 
       return response;
    }
@@ -99,49 +81,37 @@ class PlantRoutes
    //this is to soft delete a plant
    async delete(id: number, username: string)
    {
-      const response = await fetch(this.host + baseRoute + 'delete/' + id, {
+      const response = (await this.client({
+         url: baseRoute + 'delete/' + id,
          method: 'PUT',
-         headers: this.headers,
-         body: JSON.stringify({username})
-      });
+         data: JSON.stringify({username})
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 
    //this is to activate the monitoring of a plant
    async activate(id: number, username: string)
    {
-      const response = await fetch(this.host + baseRoute + 'activate/' + id, {
+      const response = (await this.client({
+         url: baseRoute + 'activate/' + id,
          method: 'PUT',
-         headers: this.headers,
-         body: JSON.stringify({username})
-      });
+         data: JSON.stringify({username})
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 
    //this is to deactivate the monitoring of a plant
    async deactivate(id: number, username: string)
    {
-      const response = await fetch(this.host + baseRoute + 'deactivate/' + id, {
+      const response = (await this.client({
+         url: baseRoute + 'deactivate/' + id,
          method: 'PUT',
-         headers: this.headers,
-         body: JSON.stringify({username})
-      });
+         data: JSON.stringify({username})
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data;
+      return response;
    }
 }
 

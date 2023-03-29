@@ -2,28 +2,22 @@ const baseRoute = '/environment/';
 
 class EnvironmentRoutes
 {
-   host: String;
-   headers: any;
+   client: any;
 
-   constructor(host: String, headers: any)
+   constructor(client: any)
    {
-      this.host = host;
-      this.headers = headers;
+      this.client = client;
    }
    
    // this call is to fetch environment configurations
    async fetchEnvironments()
    {
-      const response = await fetch(this.host + baseRoute, {
+      const response = (await this.client({
+         url: baseRoute,
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return await data.environments;
+      return response.environments;
    }
 }
 

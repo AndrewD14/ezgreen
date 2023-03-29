@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -52,20 +53,37 @@ public class Arduino
 				public void serialEvent(SerialPortEvent event)
 				{
 					if(event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) return;
-				      
-					byte[] newData = new byte[port.bytesAvailable()];
+					String value = "";
+					int bytesAvailable = port.bytesAvailable();
+					
+					byte[] buffer = new byte[bytesAvailable];
+					System.out.println("Bytes available: " + bytesAvailable);
+					
+					int bytesRead = port.readBytes(buffer, buffer.length);
+					System.out.println("Bytes read: " + bytesRead);
+					value = new String(buffer, StandardCharsets.UTF_8);
+					
+				    String[] data = value.split(";");
+				    System.out.println("Data from Adruino: " + value);
+				    System.out.println("Response index: " + data[1]);
+				    int idx = Integer.parseInt(data[1]);
+				    System.out.println("Parsed index: " + idx);
+				    System.out.println("Value to send: " + data[0]);
+				    HttpServletResponse response = responses.get(idx);
 				    
-					port.readBytes(newData, newData.length);
+				    if(response == null) return;
 				    
-				    String[] data = new String(newData, StandardCharsets.UTF_8).split(";");
-				    System.out.println("Data from Adruino: " + String.join(";", data));
-				    
-				    HttpServletResponse response = responses.get(Integer.parseInt(data[1]));
-				    response.setStatus(HttpStatus.OK.value());
+				    JSONObject message = new JSONObject();
 				    
 				    try
 				    {
-				    	response.getWriter().println("{\"statusCode\": 200, \"responseMessage\": " + data[0] + "}");
+				    	responses.remove(idx);
+				    	
+				    	message.put("statusCode", 200);
+				    	message.put("responseMessage", data[0]);
+				    	response.setStatus(HttpStatus.OK.value());
+				    	response.getWriter().print(message.toJSONString());
+				    	response.getWriter().flush();
 				    }
 				    catch(Exception e)
 					{
@@ -73,15 +91,14 @@ public class Arduino
 						
 						try
 						{
-							response.getWriter().println("Adruino data listener writer error occur: " + e.getCause());
+							response.getWriter().println("{\"statusCode\": 500, \"responseMessage\": \"Adruino data listener writer error occur.\"}");
+							System.out.println("Adruino data listener writer error occur: " + e.getCause());
 						}
 						catch(Exception error)
 						{
 							System.out.println("Error sending error to http response: " + error.getCause());
 						}
 					}
-				    
-				    responses.remove(Integer.parseInt(data[1]));
 				}
 			});
 			
@@ -128,7 +145,7 @@ public class Arduino
 		int idx = responses.size() - 1;
 		
 		command =  "cs;" + command + idx + "\n";
-		
+		System.out.println("Command sent is: " + command);
 	    byte[] bytes = command.getBytes(StandardCharsets.UTF_8);
 
 	    port.writeBytes(bytes, bytes.length);

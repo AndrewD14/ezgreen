@@ -2,88 +2,71 @@ const baseRoute = '/sensor/';
 
 class SensorRoutes
 {
-   host: String;
-   headers: any;
+   client: any;
 
-   constructor(host: String, headers: any)
+   constructor(client: any)
    {
-      this.host = host;
-      this.headers = headers;
+      this.client = client;
    }
    
    // this call is to fetch senor configs
    async fetchSensors()
    {
-      const response = await fetch(this.host + baseRoute, {
-         method: 'GET',
-         headers: this.headers
-      });
+      const response = (await this.client({
+         url: baseRoute,
+         method: 'GET'
+      })).data;
 
-      if(!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return data.sensors;
+      return response.sensors;
    }
 
    // this call is to fetch senor configs
    async fetchSensorsWithDetails()
    {
-      const response = await fetch(this.host + baseRoute + 'withalldetails', {
+      const response = (await this.client({
+         url: baseRoute + 'withalldetails',
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if(!response.ok) throw new Error(`An error has occured: ${response.status}`);
-      
-      const data: any = await response.json();
-
-      return data;
+      return response;
    }
 
    // this call is to fetch a sensor with all detai infor
    async fetchOneSensorWithDetails(id: number)
    {
-      const response = await fetch(this.host + baseRoute + id,{
+      const response = (await this.client({
+         url: baseRoute + id,
          method: 'GET',
-         headers: this.headers
-      });
+      })).data;
 
-      if(!response.ok) throw new Error(`An error has occured: ${response.status}`);
-
-      const data: any = await response.json();
-
-      return data;
+      return response;
    }
 
    async fetchSensorCalibration(type: string, board: number, port: number, serialBus: number)
    {
-      const response = await fetch(this.host + baseRoute + "calibration",{
+      const response = (await this.client({
+         url: baseRoute + "calibration",
          method: 'POST',
-         headers: this.headers,
-         body: JSON.stringify({
+         data: JSON.stringify({
             type: type,
             board: board,
             port: port,
             serialBus: serialBus
          })
-      });
+      })).data;
 
-      if(!response.ok) throw new Error(`An error has occured: ${response.status}`);
-
-      const data: any = await response.json();
-
-      return data;
+console.log(response)
+      return response;
    }
 
    //this will save the new or edit of a sensor
    async save(type: string, board: number, port: number, lowCalibration: number | null, highCalibration: number | null,
       username: string, id: string)
    {
-      const response = await fetch(this.host + baseRoute + (id ? id : ''), {
+      const response = (await this.client({
+         url: baseRoute + (id ? id : ''),
          method: 'PUT',
-         headers: this.headers,
-         body: JSON.stringify({
+         data: JSON.stringify({
             type: type,
             board: board,
             port: port,
@@ -91,7 +74,7 @@ class SensorRoutes
             highCalibration: highCalibration,
             username: username
          })
-      });
+      })).data;
 
       return response;
    }
