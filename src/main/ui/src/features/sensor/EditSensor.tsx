@@ -110,7 +110,7 @@ function EditSensor(props: any) {
    };
 
    const getCalibration = async (event: any) => {
-      let value: any = parseFloat((await sensorRoutes.fetchSensorCalibration(sensor.board, sensor.port, 1))['responseMessage']).toFixed(2); //need to put in the serialBus!!!!!!!!!!!!!!!!!!!!!!!!!!
+      let value: any = parseFloat((await sensorRoutes.fetchSensorCalibration('m', sensor.board, sensor.port, 1))['responseMessage']).toFixed(2); //need to put in the serialBus!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       setSensor({
          type: event.target.id,

@@ -37,22 +37,38 @@ public class SensorService
 		JSONObject requestJson = new JSONObject(request);
 		String command = "";
 		
-		//command = command + requestJson.getString("type") + ";";
-		command = command + "m;";
-		//command = command + requestJson.getInt("serialBus") + ";";
-		command = command + "1;";
+		command = command + requestJson.getString("type") + ";";
+		command = command + requestJson.getInt("serialBus") + ";";
 		command = command + requestJson.getInt("board") + ";";
 		command = command + requestJson.getInt("port") + ";";
-		command = command + "\n";
 		
-		arduino.writeCallCalibration(command, response);
-		
-		/*Random rand = new Random();
-		
-		double upperbound = 3.5;
-		
-		return rand.nextDouble(upperbound);
-		*/
+		if(arduino.checkGood()) arduino.writeCallCalibration(command, response);
+		else
+		{
+			Random rand = new Random();
+			
+			double upperbound = 3.5;
+			
+			response.setStatus(HttpStatus.OK.value());
+		    
+		    try
+		    {
+		    	response.getWriter().println("{\"statusCode\": 200, \"responseMessage\": " + rand.nextDouble(upperbound) + "}");
+		    }
+		    catch(Exception e)
+			{
+		    	response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+				
+				try
+				{
+					response.getWriter().println("getSensorCalibration error occur: " + e.getCause());
+				}
+				catch(Exception error)
+				{
+					System.out.println("Error sending error to http response: " + error.getCause());
+				}
+			}
+		}
 	}
 	
 	public EZGreenResponse saveAndEditSensor(String request, Long sensorId) throws IOException

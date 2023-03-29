@@ -95,7 +95,6 @@ public class SensorController
 	{
 		try
 		{
-			
 			sensorService.getCalibration(response, request);
 		}
 		catch (Exception e)

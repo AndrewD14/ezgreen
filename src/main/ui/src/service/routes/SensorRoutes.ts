@@ -56,12 +56,13 @@ class SensorRoutes
       return data;
    }
 
-   async fetchSensorCalibration(board: number, port: number, serialBus: number)
+   async fetchSensorCalibration(type: string, board: number, port: number, serialBus: number)
    {
       const response = await fetch(this.host + baseRoute + "calibration",{
          method: 'POST',
          headers: this.headers,
          body: JSON.stringify({
+            type: type,
             board: board,
             port: port,
             serialBus: serialBus

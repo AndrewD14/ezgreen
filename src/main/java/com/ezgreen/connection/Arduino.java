@@ -58,13 +58,14 @@ public class Arduino
 					port.readBytes(newData, newData.length);
 				    
 				    String[] data = new String(newData, StandardCharsets.UTF_8).split(";");
+				    System.out.println("Data from Adruino: " + String.join(";", data));
 				    
 				    HttpServletResponse response = responses.get(Integer.parseInt(data[1]));
-				    response.setStatus(getListeningEvents());
+				    response.setStatus(HttpStatus.OK.value());
 				    
 				    try
 				    {
-				    	response.getWriter().println(data[0]);
+				    	response.getWriter().println("{\"statusCode\": 200, \"responseMessage\": " + data[0] + "}");
 				    }
 				    catch(Exception e)
 					{
@@ -72,7 +73,7 @@ public class Arduino
 						
 						try
 						{
-							response.getWriter().println("getSensorCalibration error occur: " + e.getCause());
+							response.getWriter().println("Adruino data listener writer error occur: " + e.getCause());
 						}
 						catch(Exception error)
 						{
@@ -101,6 +102,13 @@ public class Arduino
 		}	
 	}
 	
+	public boolean checkGood()
+	{
+		if(port == null) return false;
+		
+		return port.isOpen();
+	}
+	
 	public void close()
 	{
 		if(port != null) port.closePort();
@@ -119,7 +127,7 @@ public class Arduino
 		
 		int idx = responses.size() - 1;
 		
-		command =  "cs;" + command + idx + ";";
+		command =  "cs;" + command + idx + "\n";
 		
 	    byte[] bytes = command.getBytes(StandardCharsets.UTF_8);
 
