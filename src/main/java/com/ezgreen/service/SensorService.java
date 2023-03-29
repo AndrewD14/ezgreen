@@ -37,8 +37,10 @@ public class SensorService
 		JSONObject requestJson = new JSONObject(request);
 		String command = "";
 		
-		command = command + requestJson.getString("type") + ";";
-		command = command + requestJson.getInt("serialBus") + ";";
+		//command = command + requestJson.getString("type") + ";";
+		command = command + "m;";
+		//command = command + requestJson.getInt("serialBus") + ";";
+		command = command + "1;";
 		command = command + requestJson.getInt("board") + ";";
 		command = command + requestJson.getInt("port") + ";";
 		command = command + "\n";
