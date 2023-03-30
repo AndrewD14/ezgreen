@@ -56,6 +56,22 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.created_ts," +
 			"s.updated_ts" +
 			" FROM Sensor s " +
+			" INNER JOIN environment e ON s.id = e.sensor_id",
+			nativeQuery = true)
+	List<Sensor> fetchAllEnvironmentSensors();
+	
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.type," +
+			"s.port," +
+			"s.board," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
+			" FROM Sensor s " +
 			" LEFT OUTER JOIN plant p ON s.id = p.sensor_id " +
 			" WHERE s.type = 'Soil moisture' " +
 			" AND p.id IS NULL",
@@ -73,9 +89,44 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
+			" FROM Sensor s " +
+			" LEFT OUTER JOIN environment e ON s.id = e.sensor_id " +
+			" WHERE s.type != 'Soil moisture' " +
+			" AND e.id IS NULL",
+			nativeQuery = true)
+	List<Sensor> fetchAllAvailableEnvironmentSensors();
+	
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.type," +
+			"s.port," +
+			"s.board," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
 			" FROM sensor s " +
 			" INNER JOIN plant p ON p.sensor_id = s.id " +
 			" WHERE p.id = :plantId",
 			nativeQuery = true)
 	Sensor fetchSensorWithPlantId(@Param("plantId") Long plantId);
+	
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.type," +
+			"s.port," +
+			"s.board," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
+			" FROM sensor s " +
+			" INNER JOIN environment e ON e.sensor_id = s.id " +
+			" WHERE e.id = :environmentId",
+			nativeQuery = true)
+	Sensor fetchSensorWithEnvironmentId(@Param("environmentId") Long environmentId);
 }

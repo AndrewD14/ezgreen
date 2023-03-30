@@ -2,6 +2,7 @@ package com.ezgreen.responses;
 
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
+import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Sensor;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -11,9 +12,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SensorDetailResponse extends EZGreenResponse
+public class SingleDetailResponse extends EZGreenResponse
 {
 	Environment environment;
 	Plant plant;
+	PotSize potSize;
 	Sensor sensor;
 }

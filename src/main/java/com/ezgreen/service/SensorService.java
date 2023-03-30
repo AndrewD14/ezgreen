@@ -136,9 +136,25 @@ public class SensorService
 	}
 	
 	@Async
+	public CompletableFuture<List<Sensor>> fetchAllEnvironmentSensors()
+	{
+		List<Sensor> sensors = sensorRepository.fetchAllEnvironmentSensors();
+
+		return CompletableFuture.completedFuture(sensors);
+	}
+	
+	@Async
 	public CompletableFuture<List<Sensor>> fetchAvailablePlantSensors()
 	{
 		List<Sensor> sensors = sensorRepository.fetchAllAvailablePlantSensors();
+
+		return CompletableFuture.completedFuture(sensors);
+	}
+	
+	@Async
+	public CompletableFuture<List<Sensor>> fetchAvailableEnvironmentSensors()
+	{
+		List<Sensor> sensors = sensorRepository.fetchAllAvailableEnvironmentSensors();
 
 		return CompletableFuture.completedFuture(sensors);
 	}

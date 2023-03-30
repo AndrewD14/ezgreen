@@ -101,21 +101,6 @@ public class Arduino
 					}
 				}
 			});
-			
-			/*
-			port.addDataListener(new SerialPortDataListener() {				   
-				   @Override
-				   public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_WRITTEN; }
-				   
-				   @Override
-				   public void serialEvent(SerialPortEvent event)
-				   {
-				      if (event.getEventType() == SerialPort.LISTENING_EVENT_DATA_WRITTEN)
-				         System.out.println("All bytes were successfully transmitted!");
-				   }
-			});
-			*/
-			//port.addDataListener(new ArduinoListener());
 		}	
 	}
 	
@@ -150,21 +135,4 @@ public class Arduino
 
 	    port.writeBytes(bytes, bytes.length);
 	}
-	
-	/*public String read() throws IOException
-	{
-		String value = "";
-		int bytesAvailable = port.bytesAvailable();
-		
-		if(bytesAvailable == -1) return null;
-		
-		byte[] buffer = new byte[bytesAvailable];
-		System.out.println("Bytes available: " + bytesAvailable);
-		
-		int bytesRead = port.readBytes(buffer, buffer.length);
-		System.out.println("Bytes read: " + bytesRead);
-		value = new String(buffer, StandardCharsets.UTF_8);
-		
-		return value;
-	}*/
 }

@@ -28,7 +28,7 @@ export default function Navbar(props: any)
          <Tabs value={value} aria-label="nav tabs">
             <Tab component={Link} label="Plants" to="/"/>
             <Tab component={Link} label="History" to="/history"/>
-            <Tab component={Link} label="Environment" to="/environments"/>
+            <Tab component={Link} label="Environment" to="/environment"/>
             <Tab component={Link} label="Sensors" to="/sensor"/>
          </Tabs>
       </Box>

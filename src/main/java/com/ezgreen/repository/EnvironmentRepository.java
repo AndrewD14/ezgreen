@@ -10,6 +10,9 @@ import com.ezgreen.models.Environment;
 
 public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 {
+	@Query("SELECT e FROM Environment e WHERE id = :environmentId")
+	Environment fetchById(@Param("environmentId") Long environmentId);
+	
 	@Query("SELECT e FROM Environment e WHERE e.sensorId = :sensorId")
 	Environment fetchEnvironmentBySensor(@Param("sensorId") Long sensorId);
 	
@@ -36,5 +39,5 @@ public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 			"updateTs" +
 			") FROM Environment " +
 			"ORDER BY updateTs DESC")
-	List<Environment> fetchAllEnvironment();
+	List<Environment> fetchAllEnvironments();
 }

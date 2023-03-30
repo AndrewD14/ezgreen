@@ -31,4 +31,12 @@ public class EnvironmentService
 
 		return CompletableFuture.completedFuture(environments);
 	}
+	
+	@Async
+	public CompletableFuture<List<Environment>> fetchAllEnvironments()
+	{
+		List<Environment> environments = environmentRepository.fetchAllEnvironments();
+
+		return CompletableFuture.completedFuture(environments);
+	}
 }

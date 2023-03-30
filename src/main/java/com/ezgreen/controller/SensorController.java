@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,31 +13,24 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
-import com.ezgreen.responses.SensorDetailResponse;
-import com.ezgreen.responses.SensorsDetailResponse;
+import com.ezgreen.responses.MultipleDetailResponse;
+import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.SensorService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/sensor")
 public class SensorController
 {
-	@Autowired
-	private HttpServletResponse httpServletResponse;
-	
 	private PlantService plantService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
@@ -122,7 +114,7 @@ public class SensorController
 	@GetMapping(value="/withalldetails", produces = "application/json")
 	public ResponseEntity<?> getSensorsWithDetails() throws Throwable
 	{
-		SensorsDetailResponse response = new SensorsDetailResponse();
+		MultipleDetailResponse response = new MultipleDetailResponse();
 		
 		try
 		{
@@ -157,7 +149,7 @@ public class SensorController
 	@GetMapping(value="/{id}", produces = "application/json")
 	public ResponseEntity<?> getSensor(@PathVariable(value = "id") Long sensorId) throws Throwable
 	{
-		SensorDetailResponse response = new SensorDetailResponse();
+		SingleDetailResponse response = new SingleDetailResponse();
 		
 		try
 		{
@@ -190,7 +182,7 @@ public class SensorController
 	@GetMapping(value="/", produces = "application/json")
 	public ResponseEntity<?> getSensors() throws Throwable
 	{
-		SensorsDetailResponse response = new SensorsDetailResponse();
+		MultipleDetailResponse response = new MultipleDetailResponse();
 		
 		try
 		{

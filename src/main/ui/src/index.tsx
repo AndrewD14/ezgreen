@@ -10,7 +10,7 @@ import EditPlant from './features/plant/EditPlant';
 import Sensors from './features/sensor/Sensors';
 import Sensor from './features/sensor/Sensor';
 import EditSensor from './features/sensor/EditSensor';
-import Environment from './features/environment/Environment';
+import Environments from './features/environment/Environments';
 import Error from './features/error/Error';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -49,8 +49,8 @@ const router = createBrowserRouter([
             element: <EditSensor />,
          },
          {
-            path: "/environments",
-            element: <Environment />,
+            path: "/environment",
+            element: <Environments />,
          },
        ],
    },

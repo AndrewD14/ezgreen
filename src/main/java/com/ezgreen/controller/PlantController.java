@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +20,8 @@ import com.ezgreen.repository.PlantRepository;
 import com.ezgreen.repository.PotSizeRepository;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
-import com.ezgreen.responses.PlantDetailResponse;
-import com.ezgreen.responses.PlantsDetailResponse;
-import com.ezgreen.responses.PlantResponse;
+import com.ezgreen.responses.MultipleDetailResponse;
+import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.PotSizeService;
 import com.ezgreen.service.SensorService;
@@ -146,7 +144,7 @@ public class PlantController
 	@GetMapping(value="/{id}", produces = "application/json")
 	public ResponseEntity<?> getPlantDetailById(@PathVariable(value = "id") Long plantId)
 	{
-		PlantDetailResponse response = new PlantDetailResponse();
+		SingleDetailResponse response = new SingleDetailResponse();
 
 		try
 		{
@@ -174,7 +172,7 @@ public class PlantController
 	@GetMapping(value="/alldetails", produces = "application/json")
 	public ResponseEntity<?> getPlantFullDetails() throws Throwable
 	{
-		PlantsDetailResponse response = new PlantsDetailResponse();
+		MultipleDetailResponse response = new MultipleDetailResponse();
 		
 		try
 		{
@@ -211,7 +209,7 @@ public class PlantController
 	@GetMapping(value="/configoptions", produces = "application/json")
 	public ResponseEntity<?> getConfigOptions() throws Throwable
 	{
-		PlantsDetailResponse response = new PlantsDetailResponse();
+		MultipleDetailResponse response = new MultipleDetailResponse();
 		
 		try
 		{
@@ -245,7 +243,7 @@ public class PlantController
 	@GetMapping(value="/", produces = "application/json")
 	public ResponseEntity<?> getPlants() throws Throwable
 	{
-		PlantResponse response = new PlantResponse();
+		MultipleDetailResponse response = new MultipleDetailResponse();
 		
 		try
 		{
