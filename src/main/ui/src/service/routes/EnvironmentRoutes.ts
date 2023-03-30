@@ -31,7 +31,16 @@ class EnvironmentRoutes
       return response;
    }
 
-   
+   // this call is to fetch environment configurations
+   async fetchOneEnvironmentWithDetail(id: number)
+   {
+      const response = (await this.client({
+         url: baseRoute + id,
+         method: 'GET',
+      })).data;
+
+      return response;
+   }
 }
 
 export default EnvironmentRoutes;
