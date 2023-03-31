@@ -2,6 +2,7 @@ package com.ezgreen.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,11 +26,35 @@ public class Environment implements Serializable
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
 	private Long id;
 
-	@Column(name="location", nullable = false)
-	private String location;
+	@Column(name="name", nullable = false)
+	private String name;
 	
-	@Column(name="sensor_id")
-	private Long sensorId;
+	@Column(name="zone_id", nullable = false)
+	private Integer zoneId;
+	
+	@Column(name="sensor_type", nullable = false)
+	private Long sensorType;
+	
+	@Column(name="low_desire")
+	private Double lowDesire;
+	
+	@Column(name="highDesire")
+	private Double highDesire;
+	
+	@Column(name="target")
+	private Double target;
+	
+	@Column(name="humidity")
+	private Double humidity;
+	
+	@Column(name = "time_start", columnDefinition = "TIME WITHOUT TIME ZONE")
+	private LocalTime timeStart;
+	
+	@Column(name = "time_end", columnDefinition = "TIME WITHOUT TIME ZONE")
+	private LocalTime timeEnd;
+	
+	@Column(name="delete", nullable = false)
+	private Integer delete;
 
 	@Column(name = "created_by", nullable = false)
 	private String createBy;
@@ -48,14 +73,23 @@ public class Environment implements Serializable
 		
 	}
 	
-	public Environment(Long id, String location, Long sensorId,
+	public Environment(Long id, String name, Integer zoneId, Long sensorType, Double lowDesire, Double highDesire,
+			Double target, Double humidity, LocalTime timeStart, LocalTime timeEnd, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
 		this.id = id;
-		this.location = location;
-		this.sensorId = sensorId;
+		this.name = name;
+		this.zoneId = zoneId;
+		this.sensorType = sensorType;
+		this.lowDesire = lowDesire;
+		this.highDesire = highDesire;
+		this.target = target;
+		this.humidity = humidity;
+		this.timeStart = timeStart;
+		this.timeEnd = timeEnd;
+		this.delete = delete;
 		this.createBy = createBy;
 		this.updateBy = updateBy;
 		this.createTs = createTs;

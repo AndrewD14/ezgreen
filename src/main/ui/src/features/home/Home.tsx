@@ -176,6 +176,10 @@ function Home() {
                         <CardContent>
                            <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" minWidth="100%">
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
+                                 <Grid2 xs={5}><label className='labels'>Plant type</label></Grid2>
+                                 <Grid2 xs={7}>{plant?.plantType ? plant.plantType.name : null}</Grid2>
+                              </Grid2>
+                              <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>Montiored</label></Grid2>
                                  <Grid2 xs={7}>{plant?.monitor === 1 ? <CheckIcon style={{color: '#7db856'}}/> : <BlockIcon style={{color: '#e3272b'}}/>}</Grid2>
                               </Grid2>

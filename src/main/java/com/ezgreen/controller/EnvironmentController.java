@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Sensor;
+import com.ezgreen.models.SensorType;
 import com.ezgreen.repository.EnvironmentRepository;
 import com.ezgreen.repository.SensorRepository;
+import com.ezgreen.repository.SensorTypeRepository;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.SensorService;
+import com.ezgreen.service.SensorTypeService;
 
 @RestController
 @RequestMapping("/api/environment")
@@ -27,14 +30,19 @@ public class EnvironmentController
 	private EnvironmentService environmentService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
+	private SensorTypeRepository sensorTypeRepository;
+	private SensorTypeService sensorTypeService;
 	
 	public EnvironmentController(EnvironmentRepository environmentRepository, EnvironmentService environmentService,
-			SensorService sensorService, SensorRepository sensorRepository)
+			SensorService sensorService, SensorRepository sensorRepository, SensorTypeRepository sensorTypeRepository,
+			SensorTypeService sensorTypeService)
 	{
 		this.environmentRepository = environmentRepository;
 		this.environmentService = environmentService;
 		this.sensorService = sensorService;
 		this.sensorRepository = sensorRepository;
+		this.sensorTypeRepository = sensorTypeRepository;
+		this.sensorTypeService = sensorTypeService;
 	}
 	
 	@GetMapping(value="/{id}", produces = "application/json")
@@ -45,10 +53,12 @@ public class EnvironmentController
 		try
 		{
 			Environment environment = environmentRepository.fetchById(environmentId);
-			Sensor sensor  = sensorRepository.fetchSensorWithEnvironmentId(environmentId);
-
+			List<Sensor> sensors  = sensorRepository.fetchSensorsWithEnvironmentId(environmentId);
+			List<SensorType> sensorTypes = sensorTypeRepository.findAll();
+			
 			if(environment != null) response.setEnvironment(environment);
-			if(sensor != null) response.setSensor(sensor);
+			response.setSensors(sensors);
+			response.setSensorTypes(sensorTypes);
 			
 			response.setStatusCode(HttpStatus.OK);
 		}
@@ -73,15 +83,18 @@ public class EnvironmentController
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironments();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllEnvironmentSensors();
+			CompletableFuture<List<SensorType>> sensorTypes = sensorTypeService.fetchSensorTypes();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					environments,
-					sensors
+					sensors,
+					sensorTypes
 			).join();
 			
 			response.setEnvironments(environments.get());
 			response.setSensors(sensors.get());
+			response.setSensorTypes(sensorTypes.get());
 			
 			response.setResponseMessage("Pulled all environment with details.");
 			response.setStatusCode(HttpStatus.OK);

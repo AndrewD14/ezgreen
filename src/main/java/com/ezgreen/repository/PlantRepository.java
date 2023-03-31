@@ -21,6 +21,7 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			"name," +
 			"number," +
 			"potSizeId," +
+			"plantTypeId," +
 			"highMoisture," +
 			"lowMoisture," +
 			"sensorId," +
@@ -41,6 +42,7 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			"name," +
 			"number," +
 			"potSizeId," +
+			"plantTypeId," +
 			"highMoisture," +
 			"lowMoisture," +
 			"sensorId," +

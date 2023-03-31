@@ -23,6 +23,9 @@ public class PotSize implements Serializable
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
 	private Long id;
+	
+	@Column(name="name", nullable = false)
+	private String name;
 
 	@Column(name="size", nullable = false)
 	private String size;
@@ -44,12 +47,13 @@ public class PotSize implements Serializable
 		
 	}
 	
-	public PotSize(Long id, String size, String createBy, String updateBy,
+	public PotSize(Long id, String name, String size, String createBy, String updateBy,
 			LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
 		this.id = id;
+		this.name = name;
 		this.size = size;
 		this.createBy = createBy;
 		this.updateBy = updateBy;

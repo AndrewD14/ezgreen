@@ -1,20 +1,72 @@
+CREATE TABLE public.board(
+   id       SMALLSERIAL PRIMARY KEY,
+   bus      SMALLINT NOT NULL,
+   number   SMALLINT NOT NULL
+);
+
+CREATE TABLE public.sensor_type(
+   id          SMALLSERIAL PRIMARY KEY,
+   type        VARCHAR(20) NOT NULL,
+   arduino     VARCHAR(1),
+   created_by  VARCHAR(100) NOT NULL,
+   updated_by  VARCHAR(100) NOT NULL,
+   created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+   updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+   
+
 CREATE TABLE public.sensor(
    id                SMALLSERIAL PRIMARY KEY,
-   type              VARCHAR(20) NOT NULL,
-   port              INTEGER NOT NULL,
-   board             INTEGER NOT NULL,
+   number            SMALLINT NOT NULL,
+   type_id           SMALLINT NOT NULL,
+   board_id          SMALLINT NOT NULL,
+   port              SMALLINT NOT NULL,
    low_calibration   REAL,
    high_calibration  REAL,
+   zone_id           SMALLINT,
+   delete            SMALLINT NOT NULL,
    created_by        VARCHAR(100) NOT NULL,
    updated_by        VARCHAR(100) NOT NULL,
    created_ts        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
    updated_ts        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
+CREATE TABLE public.relay(
+   id          SMALLSERIAL PRIMARY KEY,
+   number      SMALLINT NOT NULL,
+   type        VARCHAR(20) NOT NULL,
+   board_id    SMALLINT NOT NULL,
+   relay       SMALLINT NOT NULL,
+   zone_id     SMALLINT,
+   delete      SMALLINT NOT NULL,
+   created_by  VARCHAR(100) NOT NULL,
+   updated_by  VARCHAR(100) NOT NULL,
+   created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+   updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE TABLE public.zone(
+   id          SMALLSERIAL PRIMARY KEY,
+   name        VARCHAR(100) NOT NULL,
+   delete      SMALLINT NOT NULL,
+   created_by  VARCHAR(100) NOT NULL,
+   updated_by  VARCHAR(100) NOT NULL,
+   created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+   updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
 CREATE TABLE public.environment(
    id          SMALLSERIAL PRIMARY KEY,
-   location    VARCHAR(100) NOT NULL,
-   sensor_id   SMALLSERIAL,
+   name        VARCHAR(100) NOT NULL,
+   zone_id     SMALLINT NOT NULL,
+   sensor_type SMALLINT NOT NULL,
+   low_desire  REAL,
+   high_desire REAL,
+   target      REAL,
+   humidity    REAL,
+   time_start  TIME WITHOUT TIME ZONE,
+   time_end    TIME WITHOUT TIME ZONE,
+   delete      SMALLINT NOT NULL,
    created_by  VARCHAR(100) NOT NULL,
    updated_by  VARCHAR(100) NOT NULL,
    created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -23,6 +75,7 @@ CREATE TABLE public.environment(
 
 CREATE TABLE public.pot_size(
    id          SMALLSERIAL PRIMARY KEY,
+   name        VARCHAR(10) NOT NULL,
    size        VARCHAR(30) NOT NULL,
    created_by  VARCHAR(100) NOT NULL,
    updated_by  VARCHAR(100) NOT NULL,
@@ -30,11 +83,22 @@ CREATE TABLE public.pot_size(
    updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
+CREATE TABLE public.plant_type(
+   id          SMALLSERIAL PRIMARY KEY,
+   name        VARCHAR(10) NOT NULL,
+   arduino     SMALLINT NOT NULL,
+   created_by  VARCHAR(100) NOT NULL,
+   updated_by  VARCHAR(100) NOT NULL,
+   created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+   updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
 CREATE TABLE public.plant(
-   id             SMALLSERIAL PRIMARY KEY,
+   id             SERIAL PRIMARY KEY,
    name           VARCHAR(100) NOT NULL,
    number         INTEGER,
-   pot_size_id    SMALLSERIAL NOT NULL,
+   pot_size_id    SMALLINT NOT NULL,
+   plant_type_id  SMALLINT NOT NULL,
    high_moisture  REAL NOT NULL,
    low_moisture   REAL NOT NULL,
    sensor_id      SMALLINT,
@@ -92,7 +156,7 @@ CREATE TABLE public.history_water_level(
 
 CREATE TABLE public.history_soil_moisture(
    id                BIGSERIAL PRIMARY KEY,
-   plant_id          SMALLSERIAL NOT NULL,
+   plant_id          SMALLINT NOT NULL,
    read              TIMESTAMP WITHOUT TIME ZONE NOT NULL,
    volt              REAL NOT NULL,
    low_calibration   REAL NOT NULL,

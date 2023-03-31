@@ -3,8 +3,6 @@ import { Card, CardHeader, CardContent, CardActions,
    CircularProgress, Stack } from '@mui/material';
 import Button from '@mui/joy/Button';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
-import BlockIcon from '@mui/icons-material/Block';
-import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
@@ -92,7 +90,6 @@ function Environment()
 
          setEnvironments(data);
          setLoading(false);
-         console.log(data);
       }
       catch(error: any)
       {
@@ -122,22 +119,22 @@ function Environment()
             <Grid2 container justifyContent="flex-end">
                <Link to={'/environment/edit/'} style={{ textDecoration: 'none' }}><Button>Add Environment</Button></Link>
             </Grid2>
-            <Grid2 container columnSpacing={{ xs: 0, md: 1 }}>
+            <Grid2 container columnSpacing={{ xs: 0, md: 0 }}>
                {environments.map((environment: any) => 
                   <Grid2 key={'environment-' + environment['id']} xs={12} md>
                      <Card sx={{ maxWidth: 375 }} raised={true}>
                         <CardHeader title ={
-                           <Link to={'/environment/' + environment['id']} state={{environmentId: environment['id']}}>{environment['location'] }</Link>}
+                           <Link to={'/environment/' + environment['id']} state={{environmentId: environment['id']}}>{environment['name'] }</Link>}
                            />
                         <CardContent>
                            <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" minWidth="100%">
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>Sensor</label></Grid2>
-                                 <Grid2 xs={7}>{environment?.sensor ? <Link to={'/sensor/' + environment['sensor']['id']} state={{sensorId: environment['sensor']['id']}}>{environment['sensor']['type']}</Link> : null}</Grid2>
+                                 <Grid2 xs={7}>{environment?.sensors.map((sensor: any) => <Grid2 key={'sensor-' + sensor['id']}><Link to={'/sensor/' + sensor['id']} state={{sensorId: sensor['id']}}>{sensor.type.type + ' (' + sensor['number'] + ')'}</Link></Grid2>)}</Grid2>
                               </Grid2>
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
-                                 <Grid2 xs={5}><label className='labels'>Last Watered</label></Grid2>
-                                 <Grid2 xs={7}></Grid2>
+                                 <Grid2 xs={5}><label className='labels'>Zone</label></Grid2>
+                                 <Grid2 xs={7}>{environment?.zoneId}</Grid2>
                               </Grid2>
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>Last Updated By</label></Grid2>

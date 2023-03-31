@@ -14,17 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ezgreen.models.Plant;
+import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Sensor;
+import com.ezgreen.models.SensorType;
 import com.ezgreen.repository.PlantRepository;
+import com.ezgreen.repository.PlantTypeRepository;
 import com.ezgreen.repository.PotSizeRepository;
 import com.ezgreen.repository.SensorRepository;
+import com.ezgreen.repository.SensorTypeRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.PlantService;
+import com.ezgreen.service.PlantTypeService;
 import com.ezgreen.service.PotSizeService;
 import com.ezgreen.service.SensorService;
+import com.ezgreen.service.SensorTypeService;
 
 @RestController
 @RequestMapping("/api/plant")
@@ -32,21 +38,31 @@ public class PlantController
 {
 	private PlantRepository plantRepository;
 	private PlantService plantService;
+	private PlantTypeRepository plantTypeRepository;
+	private PlantTypeService plantTypeService;
 	private PotSizeService potSizeService;
 	private PotSizeRepository potSizeRepository;
 	private SensorRepository sensorRepository;
 	private SensorService sensorService;
+	private SensorTypeRepository sensorTypeRepository;
+	private SensorTypeService sensorTypeService;
 	
 	public PlantController(PlantRepository plantRepository, PlantService plantService,
+			PlantTypeRepository plantTypeRepository, PlantTypeService plantTypeService,
 			PotSizeService potSizeService, PotSizeRepository potSizeRepository,
-			SensorRepository sensorRepository, SensorService sensorService)
+			SensorRepository sensorRepository, SensorService sensorService,
+			SensorTypeRepository sensorTypeRepository, SensorTypeService sensorTypeService)
 	{
 		this.plantRepository = plantRepository;
 		this.plantService = plantService;
+		this.plantTypeRepository = plantTypeRepository;
+		this.plantTypeService = plantTypeService;
 		this.potSizeService = potSizeService;
 		this.potSizeRepository = potSizeRepository;
 		this.sensorRepository = sensorRepository;
 		this.sensorService = sensorService;
+		this.sensorTypeRepository = sensorTypeRepository;
+		this.sensorTypeService = sensorTypeService;
 	}
 	
 	@PutMapping("/")
@@ -149,12 +165,16 @@ public class PlantController
 		try
 		{
 			Plant plant = plantRepository.fetchPlantById(plantId);
-			Sensor sensor  = sensorRepository.fetchSensorWithPlantId(plantId);
+			PlantType plantType = plantTypeRepository.fetchPlantTypeWithPlantId(plantId);
 			PotSize potSize = potSizeRepository.fetchPotSizeWithPlantId(plantId);
+			Sensor sensor = sensorRepository.fetchSensorWithPlantId(plantId);
+			SensorType sensorType = sensorTypeRepository.fetchSensorTypeWithPlantId(plantId);
 
 			if(plant != null) response.setPlant(plant);
-			if(sensor != null) response.setSensor(sensor);
+			if(plantType != null) response.setPlantType(plantType);
 			if(potSize != null) response.setPotSize(potSize);
+			if(sensor != null) response.setSensor(sensor);
+			if(sensorType != null) response.setSensorType(sensorType);
 			
 			response.setStatusCode(HttpStatus.OK);
 		}
@@ -178,19 +198,25 @@ public class PlantController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
-			CompletableFuture<List<Sensor>> sensors = sensorService.fetchPlantSensors();
+			CompletableFuture<List<PlantType>> plantTypes = plantTypeService.fetchPlantTypes();
 			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
+			CompletableFuture<List<Sensor>> sensors = sensorService.fetchPlantSensors();
+			CompletableFuture<List<SensorType>> sensorTypes = sensorTypeService.fetchSensorTypes();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					plants,
+					plantTypes,
+					potSizes,
 					sensors,
-					potSizes
+					sensorTypes
 			).join();
 			
 			response.setPlants(plants.get());
-			response.setSensors(sensors.get());
+			response.setPlantTypes(plantTypes.get());
 			response.setPotSizes(potSizes.get());
+			response.setSensors(sensors.get());
+			response.setSensorTypes(sensorTypes.get());
 			
 			response.setResponseMessage("Pulled all plants with details.");
 			response.setStatusCode(HttpStatus.OK);

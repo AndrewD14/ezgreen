@@ -1,23 +1,20 @@
-import _ from 'lodash';
-
 export function formatAll(data: any)
 {
-   console.log(data)
    let environments: any = [];
 
    environments = data.environments.map((environment: any) => {
-      let cursor = 0;
+      environment.sensors = data.sensors
+                           .filter((sensor: any) => (sensor.zoneId === environment.zoneId))
+                           .map((sensor:any) => {
+                              let value = {...sensor};
+                              
+                              value = {
+                                 ...value,
+                                 type: {...data.sensorTypes.filter((sensorType:any) => sensorType.id === sensor.typeId)[0]}
+                              }
 
-      if(environment.sensorId >= 1)
-      {
-         do
-         {
-            if(data.sensors[cursor].id === environment.sensorId) environment.sensor = structuredClone(data.sensors[cursor]);
-
-            cursor = cursor + 1;
-         }while(cursor < data.sensors.length && _.isEmpty(environment.sensor));
-      }
-
+                              return value;
+                           });
       return environment;
    });
 
@@ -28,7 +25,16 @@ export function formatOne(data: any)
 {
    let environment = data.environment;
 
-   if(!_.isEmpty(data.sensor)) environment.sensor = structuredClone(data.sensor);
+   if(data.sensors.length > 0) environment.sensors = structuredClone(data.sensors.map((sensor:any) => {
+      let value = {...sensor};
+      
+      value = {
+         ...value,
+         type: {...data.sensorTypes.filter((sensorType:any) => sensorType.id === sensor.typeId)[0]}
+      }
+
+      return value;
+   }));
 
    return environment;
 }

@@ -3,16 +3,20 @@ export function formatAll(data: any)
    let sensors: any = [];
 
    sensors = data.sensors.map((sensor: any) => {
-      let plants: any = {};
       let environments: any = {};
+      let plants: any = {};
+      let types: any = {};
 
       for(let p of data.plants) plants[p.sensorId] = p;
-      for(let e of data.environments) environments[e.sensorId] = e;
+      for(let e of data.environments) environments[e.zoneId+"-"+e.sensorType] = e;
+      for(let t of data.sensorTypes) types[t.id] = t;
 
       for(let s of data.sensors)
       {
          if(plants.hasOwnProperty(s.id)) s.plant = structuredClone(plants[s.id]);
-         else if(environments.hasOwnProperty(s.id)) s.environment = structuredClone(environments[s.id]);
+         else if(environments.hasOwnProperty(s.zoneId+"-"+s.typeId)) s.environment = structuredClone(environments[s.zoneId+"-"+s.typeId]);
+
+         s.sensorType = structuredClone(types[s.typeId]);
       }
 
       return sensor;
@@ -43,6 +47,9 @@ export function formatOne(data: any)
 
    if(data.plant !== undefined) sensor.plant = {...data.plant};
    else if(data.environment !== undefined) sensor.environment = {...data.environment};
+
+   sensor.sensorType = {...data.sensorType};
+   sensor.boardInfo = {...data.board};
 
    return sensor;
 }

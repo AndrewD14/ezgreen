@@ -35,6 +35,9 @@ public class Plant implements Serializable
 	@Column(name="pot_size_id", nullable = false)
 	private Long potSizeId;
 	
+	@Column(name="plant_type_id", nullable = false)
+	private Long plantTypeId;
+	
 	@Column(name="high_moisture", nullable = false)
 	private Double highMoisture;
 	
@@ -73,7 +76,7 @@ public class Plant implements Serializable
 		
 	}
 	
-	public Plant(Long id, String name, Integer number, Long potSizeId, Double highMoisture,
+	public Plant(Long id, String name, Integer number, Long potSizeId, Long plantTypeId, Double highMoisture,
 			Double lowMoisture, Long sensorId, LocalDate dateObtain, Integer monitor, Integer dead,
 			Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
@@ -83,6 +86,7 @@ public class Plant implements Serializable
 		this.name = name;
 		this.number = number;
 		this.potSizeId = potSizeId;
+		this.plantTypeId = plantTypeId;
 		this.highMoisture = highMoisture;
 		this.lowMoisture = lowMoisture;
 		this.sensorId = sensorId;

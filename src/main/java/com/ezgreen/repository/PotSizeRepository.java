@@ -12,6 +12,7 @@ public interface PotSizeRepository extends JpaRepository<PotSize, Long>
 {
 	@Query("SELECT new com.ezgreen.models.PotSize(" +
 			"id," +
+			"name," +
 			"size," +
 			"createBy," +
 			"updateBy," +
@@ -23,6 +24,7 @@ public interface PotSizeRepository extends JpaRepository<PotSize, Long>
 	
 	@Query(value = "SELECT " +
 			"ps.id," +
+			"ps.name," +
 			"ps.size," +
 			"ps.created_by," +
 			"ps.updated_by," +

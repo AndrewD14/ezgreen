@@ -2,6 +2,7 @@ package com.ezgreen.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,14 +12,14 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name= "Sensor")
-@Table(name="sensor")
+@Entity(name= "Relay")
+@Table(name="relay")
 @Setter
 @Getter
-public class Sensor implements Serializable
+public class Relay implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", nullable = false, unique = true, updatable = false, insertable = false)
@@ -26,21 +27,15 @@ public class Sensor implements Serializable
 	
 	@Column(name="number", nullable = false)
 	private Integer number;
-
-	@Column(name="type_id", nullable = false)
-	private Integer typeId;
+	
+	@Column(name="type", nullable = false)
+	private String type;
 	
 	@Column(name="board_id", nullable = false)
 	private Integer boardId;
 	
-	@Column(name="port", nullable = false)
-	private Integer port;
-	
-	@Column(name="low_calibration")
-	private Double lowCalibration;
-	
-	@Column(name="high_calibration")
-	private Double highCalibration;
+	@Column(name="relay", nullable = false)
+	private Integer relay;
 	
 	@Column(name="zone_id")
 	private Integer zoneId;
@@ -60,24 +55,21 @@ public class Sensor implements Serializable
 	@Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime updateTs;
 	
-	public Sensor()
+	public Relay()
 	{
 		
 	}
 	
-	public Sensor(Long id, Integer number, Integer typeId, Integer boardId, Integer port, Double lowCalibration,
-			Double highCalibration, Integer zoneId, Integer delete,
+	public Relay(Long id, Integer number, String type, Integer boardId, Integer relay, Integer zoneId, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
-
+		
 		this.id = id;
 		this.number = number;
-		this.typeId = typeId;
+		this.type = type;
 		this.boardId = boardId;
-		this.port = port;
-		this.lowCalibration = lowCalibration;
-		this.highCalibration = highCalibration;
+		this.relay = relay;
 		this.zoneId = zoneId;
 		this.delete = delete;
 		this.createBy = createBy;

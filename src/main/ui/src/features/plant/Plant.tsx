@@ -19,7 +19,6 @@ function Plant() {
       {
          data = await plantRoutes.fetchOnePlantWithDetails(state.plantId);
 
-         console.log(formatOne(data))
          setPlant(formatOne(data));
       }
       catch(error: any)
@@ -45,6 +44,10 @@ function Plant() {
                   <Grid2 xs>{plant?.name}{plant?.number ? ' (' + plant?.number + ')' : ''}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
+                  <Grid2 xs={2}><label className='labels'>Plant type</label></Grid2>
+                  <Grid2 xs>{plant?.plantType.name}</Grid2>
+               </Grid2>
+               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Date Obtained</label></Grid2>
                   <Grid2 xs>{plant?.dateObtain}</Grid2>
                </Grid2>
@@ -58,11 +61,11 @@ function Plant() {
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Sensor</label></Grid2>
-                  <Grid2 xs>{plant?.sensor?.type}{plant?.sensor ? ' (' + plant?.sensorId + ')' : 'None'}</Grid2>
+                  <Grid2 xs>{plant?.sensorType?.type +' (' + plant?.sensor.number + ')'}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Pot Size</label></Grid2>
-                  <Grid2 xs>{plant?.potSize.size}</Grid2>
+                  <Grid2 xs>{plant?.potSize.name + " (" + plant?.potSize.size +")"}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                   <Grid2 xs={2}><label className='labels'>Last Updated By</label></Grid2>

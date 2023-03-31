@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -87,11 +86,14 @@ public class SensorService
 			sensor.setCreateTs(LocalDateTime.now(ZoneOffset.UTC));
 		}
 		
-		sensor.setBoard(requestJson.getInt("board"));
+		sensor.setBoardId(requestJson.getInt("boardId"));
+		sensor.setDelete(!requestJson.isNull("delete") ? requestJson.getInt("delete") : null);
+		sensor.setNumber(requestJson.getInt("number"));
 		sensor.setPort(requestJson.getInt("port"));
-		sensor.setType(requestJson.getString("type"));
+		sensor.setTypeId(requestJson.getInt("typeId"));
 		sensor.setLowCalibration(!requestJson.isNull("lowCalibration") ? requestJson.getDouble("lowCalibration") : null);
 		sensor.setHighCalibration(!requestJson.isNull("highCalibration") ? requestJson.getDouble("highCalibration") : null);
+		sensor.setZoneId(!requestJson.isNull("zoneId") ? requestJson.getInt("zoneId") : null);
 		sensor.setUpdateBy(requestJson.getString("username"));
 		sensor.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		

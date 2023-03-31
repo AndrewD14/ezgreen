@@ -1,9 +1,16 @@
 package com.ezgreen.responses;
 
+import java.util.List;
+
+import com.ezgreen.models.Board;
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
+import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
+import com.ezgreen.models.Relay;
 import com.ezgreen.models.Sensor;
+import com.ezgreen.models.SensorType;
+import com.ezgreen.models.Zone;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
@@ -14,8 +21,15 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SingleDetailResponse extends EZGreenResponse
 {
+	Board board;
 	Environment environment;
 	Plant plant;
+	PlantType plantType;
 	PotSize potSize;
+	Relay relay;
 	Sensor sensor;
+	List<Sensor> sensors;
+	SensorType sensorType;
+	List<SensorType> sensorTypes;
+	Zone zone;
 }

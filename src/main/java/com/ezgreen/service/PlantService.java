@@ -52,6 +52,7 @@ public class PlantService
 		plant.setMonitor(requestJson.getInt("monitor"));
 		plant.setName(requestJson.getString("name"));
 		plant.setNumber(!requestJson.isNull("number") ? requestJson.getInt("number") : null);
+		plant.setPlantTypeId(requestJson.getLong("plantTypeId"));
 		plant.setPotSizeId(requestJson.getLong("potSizeId"));
 		plant.setSensorId(!requestJson.isNull("sensorId") ? requestJson.getLong("sensorId") : null);
 		plant.setUpdateBy(requestJson.getString("username"));

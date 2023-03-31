@@ -119,19 +119,27 @@ function Sensors() {
                {sensors.map((sensor: any) => 
                   <Grid2 key={'sensor-' + sensor['id']} xs={12} sm={4} md={2}>
                      <Card sx={{ maxWidth: 375 }} raised={true}>
-                        <CardHeader title ={<Link to={'/sensor/' + sensor['id']} state={{sensorId: sensor['id']}}>{sensor['type']}</Link>}
+                        <CardHeader title ={<Link to={'/sensor/' + sensor['id']} state={{sensorId: sensor['id']}}>{sensor?.sensorType['type'] + ' (' + sensor['number'] + ')'}</Link>}
                            />
                         <CardContent>
                            <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" minWidth="100%">
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>In use</label></Grid2>
-                                 <Grid2 xs={7}>{!_.isEmpty(sensor['plant']) || !_.isEmpty(sensor['environment']) ? <CheckIcon style={{color: '#7db856'}}/> : <BlockIcon style={{color: '#e3272b'}}/>}</Grid2>
+                                 <Grid2 xs={7}>{!_.isEmpty(sensor['plant']) || !_.isEmpty(sensor['environment']) ? <CheckIcon style={{color: '#7db856'}}/> 
+                                                :
+                                                sensor.sensorType['arduino'] !== 'w' ? <BlockIcon style={{color: '#e3272b'}}/>
+                                                :
+                                                'N/A'
+                                                }
+                                 </Grid2>
                               </Grid2>
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>Used by</label></Grid2>
                                  <Grid2 xs={7}>{sensor['plant'] ? <Link to={'/plant/' + sensor['plant']['id']} state={{plantId: sensor['plant']['id']}}>{sensor['plant']['number'] ? sensor['plant']['name'] + ' (' + sensor['plant']['number'] + ')' : sensor['plant']['name']}</Link>
                                                 :
-                                                sensor['environment'] ? <Link to={'/environment/' + sensor['environment']['id']} state={{environmentId: sensor['environment']['id']}}>{sensor['environment']['location']}</Link>
+                                                sensor['environment'] ? <Link to={'/environment/' + sensor['environment']['id']} state={{environmentId: sensor['environment']['id']}}>{sensor['environment']['name']}</Link>
+                                                :
+                                                sensor['zoneId'] ? 'Zone ' + sensor['zoneId']
                                                 :
                                                 null}
                                  </Grid2>

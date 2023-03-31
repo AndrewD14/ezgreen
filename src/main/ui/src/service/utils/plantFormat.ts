@@ -21,6 +21,15 @@ export function formatAll(data: any)
 
       do
       {
+         if(data.plantTypes[cursor].id === plant.plantTypeId) plant.plantType = structuredClone(data.plantTypes[cursor]);
+
+         cursor = cursor + 1;
+      }while(cursor < data.plantTypes.length && _.isEmpty(plant.plantTypes));
+
+      cursor = 0;
+
+      do
+      {
          if(data.potSizes[cursor].id === plant.potSizeId) plant.potSize = structuredClone(data.potSizes[cursor]);
 
          cursor = cursor + 1;
@@ -37,7 +46,9 @@ export function formatOne(data: any)
    let plant = data.plant;
 
    if(!_.isEmpty(data.sensor)) plant.sensor = structuredClone(data.sensor);
+   if(!_.isEmpty(data.sensorType)) plant.sensorType = structuredClone(data.sensorType);
    
+   plant.plantType = structuredClone(data.plantType);
    plant.potSize = structuredClone(data.potSize);
 
    return plant;

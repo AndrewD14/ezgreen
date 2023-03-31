@@ -14,16 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ezgreen.models.Board;
 import com.ezgreen.models.Environment;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.Sensor;
+import com.ezgreen.models.SensorType;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
+import com.ezgreen.service.BoardService;
 import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.SensorService;
+import com.ezgreen.service.SensorTypeService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -31,17 +35,22 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequestMapping("/api/sensor")
 public class SensorController
 {
+	private BoardService boardService;
+	private EnvironmentService environmentService;
 	private PlantService plantService;
 	private SensorService sensorService;
 	private SensorRepository sensorRepository;
-	private EnvironmentService environmentService;
+	private SensorTypeService sensorTypeService;
 	
-	public SensorController(PlantService plantService, SensorRepository sensorRepository, SensorService sensorService, EnvironmentService environmentService)
+	public SensorController(BoardService boardService, EnvironmentService environmentService, PlantService plantService,
+			SensorRepository sensorRepository, SensorService sensorService, SensorTypeService sensorTypeService)
 	{
+		this.boardService = boardService;
+		this.environmentService = environmentService;
 		this.plantService = plantService;
 		this.sensorRepository = sensorRepository;
 		this.sensorService = sensorService;
-		this.environmentService = environmentService;
+		this.sensorTypeService = sensorTypeService;
 	}
 	
 	@PutMapping("/")
@@ -111,7 +120,7 @@ public class SensorController
 		}		
 	}
 	
-	@GetMapping(value="/withalldetails", produces = "application/json")
+	@GetMapping(value="/alldetails", produces = "application/json")
 	public ResponseEntity<?> getSensorsWithDetails() throws Throwable
 	{
 		MultipleDetailResponse response = new MultipleDetailResponse();
@@ -119,20 +128,24 @@ public class SensorController
 		try
 		{
 			//Kicks of multiple, asynchronous calls
+			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironmentWithSensors();
 			CompletableFuture<List<Plant>> plants = plantService.fetchPlantsWithSensor();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllSensors();
-			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironmentWithSensors();
+			CompletableFuture<List<SensorType>> sensorTypes = sensorTypeService.fetchSensorTypes();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
+					environments,
 					plants,
 					sensors,
-					environments
+					sensorTypes
 			).join();
 			
+			response.setEnvironments(environments.get());
 			response.setPlants(plants.get());
 			response.setSensors(sensors.get());
-			response.setEnvironments(environments.get());
+			response.setSensorTypes(sensorTypes.get());
+			
 			
 			response.setResponseMessage("Pulled all sensors with details that have sensors.");
 			response.setStatusCode(HttpStatus.OK);
@@ -153,19 +166,25 @@ public class SensorController
 		
 		try
 		{
+			CompletableFuture<Board> board = boardService.fetchBoardWithSensor(sensorId);
 			CompletableFuture<Environment> environment = environmentService.fetchEnvironmentBySensor(sensorId);
 			CompletableFuture<Plant> plant = plantService.fetchPlantBySensor(sensorId);
 			CompletableFuture<Sensor> sensor = sensorService.fetchSensorWithId(sensorId);
+			CompletableFuture<SensorType> sensorType = sensorTypeService.fetchSensorTypeWithSensor(sensorId);
 			
 			CompletableFuture.allOf(
+					board,
+					environment,
 					plant,
 					sensor,
-					environment
+					sensorType
 			).join();
 			
+			response.setBoard(board.get());
 			response.setEnvironment(environment.get());
 			response.setPlant(plant.get());
 			response.setSensor(sensor.get());
+			response.setSensorType(sensorType.get());
 			
 			response.setResponseMessage("Pulled sensor with details.");
 			response.setStatusCode(HttpStatus.OK);

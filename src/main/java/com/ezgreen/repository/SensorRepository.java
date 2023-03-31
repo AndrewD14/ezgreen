@@ -15,11 +15,14 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	
 	@Query("SELECT new com.ezgreen.models.Sensor(" +
 			"id," +
-			"type," +
+			"number," +
+			"typeId," +
+			"boardId," +
 			"port," +
-			"board," +
 			"lowCalibration," +
 			"highCalibration," +
+			"zoneId," +
+			"delete," +
 			"createBy," +
 			"updateBy," +
 			"createTs," +
@@ -30,48 +33,57 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
-			" FROM Sensor s " +
+			" FROM sensor s " +
 			" INNER JOIN plant p ON s.id = p.sensor_id",
 			nativeQuery = true)
 	List<Sensor> fetchAllPlantSensors();
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
-			" FROM Sensor s " +
-			" INNER JOIN environment e ON s.id = e.sensor_id",
+			" FROM sensor s " +
+			" INNER JOIN environment e ON (s.zone_id = e.zone_id AND e.sensor_type = s.type_id)",
 			nativeQuery = true)
 	List<Sensor> fetchAllEnvironmentSensors();
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
-			" FROM Sensor s " +
+			" FROM sensor s " +
 			" LEFT OUTER JOIN plant p ON s.id = p.sensor_id " +
 			" WHERE s.type = 'Soil moisture' " +
 			" AND p.id IS NULL",
@@ -80,16 +92,19 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
-			" FROM Sensor s " +
+			" FROM sensor s " +
 			" LEFT OUTER JOIN environment e ON s.id = e.sensor_id " +
 			" WHERE s.type != 'Soil moisture' " +
 			" AND e.id IS NULL",
@@ -98,11 +113,14 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
@@ -115,18 +133,21 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	
 	@Query(value = "SELECT " +
 			"s.id," +
-			"s.type," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
 			"s.port," +
-			"s.board," +
 			"s.low_calibration," +
 			"s.high_calibration," +
+			"s.zone_id," +
+			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
 			" FROM sensor s " +
-			" INNER JOIN environment e ON e.sensor_id = s.id " +
+			" INNER JOIN environment e ON (s.zone_id = e.zone_id AND e.sensor_type = s.type_id) " +
 			" WHERE e.id = :environmentId",
 			nativeQuery = true)
-	Sensor fetchSensorWithEnvironmentId(@Param("environmentId") Long environmentId);
+	List<Sensor> fetchSensorsWithEnvironmentId(@Param("environmentId") Long environmentId);
 }

@@ -24,7 +24,7 @@ class SensorRoutes
    async fetchSensorsWithDetails()
    {
       const response = (await this.client({
-         url: baseRoute + 'withalldetails',
+         url: baseRoute + 'alldetails',
          method: 'GET',
       })).data;
 
