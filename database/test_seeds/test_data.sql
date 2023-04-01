@@ -2,7 +2,6 @@ TRUNCATE TABLE public.plant;
 TRUNCATE TABLE public.environment;
 TRUNCATE TABLE public.sensor;
 TRUNCATE TABLE public.relay;
-TRUNCATE TABLE public.zone;
 
 INSERT INTO public.board
 (id,bus,number)
