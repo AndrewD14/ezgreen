@@ -16,7 +16,6 @@ public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 	@Query(value="SELECT " +
 			" e.id," +
 			" e.name," +
-			" e.zone_id," +
 			" e.sensor_type," +
 			" e.low_desire," +
 			" e.high_desire," +
@@ -30,16 +29,14 @@ public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 			" e.created_ts," +
 			" e.updated_ts " +
 			" FROM environment e " +
-			" INNER JOIN zone z ON z.id = e.zone_id " +
-			" INNER JOIN sensor s ON (z.id = s.zone_id AND s.type_id = e.sensor_type) " +
+			" INNER JOIN sensor s ON e.id = s.environment_id " +
 			" WHERE s.id = :sensorId",
 			nativeQuery = true)
 	Environment fetchEnvironmentBySensor(@Param("sensorId") Long sensorId);
 	
-	@Query(value = "SELECT " +
+	@Query(value = "SELECT DISTINCT " +
 			"e.id," +
 			"e.name," +
-			"e.zone_id," +
 			"e.sensor_type," +
 			"e.low_desire," +
 			"e.high_desire," +
@@ -53,29 +50,7 @@ public interface EnvironmentRepository extends JpaRepository<Environment, Long>
 			"e.created_ts," +
 			"e.updated_ts" +
 			" FROM environment e " +
-			" INNER JOIN zone z ON z.id = e.zone_id " +
-			" INNER JOIN sensor s ON (z.id = s.zone_id AND s.type_id = e.sensor_type) " +
-			" WHERE s.id IS NOT NULL ",
+			" INNER JOIN sensor s ON e.id = s.environment_id ",
 			nativeQuery = true)
 	List<Environment> fetchAllEnvironmentWithSensor();
-	
-	@Query("SELECT new com.ezgreen.models.Environment(" +
-			"id," +
-			"name," +
-			"zoneId," +
-			"sensorType," +
-			"lowDesire," +
-			"highDesire," +
-			"target," +
-			"humidity," +
-			"timeStart," +
-			"timeEnd," +
-			"delete," +
-			"createBy," +
-			"updateBy," +
-			"createTs," +
-			"updateTs" +
-			") FROM Environment " +
-			"ORDER BY updateTs DESC")
-	List<Environment> fetchAllEnvironments();
 }

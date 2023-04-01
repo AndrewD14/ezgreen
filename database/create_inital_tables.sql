@@ -23,7 +23,7 @@ CREATE TABLE public.sensor(
    port              SMALLINT NOT NULL,
    low_calibration   REAL,
    high_calibration  REAL,
-   zone_id           SMALLINT,
+   environment_id    SMALLINT,
    delete            SMALLINT NOT NULL,
    created_by        VARCHAR(100) NOT NULL,
    updated_by        VARCHAR(100) NOT NULL,
@@ -31,34 +31,33 @@ CREATE TABLE public.sensor(
    updated_ts        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE public.relay(
+CREATE TABLE public.relay_type(
    id          SMALLSERIAL PRIMARY KEY,
-   number      SMALLINT NOT NULL,
    type        VARCHAR(20) NOT NULL,
-   board_id    SMALLINT NOT NULL,
-   relay       SMALLINT NOT NULL,
-   zone_id     SMALLINT,
-   delete      SMALLINT NOT NULL,
+   arduino     VARCHAR(1),
    created_by  VARCHAR(100) NOT NULL,
    updated_by  VARCHAR(100) NOT NULL,
    created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
    updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE public.zone(
-   id          SMALLSERIAL PRIMARY KEY,
-   name        VARCHAR(100) NOT NULL,
-   delete      SMALLINT NOT NULL,
-   created_by  VARCHAR(100) NOT NULL,
-   updated_by  VARCHAR(100) NOT NULL,
-   created_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-   updated_ts  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+CREATE TABLE public.relay(
+   id             SMALLSERIAL PRIMARY KEY,
+   number         SMALLINT NOT NULL,
+   type_id        SMALLINT NOT NULL,
+   board_id       SMALLINT NOT NULL,
+   relay          SMALLINT NOT NULL,
+   environment_id SMALLINT,
+   delete         SMALLINT NOT NULL,
+   created_by     VARCHAR(100) NOT NULL,
+   updated_by     VARCHAR(100) NOT NULL,
+   created_ts     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+   updated_ts     TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE public.environment(
    id          SMALLSERIAL PRIMARY KEY,
    name        VARCHAR(100) NOT NULL,
-   zone_id     SMALLINT NOT NULL,
    sensor_type SMALLINT NOT NULL,
    low_desire  REAL,
    high_desire REAL,

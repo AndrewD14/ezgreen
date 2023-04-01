@@ -21,6 +21,17 @@ class EnvironmentRoutes
    }
 
    // this call is to fetch environment configurations
+   async fetchEnvironmentsConfigOption()
+   {
+      const response = (await this.client({
+         url: baseRoute + 'configoptions',
+         method: 'GET',
+      })).data;
+
+      return response;
+   }
+
+   // this call is to fetch environment configurations
    async fetchEnvironmentsWithDetail()
    {
       const response = (await this.client({

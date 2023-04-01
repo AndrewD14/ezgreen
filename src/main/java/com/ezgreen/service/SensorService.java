@@ -93,7 +93,7 @@ public class SensorService
 		sensor.setTypeId(requestJson.getInt("typeId"));
 		sensor.setLowCalibration(!requestJson.isNull("lowCalibration") ? requestJson.getDouble("lowCalibration") : null);
 		sensor.setHighCalibration(!requestJson.isNull("highCalibration") ? requestJson.getDouble("highCalibration") : null);
-		sensor.setZoneId(!requestJson.isNull("zoneId") ? requestJson.getInt("zoneId") : null);
+		sensor.setEnvironmentId(!requestJson.isNull("environmentId") ? requestJson.getInt("environmentId") : null);
 		sensor.setUpdateBy(requestJson.getString("username"));
 		sensor.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		
@@ -124,7 +124,7 @@ public class SensorService
 	@Async
 	public CompletableFuture<List<Sensor>> fetchAllSensors()
 	{
-		List<Sensor> sensors = sensorRepository.fetchAllSensors();
+		List<Sensor> sensors = sensorRepository.findAll();
 
 		return CompletableFuture.completedFuture(sensors);
 	}
@@ -140,7 +140,7 @@ public class SensorService
 	@Async
 	public CompletableFuture<List<Sensor>> fetchAllEnvironmentSensors()
 	{
-		List<Sensor> sensors = sensorRepository.fetchAllEnvironmentSensors();
+		List<Sensor> sensors = sensorRepository.findByEnvironmentIdIsNotNull();
 
 		return CompletableFuture.completedFuture(sensors);
 	}

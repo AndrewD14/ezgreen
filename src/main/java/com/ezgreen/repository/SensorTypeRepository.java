@@ -36,4 +36,18 @@ public interface SensorTypeRepository extends JpaRepository<SensorType, Long>
 			" WHERE s.id = :sensorId",
 			nativeQuery = true)
 	SensorType fetchSensorTypeWithSensorId(@Param("sensorId") Long sensorId);
+	
+	@Query(value = "SELECT " +
+			"st.id," +
+			"st.type," +
+			"st.arduino," +
+			"st.created_by," +
+			"st.updated_by," +
+			"st.created_ts," +
+			"st.updated_ts" +
+			" FROM sensor_type st " +
+			" INNER JOIN environment e ON e.sensor_type = st.id " +
+			" WHERE e.id = :environmentId",
+			nativeQuery = true)
+	SensorType fetchSensorTypeWithEnvironmentId(@Param("environmentId") Long environmentId);
 }

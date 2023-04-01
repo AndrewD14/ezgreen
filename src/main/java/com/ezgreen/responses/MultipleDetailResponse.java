@@ -8,9 +8,9 @@ import com.ezgreen.models.Plant;
 import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
 import com.ezgreen.models.Relay;
+import com.ezgreen.models.RelayType;
 import com.ezgreen.models.Sensor;
 import com.ezgreen.models.SensorType;
-import com.ezgreen.models.Zone;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class MultipleDetailResponse extends EZGreenResponse
 	List<PlantType> plantTypes;
 	List<PotSize> potSizes;
 	List<Relay> relays;
+	List<RelayType> relayTypes;
 	List<Sensor> sensors;
 	List<SensorType> sensorTypes;
-	List<Zone> zones;
 }

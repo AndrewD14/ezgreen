@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.ezgreen.models.Zone;
-import com.ezgreen.repository.ZoneRepository;
+import com.ezgreen.models.Relay;
+import com.ezgreen.repository.RelayRepository;
 
 @Service
-public class ZoneService
+public class RelayService
 {
 	@Autowired
-	private ZoneRepository zoneRepository;
+	private RelayRepository relayRepository;
 	
 	@Async
-	public CompletableFuture<List<Zone>> fetchZones()
+	public CompletableFuture<List<Relay>> fetchAllRelays()
 	{
-		List<Zone> zones = zoneRepository.findAll();
-
-		return CompletableFuture.completedFuture(zones);
+		List<Relay> relays = relayRepository.findAll();
+		
+		return CompletableFuture.completedFuture(relays);
 	}
 }

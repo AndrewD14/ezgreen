@@ -28,8 +28,8 @@ public class Relay implements Serializable
 	@Column(name="number", nullable = false)
 	private Integer number;
 	
-	@Column(name="type", nullable = false)
-	private String type;
+	@Column(name="type_id", nullable = false)
+	private Integer typeId;
 	
 	@Column(name="board_id", nullable = false)
 	private Integer boardId;
@@ -37,8 +37,8 @@ public class Relay implements Serializable
 	@Column(name="relay", nullable = false)
 	private Integer relay;
 	
-	@Column(name="zone_id")
-	private Integer zoneId;
+	@Column(name="environment_id")
+	private Integer environmentId;
 	
 	@Column(name="delete")
 	private Integer delete;
@@ -60,17 +60,17 @@ public class Relay implements Serializable
 		
 	}
 	
-	public Relay(Long id, Integer number, String type, Integer boardId, Integer relay, Integer zoneId, Integer delete,
+	public Relay(Long id, Integer number, Integer typeId, Integer boardId, Integer relay, Integer environmentId, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 		
 		this.id = id;
 		this.number = number;
-		this.type = type;
+		this.typeId = typeId;
 		this.boardId = boardId;
 		this.relay = relay;
-		this.zoneId = zoneId;
+		this.environmentId = environmentId;
 		this.delete = delete;
 		this.createBy = createBy;
 		this.updateBy = updateBy;

@@ -13,24 +13,6 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 	@Query("SELECT s FROM Sensor s WHERE id = :sensorId")
 	Sensor fetchById(@Param("sensorId") Long sensorId);
 	
-	@Query("SELECT new com.ezgreen.models.Sensor(" +
-			"id," +
-			"number," +
-			"typeId," +
-			"boardId," +
-			"port," +
-			"lowCalibration," +
-			"highCalibration," +
-			"zoneId," +
-			"delete," +
-			"createBy," +
-			"updateBy," +
-			"createTs," +
-			"updateTs" +
-			") FROM Sensor " +
-			"ORDER BY updateTs DESC")
-	List<Sensor> fetchAllSensors();
-	
 	@Query(value = "SELECT " +
 			"s.id," +
 			"s.number," +
@@ -39,7 +21,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.port," +
 			"s.low_calibration," +
 			"s.high_calibration," +
-			"s.zone_id," +
+			"s.environment_id," +
 			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
@@ -58,26 +40,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.port," +
 			"s.low_calibration," +
 			"s.high_calibration," +
-			"s.zone_id," +
-			"s.delete," +
-			"s.created_by," +
-			"s.updated_by," +
-			"s.created_ts," +
-			"s.updated_ts" +
-			" FROM sensor s " +
-			" INNER JOIN environment e ON (s.zone_id = e.zone_id AND e.sensor_type = s.type_id)",
-			nativeQuery = true)
-	List<Sensor> fetchAllEnvironmentSensors();
-	
-	@Query(value = "SELECT " +
-			"s.id," +
-			"s.number," +
-			"s.type_id," +
-			"s.board_id," +
-			"s.port," +
-			"s.low_calibration," +
-			"s.high_calibration," +
-			"s.zone_id," +
+			"s.environment_id," +
 			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
@@ -85,7 +48,8 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.updated_ts" +
 			" FROM sensor s " +
 			" LEFT OUTER JOIN plant p ON s.id = p.sensor_id " +
-			" WHERE s.type = 'Soil moisture' " +
+			" INNER JOIN sensor_type st ON st.id = s.type_id " +
+			" WHERE st.type = 'Soil moisture' " +
 			" AND p.id IS NULL",
 			nativeQuery = true)
 	List<Sensor> fetchAllAvailablePlantSensors();
@@ -98,28 +62,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.port," +
 			"s.low_calibration," +
 			"s.high_calibration," +
-			"s.zone_id," +
-			"s.delete," +
-			"s.created_by," +
-			"s.updated_by," +
-			"s.created_ts," +
-			"s.updated_ts" +
-			" FROM sensor s " +
-			" LEFT OUTER JOIN environment e ON s.id = e.sensor_id " +
-			" WHERE s.type != 'Soil moisture' " +
-			" AND e.id IS NULL",
-			nativeQuery = true)
-	List<Sensor> fetchAllAvailableEnvironmentSensors();
-	
-	@Query(value = "SELECT " +
-			"s.id," +
-			"s.number," +
-			"s.type_id," +
-			"s.board_id," +
-			"s.port," +
-			"s.low_calibration," +
-			"s.high_calibration," +
-			"s.zone_id," +
+			"s.environment_id," +
 			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
@@ -139,15 +82,38 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.port," +
 			"s.low_calibration," +
 			"s.high_calibration," +
-			"s.zone_id," +
+			"s.environment_id," +
 			"s.delete," +
 			"s.created_by," +
 			"s.updated_by," +
 			"s.created_ts," +
 			"s.updated_ts" +
 			" FROM sensor s " +
-			" INNER JOIN environment e ON (s.zone_id = e.zone_id AND e.sensor_type = s.type_id) " +
-			" WHERE e.id = :environmentId",
+			" LEFT OUTER JOIN environment e ON s.environment_id = e.id " +
+			" INNER JOIN sensor_type st ON st.id = sensor_type_id " +
+			" WHERE st.type != 'Soil moisture' " +
+			" AND e.id IS NULL",
+			nativeQuery = true)
+	List<Sensor> fetchAllAvailableEnvironmentSensors();
+	
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
+			"s.port," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.environment_id," +
+			"s.delete," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
+			" FROM sensor s " +
+			" WHERE s.environment_id = :environmentId",
 			nativeQuery = true)
 	List<Sensor> fetchSensorsWithEnvironmentId(@Param("environmentId") Long environmentId);
+	
+	List<Sensor> findByEnvironmentIdIsNotNull();
 }

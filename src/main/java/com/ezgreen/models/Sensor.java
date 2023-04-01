@@ -42,8 +42,8 @@ public class Sensor implements Serializable
 	@Column(name="high_calibration")
 	private Double highCalibration;
 	
-	@Column(name="zone_id")
-	private Integer zoneId;
+	@Column(name="environment_id")
+	private Integer environmentId;
 	
 	@Column(name="delete")
 	private Integer delete;
@@ -66,7 +66,7 @@ public class Sensor implements Serializable
 	}
 	
 	public Sensor(Long id, Integer number, Integer typeId, Integer boardId, Integer port, Double lowCalibration,
-			Double highCalibration, Integer zoneId, Integer delete,
+			Double highCalibration, Integer environmentId, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
@@ -78,7 +78,7 @@ public class Sensor implements Serializable
 		this.port = port;
 		this.lowCalibration = lowCalibration;
 		this.highCalibration = highCalibration;
-		this.zoneId = zoneId;
+		this.environmentId = environmentId;
 		this.delete = delete;
 		this.createBy = createBy;
 		this.updateBy = updateBy;

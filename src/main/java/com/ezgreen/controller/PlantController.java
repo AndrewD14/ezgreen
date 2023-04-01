@@ -241,16 +241,19 @@ public class PlantController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAvailablePlantSensors();
+			CompletableFuture<List<PlantType>> plantTypes = plantTypeService.fetchPlantTypes();
 			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
-					sensors,
-					potSizes
+					plantTypes,
+					potSizes,
+					sensors					
 			).join();
 			
-			response.setSensors(sensors.get());
+			response.setPlantTypes(plantTypes.get());
 			response.setPotSizes(potSizes.get());
+			response.setSensors(sensors.get());
 			
 			response.setResponseMessage("Pulled all plant config options.");
 			response.setStatusCode(HttpStatus.OK);

@@ -31,4 +31,12 @@ public class SensorTypeService
 
 		return CompletableFuture.completedFuture(sensorType);
 	}
+	
+	@Async
+	public CompletableFuture<SensorType> fetchSensorTypeWithEnvironment(Long environmentId)
+	{
+		SensorType sensorType = sensorTypeRepository.fetchSensorTypeWithEnvironmentId(environmentId);
+
+		return CompletableFuture.completedFuture(sensorType);
+	}
 }

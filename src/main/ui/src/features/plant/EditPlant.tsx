@@ -3,7 +3,7 @@ import { CircularProgress, Checkbox,
          Fab, FormControl, FormLabel,
          MenuItem, Select, Stack, TextField } from '@mui/material';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
@@ -20,6 +20,7 @@ const initialState: any = {
    monitor: 0,
    name: '',
    number: '',
+   plantTypeId: '',
    potSizeId: '',
    sensorId: ''
 }
@@ -31,9 +32,10 @@ function reducer(state: any, action: any)
       case 'setup': return {...state, ...action.payload}
       case 'setName': return {...state, name: action.payload};
       case 'setNumber': return {...state, number: action.payload};
-      case 'setLowMoisture': return {...state, lowMoisture: parseFloat(action.payload).toFixed(2)};
-      case 'setHighMoisture': return {...state, highMoisture: parseFloat(action.payload).toFixed(2)};
+      case 'setLowMoisture': return {...state, lowMoisture: action.payload};
+      case 'setHighMoisture': return {...state, highMoisture: action.payload};
       case 'setMonitor': return {...state, monitor: action.payload};
+      case 'setPlantType': return {...state, plantTypeId: action.payload};
       case 'setPotSizeId': return {...state, potSizeId: action.payload};
       case 'setSensorId': return {...state, sensorId: action.payload};
       case 'setDateObtain': return {...state, dateObtain: action.payload};
@@ -119,6 +121,7 @@ function EditPlant(props: any) {
          let newErrors: any[] = [];
 
          if(plant.name === '') newErrors.push("name");
+         if(plant.plantTypeId === '') newErrors.push("type");
          if(plant.potSizeId === '') newErrors.push("pot");
          if(parseFloat(plant.lowMoisture) === 0 || parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("low");
          if(parseFloat(plant.highMoisture) <= parseFloat(plant.lowMoisture)) newErrors.push("high");
@@ -133,7 +136,8 @@ function EditPlant(props: any) {
          }
 
          await plantRoutes.save(dateObtain, plant.dead, plant.delete, plant.highMoisture, plant.lowMoisture, plant.monitor, plant.name,
-            (plant.number === '' ? null: plant.number), plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId), 'adamico', plant.id);
+            (plant.number === '' ? null: plant.number), plant.plantTypeId, plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId),
+            'adamico', plant.id);
 
          navigate("/");
       }
@@ -146,27 +150,27 @@ function EditPlant(props: any) {
    };
 
    const checkChange = () => {
-      let change = false;
       let plantDate = null;
       let initDate = null;
 
       if(plant?.dateObtain !== null) plantDate = plant.dateObtain.format('YYYY-MM-DD');
       if(initPlant?.dateObtain !== null) initDate = initPlant.dateObtain.format('YYYY-MM-DD');
-      if(plantDate !== initDate) change = true;
-      if(plant.highMoisture !== initPlant.highMoisture) change = true;
-      if(plant.lowMoisture !== initPlant.lowMoisture) change = true;
-      if(plant.monitor !== initPlant.monitor) change = true;
-      if(plant.name !== initPlant.name) change = true;
-      if(plant.number !== initPlant.number) change = true;
-      if(plant.potSizeId !== initPlant.potSizeId) change = true;
-      if(plant.sensorId !== initPlant.sensorId) change = true;
+      if(plantDate !== initDate) return true;
+      if(plant.highMoisture !== initPlant.highMoisture) return true;
+      if(plant.lowMoisture !== initPlant.lowMoisture) return true;
+      if(plant.monitor !== initPlant.monitor) return true;
+      if(plant.name !== initPlant.name) return true;
+      if(plant.number !== initPlant.number) return true;
+      if(plant.plantTypeId !== initPlant.plantTypeId) return true;
+      if(plant.potSizeId !== initPlant.potSizeId) return true;
+      if(plant.sensorId !== initPlant.sensorId) return true;
 
-      return change;
+      return false;
    }
 
    const fetchData = async () => {
       let data: any = {};
-      let edit: any = {};
+      let edit: any = {...initialState};
       let id = location?.state?.plantId || null;
 
       try
@@ -178,7 +182,6 @@ function EditPlant(props: any) {
             edit = formatOne(await plantRoutes.fetchOnePlantWithDetails(id));
 
             edit = {
-               ...initialState,
                ...edit,
                highMoisture: parseFloat(edit.highMoisture).toFixed(2),
                lowMoisture: parseFloat(edit.lowMoisture).toFixed(2),
@@ -260,14 +263,25 @@ function EditPlant(props: any) {
                                  variant="standard"
                               />
                            </FormControl>
+                           <FormControl key={'plantType'}>
+                              <FormLabel required>Plant type</FormLabel>
+                              <Select
+                                 onChange={(event: any) => setPlant({type: 'setPlantType', payload: event.target.value})}
+                                 value={plant.plantTypeId}
+                              >
+                                 {options.plantTypes?.map((plantType: any) => <MenuItem key={'plantType-' + plantType.id} value={plantType.id}>{plantType.name}</MenuItem>)}
+                              </Select>
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("type") !== -1) ? <span>Plant type cannot be blank.</span> : null}
+                           </Grid2>
                            <FormControl key={'potSize'}>
                               <FormLabel required>Pot size</FormLabel>
                               <Select
-                                 id="setPotSizeId"
                                  onChange={(event: any) => setPlant({type: 'setPotSizeId', payload: event.target.value})}
                                  value={plant.potSizeId}
                               >
-                                 {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.size}</MenuItem>)}
+                                 {options.potSizes?.map((potSize: any) => <MenuItem key={'potSize-' + potSize.id} value={potSize.id}>{potSize.name + ' (' + potSize.size + ')'}</MenuItem>)}
                               </Select>
                            </FormControl>
                            <Grid2 container className="error-text">

@@ -65,7 +65,7 @@ function EditSensor(props: any) {
    const checkPort = (type: string, bus: string, board: string, port: number) => {
       if(port === 0) return false;
 
-      if(type === 'Light' && port !== 4 && port !== 3) return false;
+      if(type === 'Light' && port !== 3 && port !== 4) return false;
       if(type === 'Soil moisture'&& (port % 2 === 0 || port === 3)) return false;
       if(type === 'Water level' && port % 2 === 0 ) return false;
       if(type === 'Humidity/Temperature' && port !== 6 && port !== 8) return false;

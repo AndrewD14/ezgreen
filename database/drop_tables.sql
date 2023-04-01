@@ -1,0 +1,14 @@
+DROP TABLE public.board;
+DROP TABLE public.environment;
+DROP TABLE public.plant;
+DROP TABLE public.plant_type;
+DROP TABLE public.pot_size;
+DROP TABLE public.relay;
+DROP TABLE public.relay_type;
+DROP TABLE public.sensor;
+DROP TABLE public.sensor_type;
+DROP TABLE public.history_humidity;
+DROP TABLE public.history_luminosity;
+DROP TABLE public.history_soil_moisture;
+DROP TABLE public.history_temp;
+DROP TABLE public.history_water_level;

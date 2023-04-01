@@ -29,9 +29,6 @@ public class Environment implements Serializable
 	@Column(name="name", nullable = false)
 	private String name;
 	
-	@Column(name="zone_id", nullable = false)
-	private Integer zoneId;
-	
 	@Column(name="sensor_type", nullable = false)
 	private Long sensorType;
 	
@@ -73,7 +70,7 @@ public class Environment implements Serializable
 		
 	}
 	
-	public Environment(Long id, String name, Integer zoneId, Long sensorType, Double lowDesire, Double highDesire,
+	public Environment(Long id, String name, Long sensorType, Double lowDesire, Double highDesire,
 			Double target, Double humidity, LocalTime timeStart, LocalTime timeEnd, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
@@ -81,7 +78,6 @@ public class Environment implements Serializable
 
 		this.id = id;
 		this.name = name;
-		this.zoneId = zoneId;
 		this.sensorType = sensorType;
 		this.lowDesire = lowDesire;
 		this.highDesire = highDesire;

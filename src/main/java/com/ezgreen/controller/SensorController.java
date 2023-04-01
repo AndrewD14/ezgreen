@@ -208,7 +208,7 @@ public class SensorController
 		
 		try
 		{
-			response.setSensors(sensorRepository.fetchAllSensors());
+			response.setSensors(sensorRepository.findAll());
 
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage("Successfully pulled all sensors.");
