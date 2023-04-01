@@ -31,7 +31,7 @@ export function formatOptions(data: any)
    let possibleBoards: any = {};
    let portsUsed: any = {};
 
-   data.boards.map((board: any) => {
+   data.boards.forEach((board: any) => {
       if(possibleBoards[board.bus] === undefined) possibleBoards[board.bus] = [];
 
       if(possibleBoards[board.bus].indexOf(board.number) < 0) possibleBoards[board.bus].push(board.number);

@@ -85,6 +85,7 @@ function EditSensor(props: any) {
 
    const onTypeChange = (event: any) => {
       let type = event.target.value;
+      //eslint-disable-next-line
       let filter = options.sensorTypes.filter((sensorType: any) => sensorType.id == type);
       let sensorType = filter.length > 0 ? filter[0] : {};
 
@@ -125,6 +126,7 @@ function EditSensor(props: any) {
 
    const onBoardChange = (event: any) => {
       let number = event.target.value;
+      //eslint-disable-next-line
       let filter = options.boardInfo.filter((board: any) => (board.bus == sensor.bus && board.number == number));
       let boardInfo = filter.length > 0 ? filter[0] : {};
 
