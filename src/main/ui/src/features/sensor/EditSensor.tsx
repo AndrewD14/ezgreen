@@ -10,9 +10,11 @@ import { formatOne, formatOptions } from '../../service/utils/sensorFormat';
 
 const initialState: any = {
    id: null,
-   type: "",
+   typeId: '',
+   bus: '',
+   boardInfo: {},
+   board: '',
    port: 0,
-   board: 0,
    lowCalibration: 0,
    highCalibration: 0
 }
@@ -22,9 +24,10 @@ function reducer(state: any, action: any)
    switch(action.type)
    {
       case 'setup': return {...state, ...action.payload}
-      case 'setType': return {...state, type: action.payload};
+      case 'setType': return {...state, typeId: action.payload.type, sensorType: {...action.payload.sensorType}};
+      case 'setBus': return {...state, bus: action.payload};
+      case 'setBoard': return {...state, board: action.payload.number, boardInfo: {...action.payload.board}};
       case 'setPort': return {...state, port: parseInt(action.payload)};
-      case 'setBoard': return {...state, board: parseInt(action.payload)};
       case 'setLowCalibration': return {...state, lowCalibration: parseFloat(action.payload).toFixed(2)};
       case 'setHighCalibration': return {...state, highCalibration: parseFloat(action.payload).toFixed(2)};
       default: throw new Error(action.type + " is not supported.");
@@ -42,8 +45,7 @@ function EditSensor(props: any) {
    const location: any = useLocation();
    const navigate: any = useNavigate();
 
-   const sensors: string[] = ['Humidity/Temperature', 'Light', 'Soil moisture', 'Water level'];
-   const sensorsWithCal: string[] = ['Soil moisture', 'Water level'];
+   const sensorsWithCal: string[] = ['1', '4'];
 
    const onIntChange = (event: any) => {
       let value = event.target.value;
@@ -60,7 +62,7 @@ function EditSensor(props: any) {
       });
    };
 
-   const checkPort = (type: string, board: number, port: number) => {
+   const checkPort = (type: string, bus: string, board: string, port: number) => {
       if(port === 0) return false;
 
       if(type === 'Light' && port !== 4 && port !== 3) return false;
@@ -71,18 +73,20 @@ function EditSensor(props: any) {
       if(type !== 'Light')
       {
          if(initSensor.id !== undefined && 
-            !((initSensor.board === board && initSensor.port === port) || 
-               (options[board][port] !== undefined && initSensor.board !== board && initSensor.port !== port))
+            !((initSensor.bus === bus && initSensor.board === board && initSensor.port === port) || 
+               (options[bus][board][port] !== undefined && initSensor.bus === bus && initSensor.board !== board && initSensor.port !== port))
          ) return false;
-         else if(initSensor.id === undefined && options[board][port] !== undefined) return false;
+         else if(initSensor.id === undefined && options[bus][board][port] !== undefined) return false;
       }
-      else if(type === 'Light' && options[board][port].type !== 'Light') return false;
+      else if(type === 'Light' && options[bus][board][port].type !== 'Light') return false;
 
       return true;
    }
 
    const onTypeChange = (event: any) => {
       let type = event.target.value;
+      let filter = options.sensorTypes.filter((sensorType: any) => sensorType.id == type);
+      let sensorType = filter.length > 0 ? filter[0] : {};
 
       if(sensorsWithCal.indexOf(type) === -1)
       {
@@ -99,18 +103,42 @@ function EditSensor(props: any) {
 
       setSensor({
          type: 'setType',
-         payload: type
+         payload: {
+            type: type,
+            sensorType: sensorType
+         }
       });
 
-      if(!checkPort(type, sensor.board, sensor.port))
+      if(!checkPort(sensorType.type, sensor.bus, sensor.board, sensor.port))
          setSensor({
             type: 'setPort',
             payload: 0
          });
    };
 
+   const onBusChange = (event: any) => {
+      setSensor({
+         type: 'setBus',
+         payload: event.target.value
+      });
+   };
+
+   const onBoardChange = (event: any) => {
+      let number = event.target.value;
+      let filter = options.boardInfo.filter((board: any) => (board.bus == sensor.bus && board.number == number));
+      let boardInfo = filter.length > 0 ? filter[0] : {};
+
+      setSensor({
+         type: 'setBoard',
+         payload: {
+            number: event.target.value,
+            boardInfo: boardInfo
+         }
+      });
+   };
+
    const getCalibration = async (event: any) => {
-      let value: any = parseFloat((await sensorRoutes.fetchSensorCalibration('m', sensor.board, sensor.port, 1))['responseMessage']).toFixed(2); //need to put in the serialBus!!!!!!!!!!!!!!!!!!!!!!!!!!
+      let value: any = parseFloat((await sensorRoutes.fetchSensorCalibration(sensor.sensorType.arduino, sensor.board, sensor.port, sensor.bus))['responseMessage']).toFixed(2);
 
       setSensor({
          type: event.target.id,
@@ -139,10 +167,11 @@ function EditSensor(props: any) {
       {
          let newErrors: any[] = [];
 
-         if(sensor.type === '') newErrors.push("type");
-         if(sensor.board === 0) newErrors.push("board");
+         if(sensor.typeId === '') newErrors.push("type");
+         if(sensor.bus === '') newErrors.push("bus");
+         if(sensor.board === '') newErrors.push("board");
          if(sensor.port === 0) newErrors.push("port");
-         if(!checkPort(sensor.type, sensor.board, sensor.port)) newErrors.push("portCombo");
+         if(!checkPort(sensor.type, sensor.bus, sensor.board, sensor.port)) newErrors.push("portCombo");
          if(sensorsWithCal.indexOf(sensor.type) >= 0 && !(sensor.lowCalibration > 0)) newErrors.push("low");
          if(sensorsWithCal.indexOf(sensor.type) >= 0 && !(sensor.highCalibration > 0)) newErrors.push("high");
 
@@ -155,9 +184,9 @@ function EditSensor(props: any) {
             return;
          }
          
-         await sensorRoutes.save(sensor.type, sensor.board, sensor.port,
-            (sensorsWithCal.indexOf(sensor.type) >= 0 ? null : sensor.lowCalibration),
-            (sensorsWithCal.indexOf(sensor.type) >= 0 ? null : sensor.highCalibration),
+         await sensorRoutes.save(sensor.typeId, sensor.boardInfo?.id, sensor.port,
+            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.lowCalibration),
+            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.highCalibration),
             'adamico', sensor.id);
 
          navigate("/sensor");
@@ -171,7 +200,8 @@ function EditSensor(props: any) {
    };
 
    const checkChange = () => {
-      if(sensor.type !== initSensor.type) return true;
+      if(sensor.typeId !== initSensor.typeId) return true;
+      if(sensor.bus !== initSensor.bus) return true;
       if(sensor.port !== initSensor.port) return true;
       if(sensor.board !== initSensor.board) return true;
       if(sensor.lowCalibration !== initSensor.lowCalibration) return true;
@@ -189,18 +219,17 @@ function EditSensor(props: any) {
       {
          data = formatOptions(await sensorRoutes.fetchSensorsWithDetails());
 
-         console.log("ID is: " + id)
          if(id != null)
          {
             edit = formatOne(await sensorRoutes.fetchOneSensorWithDetails(id));
 
-            console.log(edit)
-
             edit = {
                ...initialState,
                ...edit,
-               highCalibration: parseFloat(edit.highCalibration).toFixed(2),
-               lowCalibration: parseFloat(edit.lowCalibration).toFixed(2),
+               bus: edit.boardInfo.bus,
+               board: edit.boardInfo.number,
+               highCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.highCalibration).toFixed(2) : 0,
+               lowCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.lowCalibration).toFixed(2) : 0,
             };
 
             setInitSensor({...edit});
@@ -211,8 +240,6 @@ function EditSensor(props: any) {
                }
             });
          }
-
-         console.log(data)
 
          setOptions(data);
          setLoading(false);
@@ -255,32 +282,45 @@ function EditSensor(props: any) {
                   <Grid2 xs container direction="column" justifyContent="flex-end" alignItems="flex-start" style={{width: '100%'}}>
                      <Grid2 xs>
                         <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
-                        <FormControl key={'type'}>
-                           <FormLabel required>Sensor type</FormLabel>
+                           <FormControl key={'type'}>
+                              <FormLabel required>Sensor type</FormLabel>
                               <Select
                                  id="setType"
                                  onChange={onTypeChange}
-                                 value={sensor.type}
+                                 value={sensor.typeId}
                               >
-                                 <MenuItem key={'type-'} value="">Remove</MenuItem>
-                                 {sensors.map((sensor: string) => <MenuItem key={'type-' + sensor} value={sensor}>{sensor}</MenuItem>)}
+                                 <MenuItem key={'type-'} value=''>Remove</MenuItem>
+                                 {options.sensorTypes.map((sensorType: any) => <MenuItem key={'type-' + sensorType.id} value={'' + sensorType.id}>{sensorType.type}</MenuItem>)}
                               </Select>
                            </FormControl>
                            <Grid2 container className="error-text">
                               {(errors.indexOf("type") !== -1) ? <span>A type is required.</span> : null}
                            </Grid2>
+                           <FormControl key={'bus'}>
+                              <FormLabel required>Serial bus</FormLabel>
+                              <Select
+                                 id="setBus"
+                                 onChange={onBusChange}
+                                 value={sensor.bus}
+                              >
+                                 <MenuItem key={'bus-'} value=''>Remove</MenuItem>
+                                 {options.serialBus.map((bus: any) => <MenuItem key={'bus-' + bus} value={'' + bus}>{bus}</MenuItem>)}
+                              </Select>
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("bus") !== -1) ? <span>A serial bus must be selected.</span> : null}
+                           </Grid2>
                            <FormControl key={'board'}>
                               <FormLabel required>Board</FormLabel>
-                              <TextField
+                              <Select
                                  id="setBoard"
-                                 type="number"
+                                 onChange={onBoardChange}
                                  value={sensor.board}
-                                 onChange={onIntChange}
-                                 InputLabelProps={{
-                                    shrink: true,
-                                 }}
-                                 variant="standard"
-                              />
+                                 disabled={sensor.type === '' || sensor.serialBus === ''}
+                              >
+                                 <MenuItem key={'board-'} value=''>Remove</MenuItem>
+                                 {sensor.bus !== '' ? options.boards[sensor.bus].map((board: any) => <MenuItem key={'board-' + board} value={'' + board}>{board}</MenuItem>) : null}
+                              </Select>
                            </FormControl>
                            <Grid2 container className="error-text">
                               {(errors.indexOf("board") !== -1) ? <span>Board number is required.</span> : null}
@@ -299,7 +339,7 @@ function EditSensor(props: any) {
                                     shrink: true,
                                  }}
                                  variant="standard"
-                                 disabled={(sensor.type !== '' && sensor.board > 0) ? false : true}
+                                 disabled={(sensor.typeId !== '' && sensor.board > 0) ? false : true}
                                  helperText="Select a type and input a board number first."
                               />
                            </FormControl>
@@ -310,30 +350,30 @@ function EditSensor(props: any) {
                               {(errors.indexOf("portCombo") !== -1) ? <span>Board and port combo is in use or not valid.</span> : null}
                            </Grid2>
                            <FormControl key={'lowCalibration'}>
-                              <FormLabel required={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? false : true}>Low calibration</FormLabel>
+                              <FormLabel required={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? false : true}>Low calibration</FormLabel>
                               <Grid2>
                                  <TextField
                                     value={sensor.lowCalibration}
                                     inputProps={{ readOnly: true }}
                                     variant="standard"
-                                    disabled={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? true : false}
+                                    disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false}
                                  />
-                                 <Button id="setLowCalibration" disabled={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
+                                 <Button id="setLowCalibration" disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
                               </Grid2>
                            </FormControl>
                            <Grid2 container className="error-text">
                               {(errors.indexOf("low") !== -1) ? <span>Please run the calibration to get the low configuration.</span> : null}
                            </Grid2>
                            <FormControl key={'highCalibration'}>
-                              <FormLabel required={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? false : true}>High calibration</FormLabel>
+                              <FormLabel required={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? false : true}>High calibration</FormLabel>
                               <Grid2>
                                  <TextField
                                     value={sensor.highCalibration}
                                     inputProps={{ readOnly: true }}
                                     variant="standard"
-                                    disabled={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? true : false}
+                                    disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false}
                                  />
-                                 <Button id="setHighCalibration" disabled={(sensor.type === undefined || sensorsWithCal.indexOf(sensor.type) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
+                                 <Button id="setHighCalibration" disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
                               </Grid2>
                            </FormControl>
                            <Grid2 container className="error-text">

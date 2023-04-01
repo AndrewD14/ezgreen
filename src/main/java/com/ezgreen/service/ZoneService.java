@@ -17,7 +17,7 @@ public class ZoneService
 	private ZoneRepository zoneRepository;
 	
 	@Async
-	public CompletableFuture<List<Zone>> fetchSensorTypes()
+	public CompletableFuture<List<Zone>> fetchZones()
 	{
 		List<Zone> zones = zoneRepository.findAll();
 

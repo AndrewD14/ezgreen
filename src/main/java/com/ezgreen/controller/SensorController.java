@@ -128,6 +128,7 @@ public class SensorController
 		try
 		{
 			//Kicks of multiple, asynchronous calls
+			CompletableFuture<List<Board>> boards = boardService.fetchBoards();
 			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironmentWithSensors();
 			CompletableFuture<List<Plant>> plants = plantService.fetchPlantsWithSensor();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllSensors();
@@ -135,12 +136,14 @@ public class SensorController
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
+					boards,
 					environments,
 					plants,
 					sensors,
 					sensorTypes
 			).join();
 			
+			response.setBoards(boards.get());
 			response.setEnvironments(environments.get());
 			response.setPlants(plants.get());
 			response.setSensors(sensors.get());

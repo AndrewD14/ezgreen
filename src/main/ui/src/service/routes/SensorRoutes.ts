@@ -55,12 +55,11 @@ class SensorRoutes
          })
       })).data;
 
-console.log(response)
       return response;
    }
 
    //this will save the new or edit of a sensor
-   async save(type: string, board: number, port: number, lowCalibration: number | null, highCalibration: number | null,
+   async save(type: string, boardId: number, port: number, lowCalibration: number | null, highCalibration: number | null,
       username: string, id: string)
    {
       const response = (await this.client({
@@ -68,7 +67,7 @@ console.log(response)
          method: 'PUT',
          data: JSON.stringify({
             type: type,
-            board: board,
+            boardId: boardId,
             port: port,
             lowCalibration: lowCalibration,
             highCalibration: highCalibration,

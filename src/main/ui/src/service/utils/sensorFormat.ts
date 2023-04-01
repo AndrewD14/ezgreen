@@ -27,18 +27,34 @@ export function formatAll(data: any)
 
 export function formatOptions(data: any)
 {
+   let options: any = {sensorTypes: data.sensorTypes, serialBus: Array.from(new Set(data.boards.map((board: any) => {return board.bus}))), boardInfo: data.boards};
+   let possibleBoards: any = {};
    let portsUsed: any = {};
 
+   data.boards.map((board: any) => {
+      if(possibleBoards[board.bus] === undefined) possibleBoards[board.bus] = [];
+
+      if(possibleBoards[board.bus].indexOf(board.number) < 0) possibleBoards[board.bus].push(board.number);
+   });
+
+   options['boards'] = possibleBoards;
+
    data.sensors.forEach((sensor: any) => {
-      if(portsUsed[sensor.board] === undefined) portsUsed[sensor.board] = {};
+      let board = {...data.boards.filter((board: any) => board.id === sensor.boardId)[0]};
+      let sensorType = {...data.sensorTypes.filter((sensorType: any) => sensorType.id === sensor.typeId)[0]};
+
+      if(portsUsed[board.bus] === undefined) portsUsed[board.bus] = {};
+      if(portsUsed[board.bus][board.number] === undefined) portsUsed[board.bus][board.number] = {};
       
-      portsUsed[sensor.board][sensor.port] = {
-         type: sensor.type,
+      portsUsed[board.bus][board.number][sensor.port] = {
+         type: sensorType.type,
          multiple: (sensor.type === 'Light' ? true : false)
       }
    });
 
-   return portsUsed;
+   options['usedPorts'] = portsUsed;
+
+   return options;
 }
 
 export function formatOne(data: any)
