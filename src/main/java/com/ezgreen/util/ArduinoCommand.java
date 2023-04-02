@@ -117,12 +117,9 @@ public class ArduinoCommand
 	public void initEnvironments() throws Exception
 	{
 		List<Environment> environments = environmentRepository.findAll();
-		String command = sendEnvrionmentCount(environments);
 		Iterator<Environment> itr = environments.iterator();
 		
-		System.out.print(command);
-		if(arduino.checkGood()) arduino.write(command);
-		else System.out.println("Arduino port is not working.");
+		processEnvironmentCount(environments);
 		
 		while(itr.hasNext())
 		{
@@ -143,6 +140,15 @@ public class ArduinoCommand
 			
 			processRelay(relay);
 		}
+	}
+	
+	public void processEnvironmentCount(List<Environment> environments) throws Exception
+	{
+		String command = sendEnvrionmentCount(environments);
+		
+		System.out.print(command);
+		if(arduino.checkGood()) arduino.write(command);
+		else System.out.println("Arduino port is not working.");
 	}
 	
 	public void processPlant(Plant plant) throws Exception
