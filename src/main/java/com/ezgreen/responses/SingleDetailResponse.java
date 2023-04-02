@@ -27,7 +27,9 @@ public class SingleDetailResponse extends EZGreenResponse
 	PlantType plantType;
 	PotSize potSize;
 	Relay relay;
+	List<Relay> relays;
 	RelayType relayType;
+	List<RelayType> relayTypes;
 	Sensor sensor;
 	List<Sensor> sensors;
 	SensorType sensorType;

@@ -11,6 +11,7 @@ import { formatOne, formatOptions } from '../../service/utils/sensorFormat';
 const initialState: any = {
    id: null,
    typeId: '',
+   number: '',
    bus: '',
    boardInfo: {},
    board: '',
@@ -25,8 +26,9 @@ function reducer(state: any, action: any)
    {
       case 'setup': return {...state, ...action.payload}
       case 'setType': return {...state, typeId: action.payload.type, sensorType: {...action.payload.sensorType}};
+      case 'setNumber': return {...state, number: action.payload};
       case 'setBus': return {...state, bus: action.payload};
-      case 'setBoard': return {...state, board: action.payload.number, boardInfo: {...action.payload.board}};
+      case 'setBoard': return {...state, board: action.payload.number, boardInfo: {...action.payload.boardInfo}};
       case 'setPort': return {...state, port: parseInt(action.payload)};
       case 'setLowCalibration': return {...state, lowCalibration: parseFloat(action.payload).toFixed(2)};
       case 'setHighCalibration': return {...state, highCalibration: parseFloat(action.payload).toFixed(2)};
@@ -51,34 +53,31 @@ function EditSensor(props: any) {
       let value = event.target.value;
       let id = event.target.id;
 
-      if(isNaN(value)) return;
-      if(value < 0) return;
-
-      value = parseInt(value);
+      if(value !== '' && parseInt(value) < 0) return;
 
       setSensor({
          type: id,
-         payload: value
+         payload: (value !== '' ? parseInt(value) : value)
       });
    };
 
-   const checkPort = (type: string, bus: string, board: string, port: number) => {
+   const checkPort = (type: number, bus: string, board: string, port: number) => {
       if(port === 0) return false;
 
-      if(type === 'Light' && port !== 3 && port !== 4) return false;
-      if(type === 'Soil moisture'&& (port % 2 === 0 || port === 3)) return false;
-      if(type === 'Water level' && port % 2 === 0 ) return false;
-      if(type === 'Humidity/Temperature' && port !== 6 && port !== 8) return false;
+      if(type === 3 && port !== 3 && port !== 4) return false; //light
+      if(type === 4 && (port % 2 === 0 || port === 3)) return false; //soil moisture
+      if(type === 1 && port % 2 === 0 ) return false; //water level
+      if(type === 2 && port !== 6 && port !== 8) return false; //humidity/temparature
 
-      if(type !== 'Light')
+      if(type !== 3)
       {
-         if(initSensor.id !== undefined && 
-            !((initSensor.bus === bus && initSensor.board === board && initSensor.port === port) || 
-               (options[bus][board][port] !== undefined && initSensor.bus === bus && initSensor.board !== board && initSensor.port !== port))
-         ) return false;
-         else if(initSensor.id === undefined && options[bus][board][port] !== undefined) return false;
+         if(initSensor.id !== null && !((initSensor.bus === bus && initSensor.board === board && initSensor.port === port) ||
+               (options.usedPorts[bus] !== undefined && options.usedPorts[bus][board] !== undefined && options.usedPorts[bus][board][port] !== undefined && initSensor.bus === bus && initSensor.board !== board && initSensor.port !== port)))
+                  return false;
+         else if(initSensor.id === null && options.usedPorts[bus] !== undefined && options.usedPorts[bus][board] !== undefined && options.usedPorts[bus][board][port] !== undefined)
+            return false;
       }
-      else if(type === 'Light' && options[bus][board][port].type !== 'Light') return false;
+      else if(type === 3 && options.usedPorts[bus] !== undefined && options.usedPorts[bus][board] !== undefined && options.usedPorts[bus][board][port] !== undefined && options.usedPorts[bus][board][port].type !== 3) return false;
 
       return true;
    }
@@ -173,9 +172,10 @@ function EditSensor(props: any) {
          if(sensor.bus === '') newErrors.push("bus");
          if(sensor.board === '') newErrors.push("board");
          if(sensor.port === 0) newErrors.push("port");
-         if(!checkPort(sensor.type, sensor.bus, sensor.board, sensor.port)) newErrors.push("portCombo");
-         if(sensorsWithCal.indexOf(sensor.type) >= 0 && !(sensor.lowCalibration > 0)) newErrors.push("low");
-         if(sensorsWithCal.indexOf(sensor.type) >= 0 && !(sensor.highCalibration > 0)) newErrors.push("high");
+         if(sensor.number === '') newErrors.push("number");
+         if(!checkPort(sensor.sensorType.id, sensor.bus, sensor.board, sensor.port)) newErrors.push("portCombo");
+         if(sensorsWithCal.indexOf(sensor.typeId) >= 0 && !(sensor.lowCalibration > 0)) newErrors.push("low");
+         if(sensorsWithCal.indexOf(sensor.typeId) >= 0 && !(sensor.highCalibration > 0)) newErrors.push("high");
 
          setError(newErrors);
          setPageError("");
@@ -185,8 +185,8 @@ function EditSensor(props: any) {
             setSaving(false);
             return;
          }
-         
-         await sensorRoutes.save(sensor.typeId, sensor.boardInfo?.id, sensor.port,
+
+         await sensorRoutes.save(sensor.typeId, sensor.number, sensor.boardInfo?.id, sensor.port,
             (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.lowCalibration),
             (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.highCalibration),
             'adamico', sensor.id);
@@ -203,6 +203,7 @@ function EditSensor(props: any) {
 
    const checkChange = () => {
       if(sensor.typeId !== initSensor.typeId) return true;
+      if(sensor.number !== initSensor.number) return true;
       if(sensor.bus !== initSensor.bus) return true;
       if(sensor.port !== initSensor.port) return true;
       if(sensor.board !== initSensor.board) return true;
@@ -214,7 +215,7 @@ function EditSensor(props: any) {
 
    const fetchData = async () => {
       let data: any = {};
-      let edit: any = {};
+      let edit: any = {...initialState};
       let id = location?.state?.sensorId || null;
 
       try
@@ -226,7 +227,6 @@ function EditSensor(props: any) {
             edit = formatOne(await sensorRoutes.fetchOneSensorWithDetails(id));
 
             edit = {
-               ...initialState,
                ...edit,
                bus: edit.boardInfo.bus,
                board: edit.boardInfo.number,
@@ -234,7 +234,6 @@ function EditSensor(props: any) {
                lowCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.lowCalibration).toFixed(2) : 0,
             };
 
-            setInitSensor({...edit});
             setSensor({
                type: 'setup',
                payload: {
@@ -242,6 +241,8 @@ function EditSensor(props: any) {
                }
             });
          }
+
+         setInitSensor({...edit});
 
          setOptions(data);
          setLoading(false);
@@ -297,6 +298,22 @@ function EditSensor(props: any) {
                            </FormControl>
                            <Grid2 container className="error-text">
                               {(errors.indexOf("type") !== -1) ? <span>A type is required.</span> : null}
+                           </Grid2>
+                           <FormControl key={'number'}>
+                              <FormLabel required>Number</FormLabel>
+                              <TextField
+                                 id="setNumber"
+                                 type="number"
+                                 value={sensor.number}
+                                 onChange={onIntChange}
+                                 InputLabelProps={{
+                                    shrink: true,
+                                 }}
+                                 variant="standard"
+                              />
+                           </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("number") !== -1) ? <span>Sensor number is required.</span> : null}
                            </Grid2>
                            <FormControl key={'bus'}>
                               <FormLabel required>Serial bus</FormLabel>

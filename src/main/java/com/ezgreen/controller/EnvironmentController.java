@@ -1,5 +1,6 @@
 package com.ezgreen.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -7,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +21,7 @@ import com.ezgreen.models.SensorType;
 import com.ezgreen.repository.EnvironmentRepository;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.repository.SensorTypeRepository;
+import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.EnvironmentService;
@@ -52,6 +56,44 @@ public class EnvironmentController
 		this.sensorRepository = sensorRepository;
 		this.sensorTypeRepository = sensorTypeRepository;
 		this.sensorTypeService = sensorTypeService;
+	}
+	
+	@PutMapping("/")
+	public ResponseEntity<?> createEnvironment(@RequestBody String request)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+
+		if (request == null || request.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
+
+		try
+		{
+			response = environmentService.saveAndEditEnvironment(request, (long) 0);
+		}
+		catch (IOException e)
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+		
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> editEnvironment(@RequestBody String request, @PathVariable(value = "id") Long environmentId)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+
+		if (request == null || request.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
+		
+		try
+		{
+			response = environmentService.saveAndEditEnvironment(request, (long) environmentId);
+		}
+		catch (Exception e)
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
 	}
 	
 	@GetMapping(value="/configoptions", produces = "application/json")
@@ -105,11 +147,21 @@ public class EnvironmentController
 		try
 		{
 			Environment environment = environmentRepository.fetchById(environmentId);
+			CompletableFuture<List<Relay>> relays = relayService.fetchRelayByEnvironmentId(environmentId);
+			CompletableFuture<List<RelayType>> relayTypes = relayTypeService.fetchAllRelayTypes();
 			List<Sensor> sensors  = sensorRepository.fetchSensorsWithEnvironmentId(environmentId);
 			SensorType sensorType = sensorTypeRepository.fetchSensorTypeWithEnvironmentId(environmentId);
 			List<SensorType> sensorTypes = sensorTypeRepository.findAll();
 			
+			//Wait until they are all done
+			CompletableFuture.allOf(
+					relays,
+					relayTypes
+			).join();
+			
 			response.setEnvironment(environment);
+			response.setRelays(relays.get());
+			response.setRelayTypes(relayTypes.get());
 			response.setSensors(sensors);
 			response.setSensorType(sensorType);
 			response.setSensorTypes(sensorTypes);
@@ -136,17 +188,23 @@ public class EnvironmentController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironments();
+			CompletableFuture<List<Relay>> relays = relayService.fetchAllRelays();
+			CompletableFuture<List<RelayType>> relayTypes = relayTypeService.fetchAllRelayTypes();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllEnvironmentSensors();
 			CompletableFuture<List<SensorType>> sensorTypes = sensorTypeService.fetchSensorTypes();
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					environments,
+					relays,
+					relayTypes,
 					sensors,
 					sensorTypes
 			).join();
 			
 			response.setEnvironments(environments.get());
+			response.setRelays(relays.get());
+			response.setRelayTypes(relayTypes.get());
 			response.setSensors(sensors.get());
 			response.setSensorTypes(sensorTypes.get());
 			

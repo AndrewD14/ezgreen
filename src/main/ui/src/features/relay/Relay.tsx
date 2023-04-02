@@ -39,7 +39,7 @@ function Relay() {
 
    return (
       <div>
-         <h3>Relay: {relay?.type.type + ' (' + relay?.number + ')'}</h3>
+         <h3>Actuator: {relay?.type.type + ' (' + relay?.number + ')'}</h3>
          <Grid2 container xl={6}>
             <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
@@ -51,7 +51,7 @@ function Relay() {
                   <Grid2 xs>{relay?.board.id}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
-                  <Grid2 xs={2}><label className='labels'>Port</label></Grid2>
+                  <Grid2 xs={2}><label className='labels'>Relay</label></Grid2>
                   <Grid2 xs>{relay?.relay}</Grid2>
                </Grid2>
                <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">

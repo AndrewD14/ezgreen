@@ -45,7 +45,7 @@ public class Sensor implements Serializable
 	@Column(name="environment_id")
 	private Integer environmentId;
 	
-	@Column(name="delete")
+	@Column(name="delete", nullable = false)
 	private Integer delete;
 
 	@Column(name = "created_by", nullable = false)

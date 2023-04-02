@@ -70,6 +70,34 @@ public class SensorService
 		}
 	}
 	
+	public EZGreenResponse addSensorEnvironment(String request, Long sensorId) throws IOException
+	{
+		EZGreenResponse response = new EZGreenResponse();
+		Sensor sensor = sensorRepository.fetchById(sensorId);
+		JSONObject requestJson = new JSONObject(request);
+		
+		sensor.setEnvironmentId(requestJson.getInt("environmentId"));
+		sensor.setUpdateBy(requestJson.getString("username"));
+		sensor.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
+		
+		try
+		{
+			sensorRepository.save(sensor);
+			
+			response.setStatusCode(HttpStatus.OK);
+			response.setResponseMessage(Long.toString(sensor.getId()));
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+			response.setResponseMessage("saveAndEditSensor error occur: " + e.getCause());
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return response;
+	}
+	
 	public EZGreenResponse saveAndEditSensor(String request, Long sensorId) throws IOException
 	{
 		EZGreenResponse response = new EZGreenResponse();
@@ -84,16 +112,15 @@ public class SensorService
 		{
 			sensor.setCreateBy(requestJson.getString("username"));
 			sensor.setCreateTs(LocalDateTime.now(ZoneOffset.UTC));
+			sensor.setDelete(0);
 		}
 		
 		sensor.setBoardId(requestJson.getInt("boardId"));
-		sensor.setDelete(!requestJson.isNull("delete") ? requestJson.getInt("delete") : null);
 		sensor.setNumber(requestJson.getInt("number"));
 		sensor.setPort(requestJson.getInt("port"));
 		sensor.setTypeId(requestJson.getInt("typeId"));
 		sensor.setLowCalibration(!requestJson.isNull("lowCalibration") ? requestJson.getDouble("lowCalibration") : null);
 		sensor.setHighCalibration(!requestJson.isNull("highCalibration") ? requestJson.getDouble("highCalibration") : null);
-		sensor.setEnvironmentId(!requestJson.isNull("environmentId") ? requestJson.getInt("environmentId") : null);
 		sensor.setUpdateBy(requestJson.getString("username"));
 		sensor.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		
@@ -106,6 +133,8 @@ public class SensorService
 		}
 		catch(Exception e)
 		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
 			response.setResponseMessage("saveAndEditSensor error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -140,7 +169,7 @@ public class SensorService
 	@Async
 	public CompletableFuture<List<Sensor>> fetchAllEnvironmentSensors()
 	{
-		List<Sensor> sensors = sensorRepository.findByEnvironmentIdIsNotNull();
+		List<Sensor> sensors = sensorRepository.fetchAllEnvironmentSensors();
 
 		return CompletableFuture.completedFuture(sensors);
 	}

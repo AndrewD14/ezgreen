@@ -15,6 +15,7 @@ import Environment from './features/environment/Environment';
 import EditEnvironment from './features/environment/EditEnvironment';
 import Relays from './features/relay/Relays';
 import Relay from './features/relay/Relay';
+import EditRelay from './features/relay/EditRelay';
 import Error from './features/error/Error';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
          {
             path: "/relay/:id",
             element: <Relay />,
+         },
+         {
+            path: "/relay/edit/:id?",
+            element: <EditRelay />,
          },
        ],
    },

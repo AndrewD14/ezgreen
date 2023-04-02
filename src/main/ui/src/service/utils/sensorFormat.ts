@@ -47,8 +47,8 @@ export function formatOptions(data: any)
       if(portsUsed[board.bus][board.number] === undefined) portsUsed[board.bus][board.number] = {};
       
       portsUsed[board.bus][board.number][sensor.port] = {
-         type: sensorType.type,
-         multiple: (sensor.type === 'Light' ? true : false)
+         type: sensorType.id,
+         multiple: (sensor.id === 3 ? true : false)
       }
    });
 

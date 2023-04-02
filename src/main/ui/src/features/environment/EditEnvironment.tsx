@@ -16,7 +16,7 @@ const initialState: any = {
    name: '',
    sensors: [],
    relays: [],
-   sensorType: '',
+   sensorTypeId: '',
    highDesire: 0,
    lowDesire: 0,
    target: 0,
@@ -33,7 +33,7 @@ function reducer(state: any, action: any)
       case 'setName': return {...state, name: action.payload};
       case 'setSensors': return {...state, sensors: [...action.payload]};
       case 'setRelays': return {...state, relays: [...action.payload]};
-      case 'setSensorType': return {...state, sensorType: action.payload};
+      case 'setSensorType': return {...state, sensorTypeId: action.payload};
       case 'setHighDesire': return {...state, highDesire: action.payload};
       case 'setLowDesire': return {...state, lowDesire: action.payload};
       case 'setTarget': return {...state, target: action.payload};
@@ -44,15 +44,15 @@ function reducer(state: any, action: any)
    }
 }
 
-function not(a: readonly number[], b: readonly number[]) {
+function not(a: any[], b: any[]) {
    return a.filter((value) => b.indexOf(value) === -1);
 }
 
-function intersection(a: readonly number[], b: readonly number[]) {
+function intersection(a: any[], b: any[]) {
    return a.filter((value) => b.indexOf(value) !== -1);
 }
 
-function union(a: readonly number[], b: readonly number[]) {
+function union(a: any[], b: any[]) {
    return [...a, ...not(b, a)];
 }
 
@@ -62,10 +62,8 @@ function EditEnvironment(props: any) {
    const [options, setOptions] = useState<any>({});
    const [checkedSensor, setSensorChecked] = React.useState<any[]>([]);
    const [leftSensor, setSensorLeft] = React.useState<any[]>([]);
-   const [rightSensor, setSensorRight] = React.useState<any[]>([]);
    const [checkedRelay, setRelayChecked] = React.useState<any[]>([]);
    const [leftRelay, setRelayLeft] = React.useState<any[]>([]);
-   const [rightRelay, setRelayRight] = React.useState<any[]>([]);
    const [loading, setLoading] = useState(true);
    const [errors, setError] = useState<any[]>([]);
    const [pageError, setPageError] = useState<string>("");
@@ -74,9 +72,9 @@ function EditEnvironment(props: any) {
    const navigate: any = useNavigate();   
 
    const leftSensorChecked = intersection(checkedSensor, leftSensor);
-   const rightSensorChecked = intersection(checkedSensor, rightSensor);
+   const rightSensorChecked = intersection(checkedSensor, environment.sensors);
    const leftRelayChecked = intersection(checkedRelay, leftRelay);
-   const rightRelayChecked = intersection(checkedRelay, rightRelay);
+   const rightRelayChecked = intersection(checkedRelay, environment.relays);
 
    const sensorToRelay: any = {
       '1': ['W'],
@@ -126,35 +124,126 @@ function EditEnvironment(props: any) {
    };
 
    const handleSensorCheckedRight = () => {
-      setSensorRight(rightSensor.concat(leftSensorChecked));
-      setSensorLeft(not(leftSensor, leftSensorChecked));
+      let left: any[] = not(leftSensor, leftSensorChecked);
+      let right: any[] = environment.sensors.concat(leftSensorChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setEnvironment({
+         type: 'setSensors',
+         payload: right
+      });
+      setSensorLeft(left);
       setSensorChecked(not(checkedSensor, leftSensorChecked));
    };
 
    const handleSensorCheckedLeft = () => {
-      setSensorLeft(leftSensor.concat(rightSensorChecked));
-      setSensorRight(not(rightSensor, rightSensorChecked));
+      let left: any[] = leftSensor.concat(rightSensorChecked);
+      let right: any[] = not(environment.sensors, rightSensorChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setSensorLeft(left);
+      setEnvironment({
+         type: 'setSensors',
+         payload: right
+      });
       setSensorChecked(not(checkedSensor, rightSensorChecked));
    };
 
    const handleRelayCheckedRight = () => {
-      setRelayRight(rightRelay.concat(leftRelayChecked));
-      setRelayLeft(not(leftRelay, leftRelayChecked));
+      let left: any[] = not(leftRelay, leftRelayChecked);
+      let right: any[] = environment.relays.concat(leftRelayChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setEnvironment({
+         type: 'setRelays',
+         payload: right
+      });
+      setRelayLeft(left);
       setRelayChecked(not(checkedRelay, leftRelayChecked));
    };
 
    const handleRelayCheckedLeft = () => {
-      setRelayLeft(leftRelay.concat(rightRelayChecked));
-      setRelayRight(not(rightRelay, rightRelayChecked));
+      let left: any[] = leftRelay.concat(rightRelayChecked);
+      let right: any[] = not(environment.relays, rightRelayChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.type.type < b.type.type) return -1;
+         if(a.type.type > b.type.type) return 1;
+         if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setRelayLeft(left);
+      setEnvironment({
+         type: 'setRelays',
+         payload: right
+      });
       setRelayChecked(not(checkedRelay, rightRelayChecked));
    };
 
-   const filterLeftSensors = () => {      
+   const filterLeftSensors = () => {
       let available: any[] = [];
       
       if(options?.sensors !== undefined)
-         available = options.sensors.filter((sensor: any) => sensor.typeId === environment.sensorType)
-                                    .filter((sensor: any) => sensor.environmentId !== environment.id);
+      {
+         //eslint-disable-next-line
+         available = options.sensors.filter((sensor: any) => sensor.typeId == environment.sensorTypeId)
+                                    .filter((sensor: any) => sensor.environmentId === undefined);
+      }
 
       setSensorLeft(available);
    };
@@ -163,30 +252,43 @@ function EditEnvironment(props: any) {
       let selected: any[] = [];
       
       if(options?.sensors !== undefined)
-         selected = options.sensors.filter((sensor: any) => sensor.typeId === environment.sensorType)
+      {
+         //eslint-disable-next-line
+         selected = options.sensors.filter((sensor: any) => sensor.typeId == environment.sensorTypeId)
                                     .filter((sensor: any) => sensor.environmentId === environment.id);
+      }
 
-      setSensorRight(selected);
+      setEnvironment({
+         type: 'setSensors',
+         payload: selected
+      });
    };
 
    const filterLeftRelays = () => {      
       let available: any[] = [];
       
       if(options?.relays !== undefined)
-         available = options.relays.filter((relay: any) => sensorToRelay[environment.sensorType].indexOf(relay.arduino) >= 0)
-                                    .filter((relay: any) => relay.environmentId !== environment.id);
+      {
+         available = options.relays.filter((relay: any) => sensorToRelay[environment.sensorTypeId].indexOf(relay?.type.arduino) >= 0)
+                                    .filter((relay: any) => relay.environmentId === undefined);
+      }
 
       setRelayLeft(available);
    };
 
    const filterRightRelays = () => {      
       let selected: any[] = [];
-      
-      if(options?.relays !== undefined)
-         selected = options.relays.filter((relay: any) => sensorToRelay[environment.sensorType].indexOf(relay.arduino) >= 0)
-                                  .filter((relay: any) => relay.environmentId === environment.id);
 
-      setSensorRight(selected);
+      if(options?.relays !== undefined)
+      {
+         selected = options.relays.filter((relay: any) => sensorToRelay[environment.sensorTypeId].indexOf(relay.type.arduino) >= 0)
+                                  .filter((relay: any) => relay.environmentId === environment.id);
+      }
+
+         setEnvironment({
+            type: 'setRelays',
+            payload: selected
+         });
    };
 
    //update sensor and relay list for the transfer list component
@@ -199,7 +301,7 @@ function EditEnvironment(props: any) {
    [environment.sensorType]);
 
    const onChange = (event: any) => {
-      console.log(event.target.id)
+
       setEnvironment({
          type: event.target.id,
          payload: event.target.value
@@ -304,11 +406,10 @@ function EditEnvironment(props: any) {
             return;
          }
 
-         // await plantRoutes.save(dateObtain, plant.dead, plant.delete, plant.highMoisture, plant.lowMoisture, plant.monitor, plant.name,
-         //    (plant.number === '' ? null: plant.number), plant.plantTypeId, plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId),
-         //    'adamico', plant.id);
+         await environmentRoutes.save(environment.name, environment.sensorTypeId, environment.lowDesire, environment.highDesire, environment.target,
+            environment.humidity, environment.timeStart, environment.timeEnd, environment.sensors, environment.relays, 'adamico', environment.id);
 
-         // navigate("/");
+         navigate("/environment");
 
          setSaving(false);
       }
@@ -326,10 +427,10 @@ function EditEnvironment(props: any) {
       let timeEnd = null;
       let initTimeEnd = null;
 
-      if(environment?.timeStart !== null) timeStart = environment.timeStart.utc().format('HH:mm:ss');
-      if(initEnvironment?.timeStart !== null) initTimeStart = initEnvironment.timeStart.utc().format('HH:mm:ss');
-      if(environment?.timeEnd !== null) timeEnd = environment.timeEnd.utc().format('HH:mm:ss');
-      if(initEnvironment?.timeEnd !== null) initTimeEnd = initEnvironment.timeEnd.utc().format('HH:mm:ss');
+      if(environment?.timeStart !== null && environment?.timeStart !== undefined) timeStart = environment.timeStart.utc().format('HH:mm:ss');
+      if(initEnvironment?.timeStart !== null && initEnvironment?.timeStart !== undefined) initTimeStart = initEnvironment.timeStart.utc().format('HH:mm:ss');
+      if(environment?.timeEnd !== null && environment?.timeEnd !== undefined) timeEnd = environment.timeEnd.utc().format('HH:mm:ss');
+      if(initEnvironment?.timeEnd !== null && initEnvironment?.timeEnd !== undefined) initTimeEnd = initEnvironment.timeEnd.utc().format('HH:mm:ss');
       if(timeStart !== initTimeStart) return true;
       if(timeEnd !== initTimeEnd) return true;
 
@@ -364,9 +465,11 @@ function EditEnvironment(props: any) {
 
             edit = {
                ...edit,
+               sensorTypeId: edit.sensorType.id,
+               sensors: (edit.sensors !== undefined ? [...edit.sensors] : []),
+               relays: (edit.relays !== undefined ? [...edit.relays] : [])
             };
 
-            setInitEnvironment({...edit});
             setEnvironment({
                type: 'setup',
                payload: {
@@ -375,7 +478,7 @@ function EditEnvironment(props: any) {
             });
          }
 
-         console.log(data)
+         setInitEnvironment(edit);
          setOptions(data);
          setLoading(false);
          setPageError("");
@@ -417,7 +520,7 @@ function EditEnvironment(props: any) {
         <Divider />
         <List
           sx={{
-            width: 200,
+            minWidth: 200,
             height: 230,
             bgcolor: 'background.paper',
             overflow: 'auto',
@@ -426,12 +529,10 @@ function EditEnvironment(props: any) {
           component="div"
           role="list"
         >
-          {items.sort((element1: any, element2: any) => (element1.id < element2.id) ? element1 : element2).map((value: any) => {
-            const labelId = `transfer-list-all-item-${value}-label`;
-  
+          {items.map((value: any) => {  
             return (
               <ListItem
-                key={value}
+                key={'sensor-' + value.id}
                 role="listitem"
                 onClick={handleSensorToggle(value)}
               >
@@ -440,12 +541,9 @@ function EditEnvironment(props: any) {
                     checked={checkedSensor.indexOf(value) !== -1}
                     tabIndex={-1}
                     disableRipple
-                    inputProps={{
-                      'aria-labelledby': labelId,
-                    }}
                   />
                 </ListItemIcon>
-                <ListItemText id={value.id} primary={value.type.type + ' (' + value.number + ')'} />
+                <ListItemText id={value?.id} primary={value?.type.type + ' (' + value?.number + ')'} />
               </ListItem>
             );
           })}
@@ -476,7 +574,7 @@ function EditEnvironment(props: any) {
         <Divider />
         <List
           sx={{
-            width: 200,
+            minWidth: 200,
             height: 230,
             bgcolor: 'background.paper',
             overflow: 'auto',
@@ -485,26 +583,21 @@ function EditEnvironment(props: any) {
           component="div"
           role="list"
         >
-          {items.sort((element1: any, element2: any) => (element1.id < element2.id) ? element1 : element2).map((value: any) => {
-            const labelId = `transfer-list-all-item-${value}-label`;
-  
+          {items.map((value: any) => {  
             return (
               <ListItem
-                key={value}
+                key={'relay-' + value.id}
                 role="listitem"
                 onClick={handleRelayToggle(value)}
               >
                 <ListItemIcon>
                   <Checkbox
-                    checked={checkedSensor.indexOf(value) !== -1}
+                    checked={checkedRelay.indexOf(value) !== -1}
                     tabIndex={-1}
                     disableRipple
-                    inputProps={{
-                      'aria-labelledby': labelId,
-                    }}
                   />
                 </ListItemIcon>
-                <ListItemText id={value.id} primary={value.type.type + ' (' + value.number + ')'} />
+                <ListItemText id={value?.id} primary={value?.type.type + ' (' + value?.number + ')'} />
               </ListItem>
             );
           })}
@@ -551,7 +644,7 @@ function EditEnvironment(props: any) {
                               <FormLabel required>Sensor type</FormLabel>
                               <Select
                                  onChange={onSensorTypeChange}
-                                 value={environment.sensorType}
+                                 value={environment.sensorTypeId}
                               >
                                  <MenuItem key={'sensorType-'} value={''}>Remove</MenuItem>
                                  {options.sensorTypes?.map((sensorType: any) => <MenuItem key={'sensorType-' + sensorType.id} value={sensorType.id}>{sensorType.type}</MenuItem>)}
@@ -685,14 +778,14 @@ function EditEnvironment(props: any) {
                                        </Button>
                                     </Grid2>
                                  </Grid2>
-                                 <Grid2>{customListSensor('Chosen', rightSensor)}</Grid2>
+                                 <Grid2>{customListSensor('Chosen', environment.sensors)}</Grid2>
                               </Grid2>
                            </FormControl>
                            <Grid2 container className="error-text">
                               {(errors.indexOf("sensors") !== -1) ? <span>Please select at least 1 sensor.</span> : null}
                            </Grid2>
                            <FormControl key={'relays'}>
-                              <FormLabel>Relays</FormLabel>
+                              <FormLabel>Actuators</FormLabel>
                               <Grid2 container spacing={2} justifyContent="center" alignItems="center">
                                  <Grid2>{customListRelay('Choices', leftRelay)}</Grid2>
                                  <Grid2>
@@ -719,7 +812,7 @@ function EditEnvironment(props: any) {
                                        </Button>
                                     </Grid2>
                                  </Grid2>
-                                 <Grid2>{customListRelay('Chosen', rightRelay)}</Grid2>
+                                 <Grid2>{customListRelay('Chosen', environment.relays)}</Grid2>
                               </Grid2>
                            </FormControl>
                         </Stack>

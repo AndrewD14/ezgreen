@@ -15,7 +15,21 @@ export function formatAll(data: any)
 
                               return value;
                            });
-      environment.sensorType = data.sensorTypes.filter((sensorType: any) => environment.sensorType === sensorType.id)[0];
+
+      environment.relays = data.relays
+                           .filter((relay: any) => (relay.environmentId === environment.id))
+                           .map((relay:any) => {
+                              let value = {...relay};
+                              
+                              value = {
+                                 ...value,
+                                 type: {...data.relayTypes.filter((relayType:any) => relayType.id === relay.typeId)[0]}
+                              }
+   
+                              return value;
+                           });
+
+         environment.sensorType = data.sensorTypes.filter((sensorType: any) => environment.sensorType === sensorType.id)[0];
       
       return environment;
    });
@@ -25,13 +39,12 @@ export function formatAll(data: any)
 
 export function formatOptions(data: any)
 {
-   console.log(data)
    let options: any = {
       relayTypes: data.relayTypes,
       sensorTypes: data.sensorTypes
    };
 
-   if(data.sensors.length > 0) options.sensors = structuredClone(data.sensors.map((sensor:any) => {
+   if(data.sensors.length > 0) options.sensors = data.sensors.map((sensor:any) => {
       let value = {...sensor};
       
       value = {
@@ -40,9 +53,17 @@ export function formatOptions(data: any)
       }
 
       return value;
-   }));
+   });
 
-   if(data.relays.length > 0) options.relays = structuredClone(data.relays.map((relay:any) => {
+   options.sensors.sort((a: any, b: any) => {
+      if(a.type.type < b.type.type) return -1;
+      if(a.type.type > b.type.type) return 1;
+      if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+      return 0;
+   });
+
+   if(data.relays.length > 0) options.relays = data.relays.map((relay:any) => {
       let value = {...relay};
       
       value = {
@@ -51,7 +72,15 @@ export function formatOptions(data: any)
       }
 
       return value;
-   }));
+   });
+
+   options.relays.sort((a: any, b: any) => {
+      if(a.type.type < b.type.type) return -1;
+      if(a.type.type > b.type.type) return 1;
+      if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+      return 0;
+   });
 
    return options;
 }
@@ -66,6 +95,17 @@ export function formatOne(data: any)
       value = {
          ...value,
          type: {...data.sensorTypes.filter((sensorType:any) => sensorType.id === sensor.typeId)[0]}
+      }
+
+      return value;
+   }));
+
+   if(data.relays.length > 0) environment.relays = structuredClone(data.relays.map((relay:any) => {
+      let value = {...relay};
+      
+      value = {
+         ...value,
+         type: {...data.relayTypes.filter((relayType:any) => relayType.id === relay.typeId)[0]}
       }
 
       return value;

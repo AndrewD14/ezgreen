@@ -31,7 +31,7 @@ export default function Navbar(props: any)
             <Tab component={Link} label="History" to="/history"/>
             <Tab component={Link} label="Environment" to="/environment"/>
             <Tab component={Link} label="Sensors" to="/sensor"/>
-            <Tab component={Link} label="Relays" to="/relay"/>
+            <Tab component={Link} label="Actuators" to="/relay"/>
          </Tabs>
       </Box>
    );

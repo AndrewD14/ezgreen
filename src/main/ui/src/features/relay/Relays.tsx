@@ -164,7 +164,7 @@ function Relays() {
          : <React.Fragment>
             {(alert) ? alert : null}
             <Grid2 container justifyContent="flex-end">
-               <Link to={'/relay/edit/'} style={{ textDecoration: 'none' }}><Button>Add Relay</Button></Link>
+               <Link to={'/relay/edit/'} style={{ textDecoration: 'none' }}><Button>Add Actuator</Button></Link>
             </Grid2>
             <Grid2 container columnSpacing={{ xs: 0, md: 1 }}>
                {relays.map((relay: any) => 

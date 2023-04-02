@@ -53,6 +53,25 @@ public class SensorController
 		this.sensorTypeService = sensorTypeService;
 	}
 	
+	@PutMapping("/environment/{id}")
+	public ResponseEntity<?> addSensorEnvironment(@RequestBody String request, @PathVariable(value = "id") Long sensorId)
+	{
+		EZGreenResponse response = new EZGreenResponse();
+
+		if (request == null || request.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
+
+		try
+		{
+			response = sensorService.addSensorEnvironment(request, (long) sensorId);
+		}
+		catch (IOException e)
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+		
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
+	}
+	
 	@PutMapping("/")
 	public ResponseEntity<?> createSensor(@RequestBody String request)
 	{

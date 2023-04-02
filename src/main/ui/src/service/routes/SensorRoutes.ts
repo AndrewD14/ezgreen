@@ -59,14 +59,15 @@ class SensorRoutes
    }
 
    //this will save the new or edit of a sensor
-   async save(type: string, boardId: number, port: number, lowCalibration: number | null, highCalibration: number | null,
+   async save(type: string, number: number, boardId: number, port: number, lowCalibration: number | null, highCalibration: number | null,
       username: string, id: string)
    {
       const response = (await this.client({
          url: baseRoute + (id ? id : ''),
          method: 'PUT',
          data: JSON.stringify({
-            type: type,
+            typeId: type,
+            number: number,
             boardId: boardId,
             port: port,
             lowCalibration: lowCalibration,

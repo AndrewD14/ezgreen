@@ -115,5 +115,24 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			nativeQuery = true)
 	List<Sensor> fetchSensorsWithEnvironmentId(@Param("environmentId") Long environmentId);
 	
-	List<Sensor> findByEnvironmentIdIsNotNull();
+	@Query(value = "SELECT " +
+			"s.id," +
+			"s.number," +
+			"s.type_id," +
+			"s.board_id," +
+			"s.port," +
+			"s.low_calibration," +
+			"s.high_calibration," +
+			"s.environment_id," +
+			"s.delete," +
+			"s.created_by," +
+			"s.updated_by," +
+			"s.created_ts," +
+			"s.updated_ts" +
+			" FROM sensor s " +
+			" LEFT OUTER JOIN environment e ON s.environment_id = e.id " +
+			" INNER JOIN sensor_type st ON st.id = s.type_id " +
+			" WHERE st.type != 'Soil moisture'",
+			nativeQuery = true)
+	List<Sensor> fetchAllEnvironmentSensors();
 }
