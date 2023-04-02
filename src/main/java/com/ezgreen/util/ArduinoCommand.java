@@ -1,5 +1,7 @@
 package com.ezgreen.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -410,15 +412,22 @@ public class ArduinoCommand
 	{
 		String command = "";
 		
-		Double desireLowVolt = sensor.getLowCalibration() - plant.getLowMoisture()/100.00 * (sensor.getLowCalibration() - sensor.getHighCalibration());
-		Double desireHighVolt = sensor.getLowCalibration() - plant.getHighMoisture()/100.00 * (sensor.getLowCalibration() - sensor.getHighCalibration());
+		Double desireLowVolt = BigDecimal.valueOf(sensor.getLowCalibration() - 
+					plant.getLowMoisture()/100.00 * 
+					(sensor.getLowCalibration() - sensor.getHighCalibration())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		Double desireHighVolt = BigDecimal.valueOf(sensor.getLowCalibration() - 
+				plant.getHighMoisture()/100.00 * 
+				(sensor.getLowCalibration() - sensor.getHighCalibration())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		
+		Double lowCal = BigDecimal.valueOf(sensor.getLowCalibration()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		Double highCal = BigDecimal.valueOf(sensor.getHighCalibration()).setScale(2, RoundingMode.HALF_UP).doubleValue();
 		
 		command = command + plant.getId() + ";";
 		command = command + board.getBus() + ";";
 		command = command + board.getNumber() + ";";
 		command = command + sensor.getPort() + ";";
-		command = command + sensor.getLowCalibration() + ";";
-		command = command + sensor.getHighCalibration() + ";";
+		command = command + lowCal + ";";
+		command = command + highCal + ";";
 		command = command + desireLowVolt + ";";
 		command = command + desireHighVolt + ";";
 		command = command + potSize.getId() + ";";
