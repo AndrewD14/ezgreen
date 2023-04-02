@@ -72,6 +72,11 @@ public class ArduinoCommand
 		this.relayTypeService = relayTypeService;
 	}
 	
+	public boolean checkArduino()
+	{
+		return arduino.checkGood();
+	}
+	
 	public void init() throws Exception
 	{
 		String command = sendTime();

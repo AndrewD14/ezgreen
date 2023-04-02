@@ -3,7 +3,6 @@ package com.ezgreen.connection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -99,6 +98,11 @@ public class ArduinoListener implements SerialPortDataListener
 	    {
 	    	System.out.println("Arduino response: " + value);
 	    }
+	}
+	
+	public List<HttpServletResponse> getResponses()
+	{
+		return responses;
 	}
 	
 	public void setPort(SerialPort port)

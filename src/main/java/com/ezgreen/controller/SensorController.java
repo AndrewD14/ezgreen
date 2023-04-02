@@ -114,6 +114,7 @@ public class SensorController
 	public void getSensorCalibration(HttpServletResponse response, @RequestBody String request)
 	{
 		boolean done = false;
+		int count = 0;
 		
 		try
 		{
@@ -122,7 +123,9 @@ public class SensorController
 			do
 			{
 				done = response.isCommitted();
-			}while(!done);
+				count++;
+				Thread.sleep(10);
+			}while(!done && count < 2000);
 		}
 		catch (Exception e)
 		{
