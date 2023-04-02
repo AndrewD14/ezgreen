@@ -596,14 +596,16 @@ public class ArduinoCommand
 	
 	public static String sendWaterLevel(Sensor sensor, Board board)
 	{
+		Double lowCal = BigDecimal.valueOf(sensor.getLowCalibration()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		Double highCal = BigDecimal.valueOf(sensor.getHighCalibration()).setScale(2, RoundingMode.HALF_UP).doubleValue();
 		String command = "aw;";
 		
 		command = command + sensor.getId() + ";";
 		command = command + board.getBus() + ";";
 		command = command + board.getNumber() + ";";
 		command = command + sensor.getPort() + ";";
-		command = command + sensor.getHighCalibration() + ";";
-		command = command + sensor.getLowCalibration() + "\n";
+		command = command + lowCal + ";";
+		command = command + highCal + "\n";
 		
 		return command;
 	}
