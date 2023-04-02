@@ -98,12 +98,13 @@ function EditRelay(props: any) {
       try
       {
          let newErrors: any[] = [];
-
+console.log(options)
+console.log(relay)
          if(relay.typeId === '') newErrors.push("type");
          if(relay.bus === '') newErrors.push("bus");
          if(relay.board === '') newErrors.push("board");
          if(relay.relay === 0) newErrors.push("relay");
-         if(options.portsUsed[relay.bus][relay.board].indexOf(relay.relay) !== -1) newErrors.push("relayCombo");
+         if(options.portsUsed[relay.bus] !== undefined && options.portsUsed[relay.bus][relay.board] !== undefined && options.portsUsed[relay.bus][relay.board].indexOf(relay.relay) !== -1) newErrors.push("relayCombo");
 
          setError(newErrors);
          setPageError("");

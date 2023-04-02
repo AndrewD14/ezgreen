@@ -87,7 +87,7 @@ public class RelayService
 		{
 			relayRepository.save(relay);
 			
-			command.processRelay(relay);
+			if(relay.getEnvironmentId() != null) command.processRelay(relay);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(relay.getId()));
