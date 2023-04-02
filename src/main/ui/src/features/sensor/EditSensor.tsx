@@ -231,8 +231,8 @@ function EditSensor(props: any) {
                bus: edit.boardInfo.bus,
                board: edit.boardInfo.id,
                typeId: '' + edit.typeId,
-               highCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.highCalibration).toFixed(2) : 0,
-               lowCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.lowCalibration).toFixed(2) : 0,
+               highCalibration: sensorsWithCal.indexOf('' + edit.typeId) >= 0 ? parseFloat(edit.highCalibration).toFixed(2) : 0,
+               lowCalibration: sensorsWithCal.indexOf('' + edit.typeId) >= 0 ? parseFloat(edit.lowCalibration).toFixed(2) : 0,
             };
 
             setSensor({

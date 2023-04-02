@@ -261,7 +261,7 @@ public class ArduinoCommand
 		}
 		else if(relayType.getArduino().equals("W"))
 		{
-			command = sendWaterPump(relay, environment, board);
+			command = sendWaterPump(relay, board);
 			
 			System.out.print(command);
 			if(arduino.checkGood()) arduino.write(command);
@@ -568,15 +568,16 @@ public class ArduinoCommand
 		else System.out.println("Arduino port is not working.");
 	}
 	
-	public static String sendWaterLevel(Sensor sensor, Environment environment, Board board)
+	public static String sendWaterLevel(Sensor sensor, Board board)
 	{
 		String command = "aw;";
 		
 		command = command + sensor.getId() + ";";
-		command = command + environment.getId() + ";";
 		command = command + board.getBus() + ";";
 		command = command + board.getNumber() + ";";
-		command = command + sensor.getPort() + "\n";
+		command = command + sensor.getPort() + ";";
+		command = command + sensor.getHighCalibration() + ";";
+		command = command + sensor.getLowCalibration() + "\n";
 		
 		return command;
 	}
@@ -592,12 +593,11 @@ public class ArduinoCommand
 		else System.out.println("Arduino port is not working.");
 	}
 	
-	public static String sendWaterPump(Relay relay, Environment environment, Board board)
+	public static String sendWaterPump(Relay relay, Board board)
 	{
 		String command = "aW;";
 		
 		command = command + relay.getId() + ";";
-		command = command + environment.getId() + ";";
 		command = command + board.getBus() + ";";
 		command = command + relay.getRelay() + ";";
 		command = command + board.getNumber() + "\n";

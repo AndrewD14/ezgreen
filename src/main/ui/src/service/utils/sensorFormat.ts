@@ -66,6 +66,6 @@ export function formatOne(data: any)
 
    sensor.sensorType = {...data.sensorType};
    sensor.boardInfo = {...data.board};
-
+console.log(sensor)
    return sensor;
 }

@@ -593,7 +593,7 @@ function EditEnvironment(props: any) {
 
             edit = {
                ...edit,
-               sensorTypeId: edit.sensorType.id,
+               sensorTypeId: (edit.sensorType == undefined ? '0' : edit.sensorType.id),
                sensors: (edit.sensors !== undefined ? [...edit.sensors] : []),
                relays: (edit.relays !== undefined ? [...edit.relays] : []),
                plants: (edit.plants !== undefined ? [...edit.plants] : [])
