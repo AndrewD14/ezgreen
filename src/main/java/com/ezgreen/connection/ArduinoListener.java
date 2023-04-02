@@ -40,7 +40,7 @@ public class ArduinoListener implements SerialPortDataListener
 		
 		int bytesRead = port.readBytes(buffer, buffer.length);
 		System.out.println("Bytes read: " + bytesRead);
-		value = new String(buffer, StandardCharsets.UTF_8);
+		value = (new String(buffer, StandardCharsets.UTF_8)).trim();
 		
 	    String[] data = value.split(";");
 
@@ -55,7 +55,7 @@ public class ArduinoListener implements SerialPortDataListener
 	    		System.out.println("Response index returned: " + data[2]);
 	    		System.out.println("Response value returned: " + data[1]);
 	    		
-	    		int idx = Integer.parseInt(data[2]);
+	    		int idx = Integer.parseInt(data[2].trim());
 	    		System.out.println("Parsed index: " + idx);
 			    response = responses.get(idx);
 		    
@@ -66,7 +66,7 @@ public class ArduinoListener implements SerialPortDataListener
 		    	responses.remove(idx);
 		    	
 		    	message.put("statusCode", 200);
-		    	message.put("responseMessage", Double.parseDouble(data[1]) / 100.00);
+		    	message.put("responseMessage", Double.parseDouble(data[1].trim()) / 100.00);
 		    	
 		    	response.setStatus(HttpStatus.OK.value());
 		    	response.getWriter().print(message.toJSONString());
