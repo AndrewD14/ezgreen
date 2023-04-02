@@ -93,15 +93,48 @@ public class ArduinoCommand
 		return command;
 	}
 	
-//	public static String sendPlant(Plant p, PlantType plantType, PotSize potSize, )
-//	{
-//		String command = "ap;";
-//		
-//		command = command + 
-//		command = command + "\n";
-//		
-//		return command;
-//	}
+	public static String sendPlant(Plant plant, PlantType plantType, PotSize potSize, Board board, Sensor sensor,
+			Relay relay, Board relayBoard, Relay waterPump)
+	{
+		String command = "ap;";
+		
+		command = command + formatPlant(plant, plantType, potSize, board, sensor, relay, relayBoard, waterPump);
+		
+		return command;
+	}
+	
+	public static String updatePlant(Plant plant, PlantType plantType, PotSize potSize, Board board, Sensor sensor,
+			Relay relay, Board relayBoard, Relay waterPump)
+	{
+		String command = "up;";
+		
+		command = command + formatPlant(plant, plantType, potSize, board, sensor, relay, relayBoard, waterPump);
+		
+		return command;
+	}
+	
+	private static String formatPlant(Plant plant, PlantType plantType, PotSize potSize, Board board, Sensor sensor,
+			Relay relay, Board relayBoard, Relay waterPump)
+	{
+		String command = "";
+		
+		command = command + plant.getId() + ";";
+		command = command + board.getBus() + ";";
+		command = command + board.getNumber() + ";";
+		command = command + sensor.getPort() + ";";
+		command = command + sensor.getLowCalibration() + ";";
+		command = command + sensor.getHighCalibration() + ";";
+		command = command + plant.getLowMoisture() + ";";
+		command = command + plant.getHighMoisture() + ";";
+		command = command + potSize.getId() + ";";
+		command = command + plantType.getArduino() + ";";
+		command = command + relay.getRelay() + ";";
+		command = command + relayBoard.getNumber() + ";";
+		command = command + waterPump.getId() + ";";
+		command = command + "\n";
+		
+		return command;
+	}
 	
 	public static String removePlant(Plant plant)
 	{
