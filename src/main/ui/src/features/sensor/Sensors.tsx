@@ -117,7 +117,7 @@ function Sensors() {
                </Grid2>
                <Grid2 container spacing={{ xs: 0, md: 1 }}>
                {sensors.map((sensor: any) => 
-                  <Grid2 key={'sensor-' + sensor['id']} xs={12} sm={4} md={2}>
+                  <Grid2 key={'sensor-' + sensor['id']} xs={12} md='auto'>
                      <Card sx={{ maxWidth: 375 }} raised={true}>
                         <CardHeader title ={<Link to={'/sensor/' + sensor['id']} state={{sensorId: sensor['id']}}>{sensor?.sensorType['type'] + ' (' + sensor['number'] + ')'}</Link>}
                            />

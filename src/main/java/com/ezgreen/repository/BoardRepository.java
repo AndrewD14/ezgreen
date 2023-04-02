@@ -17,4 +17,14 @@ public interface BoardRepository extends JpaRepository<Board, Long>
 			" WHERE s.id = :sensorId",
 			nativeQuery = true)
 	Board fetchBoardWithSensorId(@Param("sensorId") Long sensorId);
+	
+	@Query(value = "SELECT " +
+			"b.id," +
+			"b.bus," +
+			"b.number" +
+			" FROM board b " +
+			" INNER JOIN relay r ON r.board_id = b.id " +
+			" WHERE r.id = :relayId",
+			nativeQuery = true)
+	Board fetchBoardWithRelayId(@Param("relayId") Long relayId);
 }

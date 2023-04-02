@@ -17,6 +17,7 @@ export default function Navbar(props: any)
       else if(path.startsWith("/history")) value = 1;
       else if(path.startsWith("/environment")) value = 2;
       else if(path.startsWith("/sensor")) value = 3;
+      else if(path.startsWith("/relay")) value = 4;
 
       setValue(value);
    },
@@ -30,6 +31,7 @@ export default function Navbar(props: any)
             <Tab component={Link} label="History" to="/history"/>
             <Tab component={Link} label="Environment" to="/environment"/>
             <Tab component={Link} label="Sensors" to="/sensor"/>
+            <Tab component={Link} label="Relays" to="/relay"/>
          </Tabs>
       </Box>
    );

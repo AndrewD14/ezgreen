@@ -17,6 +17,14 @@ public class EnvironmentService
 	private EnvironmentRepository environmentRepository;
 	
 	@Async
+	public CompletableFuture<Environment> fetchEnvironmentByRelay(Long relayId)
+	{
+		Environment environment = environmentRepository.fetchEnvironmentByRelay(relayId);
+
+		return CompletableFuture.completedFuture(environment);
+	}
+	
+	@Async
 	public CompletableFuture<Environment> fetchEnvironmentBySensor(Long sensorId)
 	{
 		Environment environment = environmentRepository.fetchEnvironmentBySensor(sensorId);

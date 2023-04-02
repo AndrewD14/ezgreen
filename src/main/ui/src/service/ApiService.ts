@@ -1,7 +1,9 @@
 import axios from 'axios';
-import PlantRoutes from './routes/PlantRoutes';
-import SensorRoutes from './routes/SensorRoutes';
 import EnvironmentRoutes from './routes/EnvironmentRoutes';
+import PlantRoutes from './routes/PlantRoutes';
+import RelayRoutes from './routes/RelayRoutes';
+import SensorRoutes from './routes/SensorRoutes';
+
 
 const headers: any = {
    'Content-Type': 'application/json',
@@ -18,12 +20,15 @@ const instance = axios.create({
    headers: headers
 });
 
-const plantRoutes = new PlantRoutes(instance);
-const sensorRoutes = new SensorRoutes(instance);
 const environmentRoutes = new EnvironmentRoutes(instance);
+const plantRoutes = new PlantRoutes(instance);
+const relayRoutes = new RelayRoutes(instance);
+const sensorRoutes = new SensorRoutes(instance);
+
 
 export {
-   plantRoutes,
-   sensorRoutes,
    environmentRoutes,
+   plantRoutes,
+   relayRoutes,
+   sensorRoutes,   
 };

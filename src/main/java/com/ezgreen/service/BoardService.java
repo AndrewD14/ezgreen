@@ -31,4 +31,12 @@ public class BoardService
 		
 		return CompletableFuture.completedFuture(board);
 	}
+	
+	@Async
+	public CompletableFuture<Board> fetchBoardWithRelay(Long relayId)
+	{
+		Board board = boardRepository.fetchBoardWithRelayId(relayId);
+		
+		return CompletableFuture.completedFuture(board);
+	}
 }

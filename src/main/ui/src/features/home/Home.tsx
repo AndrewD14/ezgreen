@@ -168,7 +168,7 @@ function Home() {
             </Grid2>
             <Grid2 container columnSpacing={{ xs: 0, md: 1 }}>
                {plants.map((plant: any) => 
-                  <Grid2 key={'plant-' + plant['id']} xs={12} md>
+                  <Grid2 key={'plant-' + plant['id']} xs={12} md='auto'>
                      <Card sx={{ maxWidth: 375 }} raised={true}>
                         <CardHeader title ={
                            <Link to={'/plant/' + plant['id']} state={{plantId: plant['id']}}>{plant['number'] ? plant['name'] + ' (' + plant['number'] + ')' : plant['name']}</Link>}

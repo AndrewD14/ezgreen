@@ -13,6 +13,8 @@ import EditSensor from './features/sensor/EditSensor';
 import Environments from './features/environment/Environments';
 import Environment from './features/environment/Environment';
 import EditEnvironment from './features/environment/EditEnvironment';
+import Relays from './features/relay/Relays';
+import Relay from './features/relay/Relay';
 import Error from './features/error/Error';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
          {
             path: "/environment/edit/:id?",
             element: <EditEnvironment />,
+         },
+         {
+            path: "/relay",
+            element: <Relays />,
+         },
+         {
+            path: "/relay/:id",
+            element: <Relay />,
          },
        ],
    },

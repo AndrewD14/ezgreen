@@ -6,5 +6,5 @@ import com.ezgreen.models.Relay;
 
 public interface RelayRepository extends JpaRepository<Relay, Long>
 {
-
+	
 }

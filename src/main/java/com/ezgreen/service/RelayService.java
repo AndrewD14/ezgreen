@@ -1,6 +1,7 @@
 package com.ezgreen.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,14 @@ public class RelayService
 {
 	@Autowired
 	private RelayRepository relayRepository;
+	
+	@Async
+	public CompletableFuture<Relay> fetchRelayById(Long relayId)
+	{
+		Optional<Relay> relay = relayRepository.findById(relayId);
+		
+		return CompletableFuture.completedFuture(relay.get());
+	}
 	
 	@Async
 	public CompletableFuture<List<Relay>> fetchAllRelays()
