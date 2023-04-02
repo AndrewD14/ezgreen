@@ -55,6 +55,7 @@ public class ArduinoListener implements SerialPortDataListener
 	    
 		    try
 		    {
+		    	System.out.println("Arduino response: " + value);
 		    	responses.remove(idx);
 		    	
 		    	message.put("statusCode", 200);
