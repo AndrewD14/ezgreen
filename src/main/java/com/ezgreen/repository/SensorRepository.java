@@ -28,7 +28,8 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>
 			"s.created_ts," +
 			"s.updated_ts" +
 			" FROM sensor s " +
-			" INNER JOIN plant p ON s.id = p.sensor_id",
+			" INNER JOIN sensor_type st ON s.type_id = st.id " +
+			" WHERE st.arduino = 'm'",
 			nativeQuery = true)
 	List<Sensor> fetchAllPlantSensors();
 	

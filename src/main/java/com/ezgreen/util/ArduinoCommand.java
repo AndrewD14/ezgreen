@@ -393,14 +393,17 @@ public class ArduinoCommand
 	{
 		String command = "";
 		
+		Double desireLowVolt = sensor.getLowCalibration() - plant.getLowMoisture()/100.00 * (sensor.getLowCalibration() - sensor.getHighCalibration());
+		Double desireHighVolt = sensor.getLowCalibration() - plant.getHighMoisture()/100.00 * (sensor.getLowCalibration() - sensor.getHighCalibration());
+		
 		command = command + plant.getId() + ";";
 		command = command + board.getBus() + ";";
 		command = command + board.getNumber() + ";";
 		command = command + sensor.getPort() + ";";
 		command = command + sensor.getLowCalibration() + ";";
 		command = command + sensor.getHighCalibration() + ";";
-		command = command + plant.getLowMoisture() + ";";
-		command = command + plant.getHighMoisture() + ";";
+		command = command + desireLowVolt + ";";
+		command = command + desireHighVolt + ";";
 		command = command + potSize.getId() + ";";
 		command = command + plantType.getArduino() + ";";
 		command = command + relay.getRelay() + ";";

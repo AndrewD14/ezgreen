@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ezgreen.models.Board;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
@@ -30,6 +31,7 @@ import com.ezgreen.repository.SensorTypeRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
+import com.ezgreen.service.BoardService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.PlantTypeService;
 import com.ezgreen.service.PotSizeService;
@@ -42,6 +44,7 @@ import com.ezgreen.service.SensorTypeService;
 @RequestMapping("/api/plant")
 public class PlantController
 {
+	private BoardService boardService;
 	private PlantRepository plantRepository;
 	private PlantService plantService;
 	private PlantTypeRepository plantTypeRepository;
@@ -57,7 +60,8 @@ public class PlantController
 	private SensorTypeRepository sensorTypeRepository;
 	private SensorTypeService sensorTypeService;
 	
-	public PlantController(PlantRepository plantRepository, PlantService plantService,
+	public PlantController(BoardService boardService,
+			PlantRepository plantRepository, PlantService plantService,
 			PlantTypeRepository plantTypeRepository, PlantTypeService plantTypeService,
 			PotSizeService potSizeService, PotSizeRepository potSizeRepository,
 			RelayRepository relayRepository, RelayService relayService,
@@ -65,6 +69,7 @@ public class PlantController
 			SensorRepository sensorRepository, SensorService sensorService,
 			SensorTypeRepository sensorTypeRepository, SensorTypeService sensorTypeService)
 	{
+		this.boardService = boardService;
 		this.plantRepository = plantRepository;
 		this.plantService = plantService;
 		this.plantTypeRepository = plantTypeRepository;
@@ -285,6 +290,7 @@ public class PlantController
 		try
 		{
 			//Kicks of multiple, asynchronous calls
+			CompletableFuture<List<Board>> boards = boardService.fetchBoards();
 			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
 			CompletableFuture<List<PlantType>> plantTypes = plantTypeService.fetchPlantTypes();
 			CompletableFuture<List<PotSize>> potSizes = potSizeService.fetchPotSizes();
@@ -295,6 +301,7 @@ public class PlantController
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
+					boards,
 					plants,
 					plantTypes,
 					potSizes,
@@ -304,6 +311,7 @@ public class PlantController
 					sensorTypes
 			).join();
 			
+			response.setBoards(boards.get());
 			response.setPlants(plants.get());
 			response.setPlantTypes(plantTypes.get());
 			response.setPotSizes(potSizes.get());

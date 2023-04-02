@@ -98,8 +98,7 @@ function EditRelay(props: any) {
       try
       {
          let newErrors: any[] = [];
-console.log(options)
-console.log(relay)
+
          if(relay.typeId === '') newErrors.push("type");
          if(relay.bus === '') newErrors.push("bus");
          if(relay.board === '') newErrors.push("board");

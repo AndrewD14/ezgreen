@@ -63,7 +63,7 @@ export function formatOptions(data: any)
       return value;
    });
 
-   options.sensors.sort((a: any, b: any) => {
+   options.sensors?.sort((a: any, b: any) => {
       if(a.type.type < b.type.type) return -1;
       if(a.type.type > b.type.type) return 1;
       if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
@@ -82,7 +82,7 @@ export function formatOptions(data: any)
       return value;
    });
 
-   options.relays.sort((a: any, b: any) => {
+   options.relays?.sort((a: any, b: any) => {
       if(a.type.type < b.type.type) return -1;
       if(a.type.type > b.type.type) return 1;
       if(a.type.type === b.type.type) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
@@ -96,7 +96,7 @@ export function formatOptions(data: any)
       return value;
    });
 
-   options.plants.sort((a: any, b: any) => {
+   options.plants?.sort((a: any, b: any) => {
       if(a.name < b.name) return -1;
       if(a.name > b.name) return 1;
       if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);

@@ -51,14 +51,14 @@ public class PlantService
 			plant.setCreateTs(LocalDateTime.now(ZoneOffset.UTC));
 		}
 		
-		Integer currentMonitor = plant.getMonitor();
+		Integer currentMonitor = (plant.getMonitor() != null ? plant.getMonitor() : 0);
 		
 		plant.setDateObtain(!requestJson.isNull("dateObtain") ? LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(requestJson.getString("dateObtain"))) : null);
 		plant.setDead(requestJson.getInt("dead"));
 		plant.setDelete(requestJson.getInt("delete"));
 		plant.setHighMoisture(requestJson.getDouble("high"));
 		plant.setLowMoisture(requestJson.getDouble("low"));
-		plant.setMonitor(plant.getEnvironmentId() != null ? requestJson.getInt("monitor") : 0);
+		plant.setMonitor(plant.getEnvironmentId() != null && !requestJson.isNull("monitor") ? requestJson.getInt("monitor") : 0);
 		plant.setName(requestJson.getString("name"));
 		plant.setNumber(!requestJson.isNull("number") ? requestJson.getInt("number") : null);
 		plant.setPlantTypeId(requestJson.getLong("plantTypeId"));
@@ -131,6 +131,8 @@ public class PlantService
 		{
 			plantRepository.save(plant);
 			
+			command.processPlant(plant);
+			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(plant.getId()));
 		}
@@ -156,6 +158,8 @@ public class PlantService
 		try
 		{
 			plantRepository.save(plant);
+			
+			command.removePlant(plant);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(plant.getId()));
@@ -185,6 +189,8 @@ public class PlantService
 		
 		try
 		{
+			command.removePlant(plant);
+			
 			plantRepository.save(plant);
 			
 			response.setStatusCode(HttpStatus.OK);

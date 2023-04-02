@@ -41,6 +41,31 @@ export function formatAll(data: any)
    return plants;
 }
 
+export function formatOption(data: any)
+{
+   let options: any = {
+      plantTypes: data.plantTypes,
+      plants: data.plants,
+      potSizes: data.potSizes,
+      relayTypes: data.relayTypes,
+   };
+
+   options.relays = data.relays.map((relay: any) => {
+      relay.type = data.relayTypes.filter((relayType: any) => relayType.id === relay.typeId)[0];
+
+      return relay;
+   });
+
+   options.sensors = data.sensors.map((sensor: any) => {
+      sensor.type = data.sensorTypes.filter((sensorType: any) => sensorType.id === sensor.typeId)[0];
+      sensor.board = data.boards.filter((board: any) => sensor.boardId === board.id)[0];
+
+      return sensor;
+   });
+
+   return options;
+}
+
 export function formatOne(data: any)
 {
    console.log(data)

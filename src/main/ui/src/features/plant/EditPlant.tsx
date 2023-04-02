@@ -7,7 +7,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { plantRoutes } from '../../service/ApiService';
-import { formatOne } from '../../service/utils/plantFormat';
+import { formatOne, formatOption } from '../../service/utils/plantFormat';
 import moment from 'moment-timezone';
 
 const initialState: any = {
@@ -178,12 +178,7 @@ function EditPlant(props: any) {
 
       try
       {
-         data = await plantRoutes.fetchPlantOptions();
-
-
-         data.relays.forEach((relay: any) => {
-            relay.type = data.relayTypes.filter((relayType: any) => relayType.id === relay.typeId)[0];
-         });
+         data = formatOption(await plantRoutes.fetchPlantOptions());
 
          console.log(data)
 
@@ -306,7 +301,7 @@ function EditPlant(props: any) {
                               >
                                  <MenuItem key={'sensor-null'} value={''}>Remove</MenuItem>
                                  {(plant.id !== null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
-                                 {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
+                                 {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' (port: ' + sensor.port + ' board: ' + sensor.board.number + ')'}</MenuItem>)}
                               </Select>
                            </FormControl>
                            <FormControl key={'relay'}>

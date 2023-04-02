@@ -187,8 +187,8 @@ function EditSensor(props: any) {
          }
 
          await sensorRoutes.save(sensor.typeId, sensor.number, sensor.boardInfo?.id, sensor.port,
-            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.lowCalibration),
-            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? null : sensor.highCalibration),
+            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? sensor.lowCalibration : null),
+            (sensorsWithCal.indexOf(sensor.typeId) >= 0 ? sensor.highCalibration : null),
             'adamico', sensor.id);
 
          navigate("/sensor");
@@ -229,7 +229,8 @@ function EditSensor(props: any) {
             edit = {
                ...edit,
                bus: edit.boardInfo.bus,
-               board: edit.boardInfo.number,
+               board: edit.boardInfo.id,
+               typeId: '' + edit.typeId,
                highCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.highCalibration).toFixed(2) : 0,
                lowCalibration: sensorsWithCal.indexOf(sensor.typeId) >= 0 ? parseFloat(edit.lowCalibration).toFixed(2) : 0,
             };
