@@ -53,6 +53,7 @@ public class ArduinoListener implements SerialPortDataListener
 	    		System.out.println("Arduino response: " + value);
 	    		System.out.println("Responses list size: " + responses.size());
 	    		System.out.println("Response index returned: " + data[2]);
+	    		System.out.println("Response value returned: " + data[1]);
 	    		
 	    		int idx = Integer.parseInt(data[2]);
 	    		System.out.println("Parsed index: " + idx);
