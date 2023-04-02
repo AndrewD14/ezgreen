@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.ezgreen.responses.EZGreenResponse;
 import com.fazecast.jSerialComm.SerialPort;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,7 +64,7 @@ public class Arduino
 	    port.writeBytes(bytes, bytes.length);
 	}
 	
-	public void writeCallCalibration(String command, HttpServletResponse response) throws IOException
+	public void writeCallCalibration(String command, EZGreenResponse response) throws IOException
 	{
 		int idx = listener.addResponse(response);
 		

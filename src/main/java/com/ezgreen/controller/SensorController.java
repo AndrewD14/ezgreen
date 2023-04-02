@@ -111,8 +111,9 @@ public class SensorController
 	}
 	
 	@PostMapping(value="/calibration", produces = "application/json")
-	public void getSensorCalibration(HttpServletResponse response, @RequestBody String request)
+	public ResponseEntity<?> getSensorCalibration(@RequestBody String request)
 	{
+		EZGreenResponse response = new EZGreenResponse();
 		boolean done = false;
 		int count = 0;
 		
@@ -122,24 +123,17 @@ public class SensorController
 			
 			do
 			{
-				done = response.isCommitted();
+				done = (response.getStatusCode() != null);
 				count++;
 				Thread.sleep(10);
 			}while(!done && count < 2000);
 		}
 		catch (Exception e)
 		{
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			
-			try
-			{
-				response.getWriter().println("getSensorCalibration error occur: " + e.getCause());
-			}
-			catch(Exception error)
-			{
-				System.out.println("Error sending error to http response: " + error.getCause());
-			}
-		}		
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getCause());
+		}
+		
+		return ResponseEntity.status(response.getStatusCode()).body(response.getResponseMessage());
 	}
 	
 	@GetMapping(value="/alldetails", produces = "application/json")

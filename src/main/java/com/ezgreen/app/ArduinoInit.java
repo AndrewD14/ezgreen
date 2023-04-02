@@ -36,6 +36,6 @@ public class ArduinoInit
 			System.out.println(e.getCause());
 		}
 		
-		if(command.checkArduino()) scheduler.scheduleAtFixedRate(cleaner, 1000, 1000, TimeUnit.MILLISECONDS);
+		if(command.checkArduino()) scheduler.scheduleAtFixedRate(cleaner, 5000, 5000, TimeUnit.MILLISECONDS);
 	}
 }

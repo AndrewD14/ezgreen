@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.ezgreen.responses.EZGreenResponse;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -17,11 +18,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ArduinoListener implements SerialPortDataListener
 {
 	private SerialPort port;
-	private List<HttpServletResponse> responses;
+	private List<EZGreenResponse> responses;
 	
 	public ArduinoListener()
 	{
-		responses = new ArrayList<HttpServletResponse>();
+		responses = new ArrayList<EZGreenResponse>();
 	}
 	
 	@Override
@@ -45,7 +46,7 @@ public class ArduinoListener implements SerialPortDataListener
 
 	    if(data[0].equals("cs"))
 	    {
-	    	HttpServletResponse response = null;
+	    	EZGreenResponse response = null;
 	    	
 	    	try
 		    {
@@ -57,40 +58,21 @@ public class ArduinoListener implements SerialPortDataListener
 	    		int idx = Integer.parseInt(data[2].trim());
 	    		System.out.println("Parsed index: " + idx);
 			    response = responses.get(idx);
-		    
-			    if(response == null) return;
-		    
-			    JSONObject message = new JSONObject();
 		    	
 		    	responses.remove(idx);
 		    	
-		    	message.put("statusCode", 200);
-		    	message.put("responseMessage", Double.parseDouble(data[1].trim()) / 100.00);
-		    	
-		    	response.setStatus(HttpStatus.OK.value());
-		    	response.getWriter().print(message.toJSONString());
-		    	response.getWriter().flush();
+		    	response.setResponseMessage(String.valueOf(Double.parseDouble(data[1].trim()) / 100.00));
+		    	response.setStatusCode(HttpStatus.OK);
 		    }
 		    catch(Exception e)
 			{
 		    	System.out.println("Error!!! " + e.getMessage());
 				System.out.println("Error!!! " + e.getCause());
 				
-		    	if(response == null)
-		    	{
-		    		System.out.println("response object is null. Arduino value: " + value);
-		    		return;
-		    	}
-		    	
-				try
+				if(response != null)
 				{
-					response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-					response.getWriter().println("{\"statusCode\": 500, \"responseMessage\": \"Adruino data listener writer error occur.\"}");
-					System.out.println("Adruino data listener writer error occur: " + e.getCause());
-				}
-				catch(Exception error)
-				{
-					System.out.println("Error sending error to http response: " + error.getCause());
+					response.setResponseMessage("Error formatting message from Arduino.");
+					response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			}
 	    }
@@ -100,7 +82,7 @@ public class ArduinoListener implements SerialPortDataListener
 	    }
 	}
 	
-	public List<HttpServletResponse> getResponses()
+	public List<EZGreenResponse> getResponses()
 	{
 		return responses;
 	}
@@ -110,7 +92,7 @@ public class ArduinoListener implements SerialPortDataListener
 		this.port = port;
 	}
 	
-	public int addResponse(HttpServletResponse response)
+	public int addResponse(EZGreenResponse response)
 	{
 		responses.add(response);
 		

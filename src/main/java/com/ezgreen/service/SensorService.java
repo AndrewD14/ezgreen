@@ -31,7 +31,7 @@ public class SensorService
 		this.sensorRepository = sensorRepository;
 	}
 	
-	public void getCalibration(HttpServletResponse response, String request) throws IOException
+	public void getCalibration(EZGreenResponse response, String request) throws IOException
 	{
 		JSONObject requestJson = new JSONObject(request);
 		String command = "";
@@ -47,34 +47,11 @@ public class SensorService
 		}
 		else
 		{
-			Random rand = new Random();
-			org.json.simple.JSONObject message = new org.json.simple.JSONObject();
-			
+			Random rand = new Random();			
 			double upperbound = 3.5;
-		    
-		    try
-		    {
-		    	message.put("statusCode", 200);
-		    	message.put("responseMessage", rand.nextDouble(upperbound));
 		    	
-		    	response.setStatus(HttpStatus.OK.value());
-		    	response.getWriter().print(message.toJSONString());
-		    	response.getWriter().flush();
-		    }
-		    catch(Exception e)
-			{
-		    	System.out.println("Error sending to http response: " + e.getCause());
-		    	response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-				
-				try
-				{
-					response.getWriter().println("getSensorCalibration error occur: " + e.getCause());
-				}
-				catch(Exception error)
-				{
-					System.out.println("Error sending error to http response: " + error.getCause());
-				}
-			}
+	    	response.setResponseMessage("{\"responseMessage\": " + rand.nextDouble(upperbound) + "}");
+	    	response.setStatusCode(HttpStatus.OK);
 		}
 	}
 	

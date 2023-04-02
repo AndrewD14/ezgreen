@@ -12,6 +12,6 @@ public class ResponseListCleaner implements Runnable
 	@Override
 	public void run()
 	{
-		listener.getResponses().removeIf(response -> (response == null));
+		listener.getResponses().removeIf(response -> (response == null || response.getStatusCode() != null));
 	}
 }
