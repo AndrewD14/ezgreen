@@ -321,7 +321,24 @@ public class ArduinoCommand
 			count++;
 		}
 		
-		command = command + count + "\n";
+		
+		command = command + count;
+		
+		if(bus < 3)
+		{
+			command = command + ";";
+			
+			do
+			{
+				command = command + "0";
+				
+				bus++;
+				
+				if(bus < 3) command = command + ";";
+			}while(bus < 3);
+		}
+		
+		command = command + "\n";
 		
 		return command;
 	}
