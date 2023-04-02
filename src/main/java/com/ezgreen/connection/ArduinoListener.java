@@ -46,7 +46,7 @@ public class ArduinoListener implements SerialPortDataListener
 
 	    if(data[0].equals("cs"))
 	    {
-		    int idx = Integer.parseInt(data[1]);
+		    int idx = Integer.parseInt(data[2]);
 		    HttpServletResponse response = responses.get(idx);
 	    
 		    if(response == null) return;
@@ -58,7 +58,7 @@ public class ArduinoListener implements SerialPortDataListener
 		    	responses.remove(idx);
 		    	
 		    	message.put("statusCode", 200);
-		    	message.put("responseMessage", data[0]);
+		    	message.put("responseMessage", data[1]);
 		    	
 		    	response.setStatus(HttpStatus.OK.value());
 		    	response.getWriter().print(message.toJSONString());

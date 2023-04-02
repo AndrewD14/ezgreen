@@ -37,6 +37,7 @@ public class EnvironmentService
 		EZGreenResponse response = new EZGreenResponse();
 		Environment environment = new Environment();
 		JSONObject requestJson = new JSONObject(request);
+		boolean create = false;
 		
 		if(environmentId != null && environmentId != 0)
 		{
@@ -47,6 +48,8 @@ public class EnvironmentService
 			environment.setCreateBy(requestJson.getString("username"));
 			environment.setCreateTs(LocalDateTime.now(ZoneOffset.UTC));
 			environment.setDelete(0);
+			
+			create = true;
 		}
 		
 		environment.setHighDesire((!requestJson.isNull("highDesire") ? requestJson.getDouble("highDesire") : null));
@@ -63,6 +66,8 @@ public class EnvironmentService
 		try
 		{
 			environmentRepository.save(environment);
+			
+			if(create) command.processEnvironmentCount(environmentRepository.findAll());
 			
 			command.processEnvironment(environment);
 			
