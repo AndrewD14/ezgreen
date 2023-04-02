@@ -58,7 +58,7 @@ public class ArduinoListener implements SerialPortDataListener
 		    	responses.remove(idx);
 		    	
 		    	message.put("statusCode", 200);
-		    	message.put("responseMessage", data[1]);
+		    	message.put("responseMessage", Double.parseDouble(data[1]) / 100.00);
 		    	
 		    	response.setStatus(HttpStatus.OK.value());
 		    	response.getWriter().print(message.toJSONString());
