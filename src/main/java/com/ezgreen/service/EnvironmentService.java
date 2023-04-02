@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,15 @@ import org.springframework.stereotype.Service;
 import com.ezgreen.models.Environment;
 import com.ezgreen.repository.EnvironmentRepository;
 import com.ezgreen.responses.EZGreenResponse;
+import com.ezgreen.util.ArduinoCommand;
 
 @Service
 public class EnvironmentService
 {
+	@Autowired
+	@Lazy
+	private ArduinoCommand command;
+	
 	@Autowired
 	private EnvironmentRepository environmentRepository;
 	
@@ -58,6 +64,8 @@ public class EnvironmentService
 		{
 			environmentRepository.save(environment);
 			
+			command.processEnvironment(environment);
+			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(environment.getId()));
 		}
@@ -84,6 +92,14 @@ public class EnvironmentService
 	public CompletableFuture<Environment> fetchEnvironmentBySensor(Long sensorId)
 	{
 		Environment environment = environmentRepository.fetchEnvironmentBySensor(sensorId);
+
+		return CompletableFuture.completedFuture(environment);
+	}
+	
+	@Async
+	public CompletableFuture<Environment> fetchById(Long environmentId)
+	{
+		Environment environment = environmentRepository.findById(environmentId).get();
 
 		return CompletableFuture.completedFuture(environment);
 	}

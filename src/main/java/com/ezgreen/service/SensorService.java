@@ -22,13 +22,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class SensorService
 {	
-	private SensorRepository sensorRepository;
 	private Arduino arduino;
+	private SensorRepository sensorRepository;
 	
-	public SensorService(SensorRepository sensorRepository, Arduino arduino)
+	public SensorService(Arduino arduino, SensorRepository sensorRepository)
 	{
-		this.sensorRepository = sensorRepository;
 		this.arduino = arduino;
+		this.sensorRepository = sensorRepository;
 	}
 	
 	public void getCalibration(HttpServletResponse response, String request) throws IOException
@@ -41,21 +41,29 @@ public class SensorService
 		command = command + requestJson.getInt("board") + ";";
 		command = command + requestJson.getInt("port") + ";";
 		
-		if(arduino.checkGood()) arduino.writeCallCalibration(command, response);
+		if(arduino.checkGood())
+		{
+			arduino.writeCallCalibration(command, response);
+		}
 		else
 		{
 			Random rand = new Random();
+			org.json.simple.JSONObject message = new org.json.simple.JSONObject();
 			
 			double upperbound = 3.5;
-			
-			response.setStatus(HttpStatus.OK.value());
 		    
 		    try
 		    {
-		    	response.getWriter().println("{\"statusCode\": 200, \"responseMessage\": " + rand.nextDouble(upperbound) + "}");
+		    	message.put("statusCode", 200);
+		    	message.put("responseMessage", rand.nextDouble(upperbound));
+		    	
+		    	response.setStatus(HttpStatus.OK.value());
+		    	response.getWriter().print(message.toJSONString());
+		    	response.getWriter().flush();
 		    }
 		    catch(Exception e)
 			{
+		    	System.out.println("Error sending to http response: " + e.getCause());
 		    	response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 				
 				try
@@ -115,7 +123,7 @@ public class SensorService
 			sensor.setDelete(0);
 		}
 		
-		sensor.setBoardId(requestJson.getInt("boardId"));
+		sensor.setBoardId(requestJson.getLong("boardId"));
 		sensor.setNumber(requestJson.getInt("number"));
 		sensor.setPort(requestJson.getInt("port"));
 		sensor.setTypeId(requestJson.getInt("typeId"));

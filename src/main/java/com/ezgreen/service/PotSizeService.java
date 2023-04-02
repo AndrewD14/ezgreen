@@ -23,4 +23,12 @@ public class PotSizeService
 
 		return CompletableFuture.completedFuture(potSizes);
 	}
+	
+	@Async
+	public CompletableFuture<PotSize> fetchPotSizeById(Long potSizeId)
+	{
+		PotSize potSize = potSizeRepository.findById(potSizeId).get();
+
+		return CompletableFuture.completedFuture(potSize);
+	}
 }

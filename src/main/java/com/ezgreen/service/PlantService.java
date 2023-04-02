@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,15 @@ import com.ezgreen.models.Plant;
 import com.ezgreen.repository.HistorySoilMoistureRepository;
 import com.ezgreen.repository.PlantRepository;
 import com.ezgreen.responses.EZGreenResponse;
+import com.ezgreen.util.ArduinoCommand;
 
 @Service
 public class PlantService
 {
+	@Autowired
+	@Lazy
+	private ArduinoCommand command;
+	
 	@Autowired
 	private PlantRepository plantRepository;
 	
@@ -34,6 +40,7 @@ public class PlantService
 		Plant plant = new Plant();
 		JSONObject requestJson = new JSONObject(request);
 		
+		
 		if(plantId != null && plantId != 0)
 		{
 			plant = plantRepository.fetchPlantById(plantId);
@@ -44,12 +51,14 @@ public class PlantService
 			plant.setCreateTs(LocalDateTime.now(ZoneOffset.UTC));
 		}
 		
+		Integer currentMonitor = plant.getMonitor();
+		
 		plant.setDateObtain(!requestJson.isNull("dateObtain") ? LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(requestJson.getString("dateObtain"))) : null);
 		plant.setDead(requestJson.getInt("dead"));
 		plant.setDelete(requestJson.getInt("delete"));
 		plant.setHighMoisture(requestJson.getDouble("high"));
 		plant.setLowMoisture(requestJson.getDouble("low"));
-		plant.setMonitor(requestJson.getInt("monitor"));
+		plant.setMonitor(plant.getEnvironmentId() != null ? requestJson.getInt("monitor") : 0);
 		plant.setName(requestJson.getString("name"));
 		plant.setNumber(!requestJson.isNull("number") ? requestJson.getInt("number") : null);
 		plant.setPlantTypeId(requestJson.getLong("plantTypeId"));
@@ -62,6 +71,9 @@ public class PlantService
 		try
 		{
 			plantRepository.save(plant);
+			
+			if(plant.getMonitor() == 1) command.processPlant(plant);
+			else if(currentMonitor == 1 && plant.getMonitor() == 0) command.removePlant(plant);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(plant.getId()));

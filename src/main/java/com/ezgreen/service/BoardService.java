@@ -39,4 +39,12 @@ public class BoardService
 		
 		return CompletableFuture.completedFuture(board);
 	}
+	
+	@Async
+	public CompletableFuture<Board> fetchById(Long boardId)
+	{
+		Board board = boardRepository.findById(boardId).get();
+		
+		return CompletableFuture.completedFuture(board);
+	}
 }

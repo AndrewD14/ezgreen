@@ -31,7 +31,7 @@ public class Sensor implements Serializable
 	private Integer typeId;
 	
 	@Column(name="board_id", nullable = false)
-	private Integer boardId;
+	private Long boardId;
 	
 	@Column(name="port", nullable = false)
 	private Integer port;
@@ -65,7 +65,7 @@ public class Sensor implements Serializable
 		
 	}
 	
-	public Sensor(Long id, Integer number, Integer typeId, Integer boardId, Integer port, Double lowCalibration,
+	public Sensor(Long id, Integer number, Integer typeId, Long boardId, Integer port, Double lowCalibration,
 			Double highCalibration, Integer environmentId, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{

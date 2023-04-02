@@ -25,6 +25,14 @@ public class RelayTypeService
 	}
 	
 	@Async
+	public CompletableFuture<RelayType> fetchById(Long relayId)
+	{
+		RelayType relayType = relayTypeRepository.findById(relayId).get();
+		
+		return CompletableFuture.completedFuture(relayType);
+	}
+	
+	@Async
 	public CompletableFuture<List<RelayType>> fetchAllRelayTypes()
 	{
 		List<RelayType> relayTypes = relayTypeRepository.findAll();

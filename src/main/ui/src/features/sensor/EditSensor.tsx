@@ -53,11 +53,9 @@ function EditSensor(props: any) {
       let value = event.target.value;
       let id = event.target.id;
 
-      if(value !== '' && parseInt(value) < 0) return;
-
       setSensor({
          type: id,
-         payload: (value !== '' ? parseInt(value) : value)
+         payload:  value
       });
    };
 
@@ -139,6 +137,8 @@ function EditSensor(props: any) {
    };
 
    const getCalibration = async (event: any) => {
+      if(sensor.board === '' || sensor.port === 0 || sensor.bus === '') return;
+
       let value: any = parseFloat((await sensorRoutes.fetchSensorCalibration(sensor.sensorType.arduino, sensor.board, sensor.port, sensor.bus))['responseMessage']).toFixed(2);
 
       setSensor({
@@ -377,7 +377,7 @@ function EditSensor(props: any) {
                                     variant="standard"
                                     disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false}
                                  />
-                                 <Button id="setLowCalibration" disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
+                                 <Button id="setLowCalibration" disabled={((sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) || (sensor.board === '' || sensor.port === 0 || sensor.bus === '')) ? true : false} onClick={getCalibration}>Calibrate</Button>
                               </Grid2>
                            </FormControl>
                            <Grid2 container className="error-text">
@@ -392,7 +392,7 @@ function EditSensor(props: any) {
                                     variant="standard"
                                     disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false}
                                  />
-                                 <Button id="setHighCalibration" disabled={(sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) ? true : false} onClick={getCalibration}>Calibrate</Button>
+                                 <Button id="setHighCalibration" disabled={((sensor.typeId === '' || sensorsWithCal.indexOf(sensor.typeId) < 0) || (sensor.board === '' || sensor.port === 0 || sensor.bus === '')) ? true : false} onClick={getCalibration}>Calibrate</Button>
                               </Grid2>
                            </FormControl>
                            <Grid2 container className="error-text">

@@ -29,16 +29,16 @@ public class Relay implements Serializable
 	private Integer number;
 	
 	@Column(name="type_id", nullable = false)
-	private Integer typeId;
+	private Long typeId;
 	
 	@Column(name="board_id", nullable = false)
-	private Integer boardId;
+	private Long boardId;
 	
 	@Column(name="relay", nullable = false)
 	private Integer relay;
 	
 	@Column(name="environment_id")
-	private Integer environmentId;
+	private Long environmentId;
 	
 	@Column(name="delete")
 	private Integer delete;
@@ -60,7 +60,7 @@ public class Relay implements Serializable
 		
 	}
 	
-	public Relay(Long id, Integer number, Integer typeId, Integer boardId, Integer relay, Integer environmentId, Integer delete,
+	public Relay(Long id, Integer number, Long typeId, Long boardId, Integer relay, Long environmentId, Integer delete,
 			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();

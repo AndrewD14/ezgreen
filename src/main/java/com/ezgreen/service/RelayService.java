@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,15 @@ import org.springframework.stereotype.Service;
 import com.ezgreen.models.Relay;
 import com.ezgreen.repository.RelayRepository;
 import com.ezgreen.responses.EZGreenResponse;
+import com.ezgreen.util.ArduinoCommand;
 
 @Service
 public class RelayService
 {
+	@Autowired
+	@Lazy
+	private ArduinoCommand command;
+	
 	@Autowired
 	private RelayRepository relayRepository;
 	
@@ -29,13 +35,15 @@ public class RelayService
 		Relay relay = relayRepository.findById(relayId).get();
 		JSONObject requestJson = new JSONObject(request);
 		
-		relay.setEnvironmentId(requestJson.getInt("environmentId"));
+		relay.setEnvironmentId(requestJson.getLong("environmentId"));
 		relay.setUpdateBy(requestJson.getString("username"));
 		relay.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		
 		try
 		{
 			relayRepository.save(relay);
+			
+			command.processRelay(relay);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(relay.getId()));
@@ -68,8 +76,8 @@ public class RelayService
 			relay.setDelete(0);
 		}
 		
-		relay.setTypeId(requestJson.getInt("type"));
-		relay.setBoardId(requestJson.getInt("boardId"));
+		relay.setTypeId(requestJson.getLong("type"));
+		relay.setBoardId(requestJson.getLong("boardId"));
 		relay.setNumber(requestJson.getInt("number"));
 		relay.setRelay(requestJson.getInt("relay"));
 		relay.setUpdateBy(requestJson.getString("username"));
@@ -78,6 +86,8 @@ public class RelayService
 		try
 		{
 			relayRepository.save(relay);
+			
+			command.processRelay(relay);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(relay.getId()));
@@ -99,6 +109,14 @@ public class RelayService
 		Optional<Relay> relay = relayRepository.findById(relayId);
 		
 		return CompletableFuture.completedFuture(relay.get());
+	}
+	
+	@Async
+	public CompletableFuture<Relay> fetchWaterPumpByPlant(Long plantId)
+	{
+		Relay relay = relayRepository.fetchWaterPumpByPlantId(plantId);
+		
+		return CompletableFuture.completedFuture(relay);
 	}
 	
 	@Async

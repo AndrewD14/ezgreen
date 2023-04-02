@@ -23,4 +23,12 @@ public class PlantTypeService
 
 		return CompletableFuture.completedFuture(plantTypes);
 	}
+	
+	@Async
+	public CompletableFuture<PlantType> fetchPlantTypeById(Long plantTypeId)
+	{
+		PlantType plantType = plantTypeRepository.findById(plantTypeId).get();
+
+		return CompletableFuture.completedFuture(plantType);
+	}
 }
