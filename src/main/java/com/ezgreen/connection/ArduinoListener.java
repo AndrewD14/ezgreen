@@ -46,16 +46,20 @@ public class ArduinoListener implements SerialPortDataListener
 
 	    if(data[0].equals("cs"))
 	    {
-		    int idx = Integer.parseInt(data[2]);
-		    HttpServletResponse response = responses.get(idx);
-	    
-		    if(response == null) return;
-	    
-		    JSONObject message = new JSONObject();
-	    
-		    try
+	    	HttpServletResponse response = null;
+	    	
+	    	try
 		    {
-		    	System.out.println("Arduino response: " + value);
+	    		System.out.println("Arduino response: " + value);
+	    		
+	    		int idx = Integer.parseInt(data[2]);
+			    response = responses.get(idx);
+		    
+			    if(response == null) return;
+		    
+			    JSONObject message = new JSONObject();
+		    
+		    	
 		    	responses.remove(idx);
 		    	
 		    	message.put("statusCode", 200);
@@ -67,10 +71,15 @@ public class ArduinoListener implements SerialPortDataListener
 		    }
 		    catch(Exception e)
 			{
-		    	response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-				
+		    	if(response == null)
+		    	{
+		    		System.out.println("response object is null. Arduino value: " + value);
+		    		return;
+		    	}
+		    	
 				try
 				{
+					response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 					response.getWriter().println("{\"statusCode\": 500, \"responseMessage\": \"Adruino data listener writer error occur.\"}");
 					System.out.println("Adruino data listener writer error occur: " + e.getCause());
 				}
