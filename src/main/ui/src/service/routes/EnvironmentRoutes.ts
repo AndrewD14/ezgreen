@@ -55,7 +55,7 @@ class EnvironmentRoutes
 
    //this will save the new or edit of an environment
    async save(name: string, type: number, low: number | null, high: number | null, target: number, humidity: number | null, timeStart: string | null,
-      timeEnd: string | null, sensors: any[], relays: any[], username: string, id: string)
+      timeEnd: string | null, sensors: any[], relays: any[], plants: any[], username: string, id: string)
    {
       let environmentId = (await this.client({
          url: baseRoute + (id ? id : ''),
@@ -89,6 +89,18 @@ class EnvironmentRoutes
       relays.forEach(async (relay: any) => {
          await this.client({
             url: '/relay/environment/' + relay.id,
+            method: 'PUT',
+            data: JSON.stringify({
+               environmentId: environmentId,
+               username: username
+            })
+         });
+      });
+
+      //loops through plants
+      plants.forEach(async (plant: any) => {
+         await this.client({
+            url: '/plant/environment/' + plant.id,
             method: 'PUT',
             data: JSON.stringify({
                environmentId: environmentId,

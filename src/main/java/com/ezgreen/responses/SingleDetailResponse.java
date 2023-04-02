@@ -24,6 +24,7 @@ public class SingleDetailResponse extends EZGreenResponse
 	Board board;
 	Environment environment;
 	Plant plant;
+	List<Plant> plants;
 	PlantType plantType;
 	PotSize potSize;
 	Relay relay;

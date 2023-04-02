@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ezgreen.models.Environment;
+import com.ezgreen.models.Plant;
 import com.ezgreen.models.Relay;
 import com.ezgreen.models.RelayType;
 import com.ezgreen.models.Sensor;
@@ -25,6 +26,7 @@ import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.EnvironmentService;
+import com.ezgreen.service.PlantService;
 import com.ezgreen.service.RelayService;
 import com.ezgreen.service.RelayTypeService;
 import com.ezgreen.service.SensorService;
@@ -36,6 +38,7 @@ public class EnvironmentController
 {
 	private EnvironmentRepository environmentRepository;
 	private EnvironmentService environmentService;
+	private PlantService plantService;
 	private RelayService relayService;
 	private RelayTypeService relayTypeService;
 	private SensorService sensorService;
@@ -44,12 +47,14 @@ public class EnvironmentController
 	private SensorTypeService sensorTypeService;
 	
 	public EnvironmentController(EnvironmentRepository environmentRepository, EnvironmentService environmentService,
+			PlantService plantService,
 			RelayService relayService, RelayTypeService relayTypeService,
 			SensorService sensorService, SensorRepository sensorRepository, SensorTypeRepository sensorTypeRepository,
 			SensorTypeService sensorTypeService)
 	{
 		this.environmentRepository = environmentRepository;
 		this.environmentService = environmentService;
+		this.plantService = plantService;
 		this.relayService = relayService;
 		this.relayTypeService = relayTypeService;
 		this.sensorService = sensorService;
@@ -105,6 +110,7 @@ public class EnvironmentController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironments();
+			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
 			CompletableFuture<List<Relay>> relays = relayService.fetchAllRelays();
 			CompletableFuture<List<RelayType>> relayTypes = relayTypeService.fetchAllRelayTypes();
 			CompletableFuture<List<SensorType>> sensorTypes = sensorTypeService.fetchSensorTypes();
@@ -113,6 +119,7 @@ public class EnvironmentController
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					environments,
+					plants,
 					relays,
 					relayTypes,
 					sensors,
@@ -120,6 +127,7 @@ public class EnvironmentController
 			).join();
 			
 			response.setEnvironments(environments.get());
+			response.setPlants(plants.get());
 			response.setRelays(relays.get());
 			response.setRelayTypes(relayTypes.get());
 			response.setSensorTypes(sensorTypes.get());
@@ -147,6 +155,7 @@ public class EnvironmentController
 		try
 		{
 			Environment environment = environmentRepository.fetchById(environmentId);
+			CompletableFuture<List<Plant>> plants = plantService.fetchPlantByEnvironment(environmentId);
 			CompletableFuture<List<Relay>> relays = relayService.fetchRelayByEnvironmentId(environmentId);
 			CompletableFuture<List<RelayType>> relayTypes = relayTypeService.fetchAllRelayTypes();
 			List<Sensor> sensors  = sensorRepository.fetchSensorsWithEnvironmentId(environmentId);
@@ -155,11 +164,13 @@ public class EnvironmentController
 			
 			//Wait until they are all done
 			CompletableFuture.allOf(
+					plants,
 					relays,
 					relayTypes
 			).join();
 			
 			response.setEnvironment(environment);
+			response.setPlants(plants.get());
 			response.setRelays(relays.get());
 			response.setRelayTypes(relayTypes.get());
 			response.setSensors(sensors);
@@ -188,6 +199,7 @@ public class EnvironmentController
 		{
 			//Kicks of multiple, asynchronous calls
 			CompletableFuture<List<Environment>> environments = environmentService.fetchAllEnvironments();
+			CompletableFuture<List<Plant>> plants = plantService.fetchNonDeletedPlants();
 			CompletableFuture<List<Relay>> relays = relayService.fetchAllRelays();
 			CompletableFuture<List<RelayType>> relayTypes = relayTypeService.fetchAllRelayTypes();
 			CompletableFuture<List<Sensor>> sensors = sensorService.fetchAllEnvironmentSensors();
@@ -196,6 +208,7 @@ public class EnvironmentController
 			//Wait until they are all done
 			CompletableFuture.allOf(
 					environments,
+					plants,
 					relays,
 					relayTypes,
 					sensors,
@@ -203,6 +216,7 @@ public class EnvironmentController
 			).join();
 			
 			response.setEnvironments(environments.get());
+			response.setPlants(plants.get());
 			response.setRelays(relays.get());
 			response.setRelayTypes(relayTypes.get());
 			response.setSensors(sensors.get());

@@ -43,10 +43,13 @@ export function formatAll(data: any)
 
 export function formatOne(data: any)
 {
+   console.log(data)
    let plant = data.plant;
 
    if(!_.isEmpty(data.sensor)) plant.sensor = structuredClone(data.sensor);
    if(!_.isEmpty(data.sensorType)) plant.sensorType = structuredClone(data.sensorType);
+   if(!_.isEmpty(data.relay)) plant.relay = structuredClone(data.relay);
+   if(!_.isEmpty(data.relayType)) plant.relay.type = structuredClone(data.relayType);
    
    plant.plantType = structuredClone(data.plantType);
    plant.potSize = structuredClone(data.potSize);

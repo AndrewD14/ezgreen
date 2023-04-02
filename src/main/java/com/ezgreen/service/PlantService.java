@@ -55,6 +55,7 @@ public class PlantService
 		plant.setPlantTypeId(requestJson.getLong("plantTypeId"));
 		plant.setPotSizeId(requestJson.getLong("potSizeId"));
 		plant.setSensorId(!requestJson.isNull("sensorId") ? requestJson.getLong("sensorId") : null);
+		plant.setValveId(!requestJson.isNull("valveId") ? requestJson.getLong("valveId") : null);
 		plant.setUpdateBy(requestJson.getString("username"));
 		plant.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
 		
@@ -67,7 +68,37 @@ public class PlantService
 		}
 		catch(Exception e)
 		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
 			response.setResponseMessage("saveAndEditPlant error occur: " + e.getCause());
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return response;
+	}
+	
+	public EZGreenResponse addPlantEnvironment(String request, Long plantId) throws IOException
+	{
+		EZGreenResponse response = new EZGreenResponse();
+		Plant plant = plantRepository.fetchPlantById(plantId);
+		JSONObject requestJson = new JSONObject(request);
+		
+		plant.setEnvironmentId(requestJson.getLong("environmentId"));
+		plant.setUpdateBy(requestJson.getString("username"));
+		plant.setUpdateTs(LocalDateTime.now(ZoneOffset.UTC));
+		
+		try
+		{
+			plantRepository.save(plant);
+			
+			response.setStatusCode(HttpStatus.OK);
+			response.setResponseMessage(Long.toString(plant.getId()));
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+			response.setResponseMessage("addPlantEnvironment error occur: " + e.getCause());
 			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
@@ -133,6 +164,8 @@ public class PlantService
 		JSONObject requestJson = new JSONObject(request);
 		
 		plant.setSensorId(null);
+		plant.setEnvironmentId(null);
+		plant.setValveId(null);
 		plant.setMonitor(0);
 		plant.setUpdateTs(LocalDateTime.now());
 		plant.setDelete(1);
@@ -152,6 +185,14 @@ public class PlantService
 		}
 		
 		return response;
+	}
+	
+	@Async
+	public CompletableFuture<List<Plant>> fetchPlantByEnvironment(Long environmentId)
+	{
+		List<Plant> plants = plantRepository.fetchAllNonDeletePlantsByEnvironmentId(environmentId);
+
+		return CompletableFuture.completedFuture(plants);
 	}
 	
 	@Async

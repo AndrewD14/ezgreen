@@ -25,6 +25,8 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			"highMoisture," +
 			"lowMoisture," +
 			"sensorId," +
+			"environmentId," +
+			"valveId," +
 			"dateObtain," +
 			"monitor," +
 			"dead," +
@@ -46,6 +48,8 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			"highMoisture," +
 			"lowMoisture," +
 			"sensorId," +
+			"environmentId," +
+			"valveId," +
 			"dateObtain," +
 			"monitor," +
 			"dead," +
@@ -58,6 +62,31 @@ public interface PlantRepository extends JpaRepository<Plant, Long>
 			" WHERE delete != 1 " +
 			" ORDER BY updateTs DESC")
 	List<Plant> fetchAllNonDeletedPlants();
+	
+	@Query("SELECT new com.ezgreen.models.Plant(" +
+			"id," +
+			"name," +
+			"number," +
+			"potSizeId," +
+			"plantTypeId," +
+			"highMoisture," +
+			"lowMoisture," +
+			"sensorId," +
+			"environmentId," +
+			"valveId,"+
+			"dateObtain," +
+			"monitor," +
+			"dead," +
+			"delete," +
+			"createBy," +
+			"updateBy," +
+			"createTs," +
+			"updateTs" +
+			") FROM Plant " +
+			" WHERE delete != 1 " +
+			" AND environmentId = :environmentId " +
+			" ORDER BY updateTs DESC")
+	List<Plant> fetchAllNonDeletePlantsByEnvironmentId(@Param("environmentId") Long environmentId);
 	
 	List<Plant> findBySensorIdIsNotNull();
 }

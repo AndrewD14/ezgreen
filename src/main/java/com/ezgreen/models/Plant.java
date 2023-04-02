@@ -45,7 +45,13 @@ public class Plant implements Serializable
 	private Double lowMoisture;
 	
 	@Column(name="sensor_id")
-	private Long sensorId;	
+	private Long sensorId;
+	
+	@Column(name="environment_id")
+	private Long environmentId;
+	
+	@Column(name="valve_id")
+	private Long valveId;
 	
 	@Column(name="date_obtain")
 	private LocalDate dateObtain;
@@ -77,8 +83,8 @@ public class Plant implements Serializable
 	}
 	
 	public Plant(Long id, String name, Integer number, Long potSizeId, Long plantTypeId, Double highMoisture,
-			Double lowMoisture, Long sensorId, LocalDate dateObtain, Integer monitor, Integer dead,
-			Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
+			Double lowMoisture, Long sensorId, Long environmentId, Long valveId, LocalDate dateObtain, Integer monitor,
+			Integer dead, Integer delete, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
@@ -90,6 +96,8 @@ public class Plant implements Serializable
 		this.highMoisture = highMoisture;
 		this.lowMoisture = lowMoisture;
 		this.sensorId = sensorId;
+		this.environmentId = environmentId;
+		this.valveId = valveId;
 		this.dateObtain = dateObtain;
 		this.monitor = monitor;
 		this.dead = dead;

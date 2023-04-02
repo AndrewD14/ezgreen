@@ -101,6 +101,8 @@ CREATE TABLE public.plant(
    high_moisture  REAL NOT NULL,
    low_moisture   REAL NOT NULL,
    sensor_id      SMALLINT,
+   environment_id SMALLINT,
+   valve_id       SMALLINT,
    date_obtain    DATE,
    monitor        SMALLINT NOT NULL,
    dead           SMALLINT NOT NULL,

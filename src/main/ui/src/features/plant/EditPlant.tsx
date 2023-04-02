@@ -22,7 +22,8 @@ const initialState: any = {
    number: '',
    plantTypeId: '',
    potSizeId: '',
-   sensorId: ''
+   sensorId: '',
+   valveId: ''
 }
 
 function reducer(state: any, action: any)
@@ -38,6 +39,7 @@ function reducer(state: any, action: any)
       case 'setPlantType': return {...state, plantTypeId: action.payload};
       case 'setPotSizeId': return {...state, potSizeId: action.payload};
       case 'setSensorId': return {...state, sensorId: action.payload};
+      case 'setValveId': return {...state, valveId: action.payload};
       case 'setDateObtain': return {...state, dateObtain: action.payload};
       default: throw new Error(action.type + " is not supported.");
    }
@@ -137,7 +139,7 @@ function EditPlant(props: any) {
 
          await plantRoutes.save(dateObtain, plant.dead, plant.delete, plant.highMoisture, plant.lowMoisture, plant.monitor, plant.name,
             (plant.number === '' ? null: plant.number), plant.plantTypeId, plant.potSizeId, (plant.sensorId === '' ? null : plant.sensorId),
-            'adamico', plant.id);
+            (plant.valveId === '' ? null : plant.valveId),'adamico', plant.id);
 
          navigate("/");
       }
@@ -164,6 +166,7 @@ function EditPlant(props: any) {
       if(plant.plantTypeId !== initPlant.plantTypeId) return true;
       if(plant.potSizeId !== initPlant.potSizeId) return true;
       if(plant.sensorId !== initPlant.sensorId) return true;
+      if(plant.valveId !== initPlant.valveId) return true;
 
       return false;
    }
@@ -176,6 +179,13 @@ function EditPlant(props: any) {
       try
       {
          data = await plantRoutes.fetchPlantOptions();
+
+
+         data.relays.forEach((relay: any) => {
+            relay.type = data.relayTypes.filter((relayType: any) => relayType.id === relay.typeId)[0];
+         });
+
+         console.log(data)
 
          if(id != null)
          {
@@ -297,6 +307,17 @@ function EditPlant(props: any) {
                                  <MenuItem key={'sensor-null'} value={''}>Remove</MenuItem>
                                  {(plant.id !== null && initPlant?.sensor ) ? <MenuItem key={'sensor-' + initPlant?.sensor?.id} value={initPlant?.sensor?.id}>{initPlant?.sensor?.id + ' port: ' + initPlant?.sensor?.port + ' board: ' + initPlant?.sensor?.board}</MenuItem> : null}
                                  {options.sensors?.map((sensor: any) => <MenuItem key={'sensor-' + sensor.id} value={sensor.id}>{sensor.id + ' port: ' + sensor.port + ' board: ' + sensor.board}</MenuItem>)}
+                              </Select>
+                           </FormControl>
+                           <FormControl key={'relay'}>
+                              <FormLabel>Water valve</FormLabel>
+                              <Select
+                                 onChange={(event: any) => setPlant({type: 'setValveId', payload: event.target.value})}
+                                 value={plant.valveId}
+                              >
+                                 <MenuItem key={'relay-'} value={''}>Remove</MenuItem>
+                                 {(plant.id !== null && initPlant?.relay ) ? <MenuItem key={'relay-' + initPlant?.relay?.id} value={initPlant?.relay?.id}>{initPlant?.relay.type.type + ' (' + initPlant?.relay.number + ')'}</MenuItem> : null}
+                                 {options.relays?.map((relay: any) => <MenuItem key={'relay-' + relay.id} value={relay.id}>{relay.type.type + ' (' + relay.number + ')'}</MenuItem>)}
                               </Select>
                            </FormControl>
                            <FormControl key={'dateObtain'}>

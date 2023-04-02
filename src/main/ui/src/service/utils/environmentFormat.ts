@@ -29,6 +29,14 @@ export function formatAll(data: any)
                               return value;
                            });
 
+      environment.plants = data.plants
+                           .filter((plant: any) => (plant.environmentId === environment.id))
+                           .map((plant:any) => {
+                              let value = {...plant};
+   
+                              return value;
+                           });
+
          environment.sensorType = data.sensorTypes.filter((sensorType: any) => environment.sensorType === sensorType.id)[0];
       
       return environment;
@@ -82,6 +90,20 @@ export function formatOptions(data: any)
       return 0;
    });
 
+   if(data.plants.length > 0) options.plants = data.plants.map((plant:any) => {
+      let value = {...plant};
+
+      return value;
+   });
+
+   options.plants.sort((a: any, b: any) => {
+      if(a.name < b.name) return -1;
+      if(a.name > b.name) return 1;
+      if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+      return 0;
+   });
+
    return options;
 }
 
@@ -107,6 +129,12 @@ export function formatOne(data: any)
          ...value,
          type: {...data.relayTypes.filter((relayType:any) => relayType.id === relay.typeId)[0]}
       }
+
+      return value;
+   }));
+
+   if(data.plants.length > 0) environment.plants = structuredClone(data.plants.map((plant:any) => {
+      let value = {...plant};
 
       return value;
    }));

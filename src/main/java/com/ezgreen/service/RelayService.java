@@ -110,6 +110,14 @@ public class RelayService
 	}
 	
 	@Async
+	public CompletableFuture<List<Relay>> fetchPlantRelays()
+	{
+		List<Relay> relays = relayRepository.fetchPlantRelays();
+		
+		return CompletableFuture.completedFuture(relays);
+	}
+	
+	@Async
 	public CompletableFuture<List<Relay>> fetchAllRelays()
 	{
 		List<Relay> relays = relayRepository.findAll();

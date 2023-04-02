@@ -56,7 +56,7 @@ class PlantRoutes
    //this will save the new or edit of a plant
    async save(dateObtain: string | null, dead: number, deleted: number, highMoisture: number, lowMoisture: number,
       monitor: number, name: string, number: string | null, plantTypeId: number, potSizeId: number, sensorId: number,
-      username: string, id: string)
+      valveId: number | null, username: string, id: string)
    {
       const response = (await this.client({
          url: baseRoute + (id ? id : ''),
@@ -73,6 +73,7 @@ class PlantRoutes
             plantTypeId: plantTypeId,
             potSizeId: potSizeId,
             sensorId: sensorId,
+            valveId: valveId,
             username: username
          })
       })).data;

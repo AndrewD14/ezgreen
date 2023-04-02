@@ -16,6 +16,7 @@ const initialState: any = {
    name: '',
    sensors: [],
    relays: [],
+   plants: [],
    sensorTypeId: '',
    highDesire: 0,
    lowDesire: 0,
@@ -33,6 +34,7 @@ function reducer(state: any, action: any)
       case 'setName': return {...state, name: action.payload};
       case 'setSensors': return {...state, sensors: [...action.payload]};
       case 'setRelays': return {...state, relays: [...action.payload]};
+      case 'setPlants': return {...state, plants: [...action.payload]};
       case 'setSensorType': return {...state, sensorTypeId: action.payload};
       case 'setHighDesire': return {...state, highDesire: action.payload};
       case 'setLowDesire': return {...state, lowDesire: action.payload};
@@ -64,6 +66,8 @@ function EditEnvironment(props: any) {
    const [leftSensor, setSensorLeft] = React.useState<any[]>([]);
    const [checkedRelay, setRelayChecked] = React.useState<any[]>([]);
    const [leftRelay, setRelayLeft] = React.useState<any[]>([]);
+   const [checkedPlant, setPlantChecked] = React.useState<any[]>([]);
+   const [leftPlant, setPlantLeft] = React.useState<any[]>([]);
    const [loading, setLoading] = useState(true);
    const [errors, setError] = useState<any[]>([]);
    const [pageError, setPageError] = useState<string>("");
@@ -75,14 +79,16 @@ function EditEnvironment(props: any) {
    const rightSensorChecked = intersection(checkedSensor, environment.sensors);
    const leftRelayChecked = intersection(checkedRelay, leftRelay);
    const rightRelayChecked = intersection(checkedRelay, environment.relays);
+   const leftPlantChecked = intersection(checkedPlant, leftPlant);
+   const rightPlantChecked = intersection(checkedPlant, environment.plants);
 
    const sensorToRelay: any = {
-      '1': ['W'],
+      '0': ['W'],
       '2': ['T', 'F', 'H'],
       '3': ['L']
    };
 
-   const validSensorStypes: number[] = [2, 3];
+   const validSensorsTypes: number[] = [0, 2, 3];
 
    const handleSensorToggle = (value: any) => () => {
       const currentIndex = checkedSensor.indexOf(value);
@@ -110,8 +116,22 @@ function EditEnvironment(props: any) {
       setRelayChecked(newChecked);
    };
 
+   const handlePlantToggle = (value: any) => () => {
+      const currentIndex = checkedPlant.indexOf(value);
+      const newChecked = [...checkedPlant];
+
+      if (currentIndex === -1) {
+         newChecked.push(value);
+      } else {
+         newChecked.splice(currentIndex, 1);
+      }
+
+      setPlantChecked(newChecked);
+   };
+
    const numberOfCheckedSensor = (items: any[]) => intersection(checkedSensor, items).length;
    const numberOfCheckedRelay = (items: any[]) => intersection(checkedRelay, items).length;
+   const numberOfCheckedPlant = (items: any[]) => intersection(checkedPlant, items).length;
 
    const handleToggleAllSensor = (items: any[]) => () => {
       if (numberOfCheckedSensor(items) === items.length) setSensorChecked(not(checkedSensor, items));
@@ -121,6 +141,11 @@ function EditEnvironment(props: any) {
    const handleToggleAllRelay = (items: any[]) => () => {
       if (numberOfCheckedRelay(items) === items.length) setRelayChecked(not(checkedRelay, items));
       else setRelayChecked(union(checkedRelay, items));
+   };
+
+   const handleToggleAllPlant = (items: any[]) => () => {
+      if (numberOfCheckedPlant(items) === items.length) setRelayChecked(not(checkedPlant, items));
+      else setPlantChecked(union(checkedPlant, items));
    };
 
    const handleSensorCheckedRight = () => {
@@ -235,6 +260,62 @@ function EditEnvironment(props: any) {
       setRelayChecked(not(checkedRelay, rightRelayChecked));
    };
 
+   const handlePlantCheckedRight = () => {
+      let left: any[] = not(leftPlant, leftPlantChecked);
+      let right: any[] = environment.plants.concat(leftPlantChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.name < b.name) return -1;
+         if(a.name > b.name) return 1;
+         if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.name < b.name) return -1;
+         if(a.name > b.name) return 1;
+         if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setEnvironment({
+         type: 'setPlants',
+         payload: right
+      });
+      setPlantLeft(left);
+      setPlantChecked(not(checkedPlant, leftPlantChecked));
+   };
+
+   const handlePlantCheckedLeft = () => {
+      let left: any[] = leftPlant.concat(rightPlantChecked);
+      let right: any[] = not(environment.plants, rightPlantChecked);
+
+      left.sort((a: any, b: any) => {
+         if(a.name < b.name) return -1;
+         if(a.name > b.name) return 1;
+         if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+
+         return 0;
+      });
+
+      right.sort((a: any, b: any) => {
+         if(a.name < b.name) return -1;
+         if(a.name > b.name) return 1;
+         if(a.name === b.name) return (a.number < b.number ? -1 : a.number > b.number ? 1 : 0);
+         
+         return 0;
+      });
+
+      setPlantLeft(left);
+      setEnvironment({
+         type: 'setPlants',
+         payload: right
+      });
+      setRelayChecked(not(checkedPlant, rightPlantChecked));
+   };
+
    const filterLeftSensors = () => {
       let available: any[] = [];
       
@@ -286,7 +367,32 @@ function EditEnvironment(props: any) {
       }
 
          setEnvironment({
-            type: 'setRelays',
+            type: 'setPlants',
+            payload: selected
+         });
+   };
+
+   const filterLeftPlant = () => {      
+      let available: any[] = [];
+      
+      if(options?.plants !== undefined)
+      {
+         available = options.plants.filter((plant: any) => plant.environmentId === undefined);
+      }
+
+      setPlantLeft(available);
+   };
+
+   const filterRightPlant = () => {      
+      let selected: any[] = [];
+
+      if(options?.plants !== undefined)
+      {
+         selected = options.plants.filter((plant: any) => plant.environmentId === environment.id);
+      }
+
+         setEnvironment({
+            type: 'setPlants',
             payload: selected
          });
    };
@@ -297,8 +403,10 @@ function EditEnvironment(props: any) {
       filterRightSensors();
       filterLeftRelays();
       filterRightRelays();
+      filterLeftPlant();
+      filterRightPlant();
    },
-   [environment.sensorType]);
+   [environment.sensorTypeId]);
 
    const onChange = (event: any) => {
 
@@ -344,6 +452,21 @@ function EditEnvironment(props: any) {
             payload: null
          });
       }
+
+      setEnvironment({
+         type: 'setSensors',
+         payload: []
+      });
+
+      setEnvironment({
+         type: 'setRelays',
+         payload: []
+      });
+
+      setEnvironment({
+         type: 'setPlants',
+         payload: []
+      });
    };
 
    const onTimeChange = (type: string, event: any) => {
@@ -379,14 +502,19 @@ function EditEnvironment(props: any) {
          if(environment?.timeStart !== null) timeStart = environment.timeStart.utc().format('HH:mm:ss');
          if(environment?.timeEnd !== null) timeEnd = environment.timeEnd.utc().format('HH:mm:ss');
 
-         if(environment.sensorType === '2')
+         if(environment.sensorTypeId === '0')
+         {
+            if(environment.plants.length === 0) newErrors.push('plants');
+            if(environment.relays.length === 0) newErrors.push('relays');
+         }
+         else if(environment.sensorTypeId === '2')
          {
             if(environment.highDesire === 0) newErrors.push('high');
             if(environment.lowDesire === 0) newErrors.push('low');
             if(environment.target === 0) newErrors.push('target');
             if(environment.humidity === 0) newErrors.push('humidity');
          }
-         else if(environment.sensorType === '3')
+         else if(environment.sensorTypeId === '3')
          {
             if(timeStart === null) newErrors.push('start');
             if(timeEnd === null) newErrors.push('end');
@@ -394,7 +522,7 @@ function EditEnvironment(props: any) {
          }
          
          if(environment.name === '') newErrors.push('name');
-         if(_.isEmpty(environment.sensors)) newErrors.push('sensors');
+         if(environment.sensorTypeId !== '0' && _.isEmpty(environment.sensors)) newErrors.push('sensors');
          
 
          setError(newErrors);
@@ -407,7 +535,7 @@ function EditEnvironment(props: any) {
          }
 
          await environmentRoutes.save(environment.name, environment.sensorTypeId, environment.lowDesire, environment.highDesire, environment.target,
-            environment.humidity, environment.timeStart, environment.timeEnd, environment.sensors, environment.relays, 'adamico', environment.id);
+            environment.humidity, environment.timeStart, environment.timeEnd, environment.sensors, environment.relays, environment.plants, 'adamico', environment.id);
 
          navigate("/environment");
 
@@ -435,7 +563,7 @@ function EditEnvironment(props: any) {
       if(timeEnd !== initTimeEnd) return true;
 
       if(environment.name !== initEnvironment.name) return true;
-      if(environment.sensorType !== initEnvironment.sensorType) return true;
+      if(environment.sensorTypeId !== initEnvironment.sensorTypeId) return true;
       if(environment.highDesire !== initEnvironment.highDesire) return true;
       if(environment.lowDesire !== initEnvironment.lowDesire) return true;
       if(environment.target !== initEnvironment.target) return true;
@@ -457,7 +585,7 @@ function EditEnvironment(props: any) {
          data = formatOptions(await environmentRoutes.fetchEnvironmentsConfigOption());
 
          //sets the valid sensor types for environments
-         data.sensorTypes = data.sensorTypes.filter((sensorType: any) => validSensorStypes.indexOf(sensorType.id) !== -1);
+         data.sensorTypes = data.sensorTypes.filter((sensorType: any) => validSensorsTypes.indexOf(sensorType.id) !== -1);
 
          if(id != null)
          {
@@ -467,7 +595,8 @@ function EditEnvironment(props: any) {
                ...edit,
                sensorTypeId: edit.sensorType.id,
                sensors: (edit.sensors !== undefined ? [...edit.sensors] : []),
-               relays: (edit.relays !== undefined ? [...edit.relays] : [])
+               relays: (edit.relays !== undefined ? [...edit.relays] : []),
+               plants: (edit.plants !== undefined ? [...edit.plants] : [])
             };
 
             setEnvironment({
@@ -605,6 +734,60 @@ function EditEnvironment(props: any) {
       </Card>
    );
 
+   const customListPlant = (title: React.ReactNode, items: any[]) => (
+      <Card>
+        <CardHeader
+          sx={{ px: 2, py: 1 }}
+          avatar={
+            <Checkbox
+              onClick={handleToggleAllPlant(items)}
+              checked={numberOfCheckedPlant(items) === items.length && items.length !== 0}
+              indeterminate={
+                numberOfCheckedPlant(items) !== items.length && numberOfCheckedPlant(items) !== 0
+              }
+              disabled={items.length === 0}
+              inputProps={{
+                'aria-label': 'all items selected',
+              }}
+            />
+          }
+          title={title}
+          subheader={`${numberOfCheckedPlant(items)}/${items.length} selected`}
+        />
+        <Divider />
+        <List
+          sx={{
+            minWidth: 200,
+            height: 230,
+            bgcolor: 'background.paper',
+            overflow: 'auto',
+          }}
+          dense
+          component="div"
+          role="list"
+        >
+          {items.map((value: any) => {  
+            return (
+              <ListItem
+                key={'relay-' + value.id}
+                role="listitem"
+                onClick={handlePlantToggle(value)}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checkedPlant.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                  />
+                </ListItemIcon>
+                <ListItemText id={value?.id} primary={value?.number !== undefined ? value?.name + ' (' + value?.number + ')' : value?.name} />
+              </ListItem>
+            );
+          })}
+        </List>
+      </Card>
+   );
+
    return (
       <React.Fragment>
          <Grid2 container direction="column" justifyContent="flex-start" alignItems="flex-start" style={{minHeight: '100%'}}>
@@ -641,23 +824,24 @@ function EditEnvironment(props: any) {
                               {(errors.indexOf("name") !== -1) ? <span>Name for the environment is required.</span> : null}
                            </Grid2>
                            <FormControl key={'sensorType'}>
-                              <FormLabel required>Sensor type</FormLabel>
+                              <FormLabel required>Envionment type</FormLabel>
                               <Select
                                  onChange={onSensorTypeChange}
                                  value={environment.sensorTypeId}
                               >
                                  <MenuItem key={'sensorType-'} value={''}>Remove</MenuItem>
+                                 <MenuItem key={'sensorType-P'} value={'0'}>Plant</MenuItem>
                                  {options.sensorTypes?.map((sensorType: any) => <MenuItem key={'sensorType-' + sensorType.id} value={sensorType.id}>{sensorType.type}</MenuItem>)}
                               </Select>
                            </FormControl>
                            <Grid2 container className="error-text">
-                              {(errors.indexOf("type") !== -1) ? <span>Sensor type cannot be blank.</span> : null}
+                              {(errors.indexOf("type") !== -1) ? <span>Environment type cannot be blank.</span> : null}
                            </Grid2>
-                           {(environment?.sensorType === '2' || environment?.sensorType === '3')
+                           {(environment?.sensorTypeId === '2' || environment?.sensorTypeId === '3')
                            ?
                               <React.Fragment>
                                  <FormControl key={'target'}>
-                                    <FormLabel required>Target {environment?.sensorType === '2' ? 'temparature' : 'luminosity'}</FormLabel>
+                                    <FormLabel required>Target {environment?.sensorTypeId === '2' ? 'temparature' : 'luminosity'}</FormLabel>
                                     <TextField
                                        id="setTarget"
                                        type='number'
@@ -673,7 +857,7 @@ function EditEnvironment(props: any) {
                            :
                               null
                            }
-                           {(environment?.sensorType === '2')
+                           {(environment?.sensorTypeId === '2')
                            ?
                               <React.Fragment>
                                  <FormControl key={'lowDesire'}>
@@ -719,7 +903,7 @@ function EditEnvironment(props: any) {
                            :
                               null
                            }
-                           {(environment?.sensorType === '3')
+                           {(environment?.sensorTypeId === '3')
                            ?
                               <React.Fragment>
                                  <FormControl key={'timeStart'}>
@@ -750,42 +934,85 @@ function EditEnvironment(props: any) {
                            :
                               null
                            }
-                           <FormControl key={'sensors'}>
-                              <FormLabel required>Sensors</FormLabel>
-                              <Grid2 container spacing={2} justifyContent="center" alignItems="center">
-                                 <Grid2>{customListSensor('Choices', leftSensor)}</Grid2>
-                                 <Grid2>
-                                    <Grid2 container direction="column" alignItems="center">
-                                       <Button
-                                          sx={{ my: 0.5 }}
-                                          variant="outlined"
-                                          size="small"
-                                          onClick={handleSensorCheckedRight}
-                                          disabled={leftSensorChecked.length === 0}
-                                          aria-label="move selected right"
-                                       >
-                                          &gt;
-                                       </Button>
-                                       <Button
-                                          sx={{ my: 0.5 }}
-                                          variant="outlined"
-                                          size="small"
-                                          onClick={handleSensorCheckedLeft}
-                                          disabled={rightSensorChecked.length === 0}
-                                          aria-label="move selected left"
-                                       >
-                                          &lt;
-                                       </Button>
+                           {
+                              environment.sensorTypeId == 2 || environment.sensorTypeId == 3
+                           ?
+                              <React.Fragment>
+                                 <FormControl key={'sensors'}>
+                                    <FormLabel required>Sensors</FormLabel>
+                                    <Grid2 container spacing={2} justifyContent="center" alignItems="center">
+                                       <Grid2>{customListSensor('Choices', leftSensor)}</Grid2>
+                                       <Grid2>
+                                          <Grid2 container direction="column" alignItems="center">
+                                             <Button
+                                                sx={{ my: 0.5 }}
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={handleSensorCheckedRight}
+                                                disabled={leftSensorChecked.length === 0}
+                                                aria-label="move selected right"
+                                             >
+                                                &gt;
+                                             </Button>
+                                             <Button
+                                                sx={{ my: 0.5 }}
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={handleSensorCheckedLeft}
+                                                disabled={rightSensorChecked.length === 0}
+                                                aria-label="move selected left"
+                                             >
+                                                &lt;
+                                             </Button>
+                                          </Grid2>
+                                       </Grid2>
+                                       <Grid2>{customListSensor('Chosen', environment.sensors)}</Grid2>
                                     </Grid2>
+                                 </FormControl>
+                                 <Grid2 container className="error-text">
+                                    {(errors.indexOf("sensors") !== -1) ? <span>Please select at least 1 sensor.</span> : null}
                                  </Grid2>
-                                 <Grid2>{customListSensor('Chosen', environment.sensors)}</Grid2>
-                              </Grid2>
-                           </FormControl>
-                           <Grid2 container className="error-text">
-                              {(errors.indexOf("sensors") !== -1) ? <span>Please select at least 1 sensor.</span> : null}
-                           </Grid2>
+                              </React.Fragment>
+                           :
+                              <React.Fragment>
+                                 <FormControl key={'plants'}>
+                                    <FormLabel required>Plants</FormLabel>
+                                    <Grid2 container spacing={2} justifyContent="center" alignItems="center">
+                                       <Grid2>{customListPlant('Choices', leftPlant)}</Grid2>
+                                       <Grid2>
+                                          <Grid2 container direction="column" alignItems="center">
+                                             <Button
+                                                sx={{ my: 0.5 }}
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={handlePlantCheckedRight}
+                                                disabled={leftPlantChecked.length === 0}
+                                                aria-label="move selected right"
+                                             >
+                                                &gt;
+                                             </Button>
+                                             <Button
+                                                sx={{ my: 0.5 }}
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={handlePlantCheckedLeft}
+                                                disabled={rightPlantChecked.length === 0}
+                                                aria-label="move selected left"
+                                             >
+                                                &lt;
+                                             </Button>
+                                          </Grid2>
+                                       </Grid2>
+                                       <Grid2>{customListPlant('Chosen', environment.plants)}</Grid2>
+                                    </Grid2>
+                                 </FormControl>
+                                 <Grid2 container className="error-text">
+                                    {(errors.indexOf("plants") !== -1) ? <span>Please select at least 1 plant.</span> : null}
+                                 </Grid2>
+                              </React.Fragment>
+                           }
                            <FormControl key={'relays'}>
-                              <FormLabel>Actuators</FormLabel>
+                              <FormLabel required={(environment.sensorTypeId === '0' ? true : false)}>Actuators</FormLabel>
                               <Grid2 container spacing={2} justifyContent="center" alignItems="center">
                                  <Grid2>{customListRelay('Choices', leftRelay)}</Grid2>
                                  <Grid2>
@@ -815,6 +1042,9 @@ function EditEnvironment(props: any) {
                                  <Grid2>{customListRelay('Chosen', environment.relays)}</Grid2>
                               </Grid2>
                            </FormControl>
+                           <Grid2 container className="error-text">
+                              {(errors.indexOf("relays") !== -1) ? <span>Please select at least 1 relay.</span> : null}
+                           </Grid2>
                         </Stack>
                      </Grid2>
                      <Grid2 xs={3} style={{width: '100%'}}>
