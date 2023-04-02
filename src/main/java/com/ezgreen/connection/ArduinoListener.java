@@ -74,6 +74,9 @@ public class ArduinoListener implements SerialPortDataListener
 		    }
 		    catch(Exception e)
 			{
+		    	System.out.println("Error!!! " + e.getMessage());
+				System.out.println("Error!!! " + e.getCause());
+				
 		    	if(response == null)
 		    	{
 		    		System.out.println("response object is null. Arduino value: " + value);
