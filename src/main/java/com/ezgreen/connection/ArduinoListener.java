@@ -51,6 +51,7 @@ public class ArduinoListener implements SerialPortDataListener
 	    	try
 		    {
 	    		System.out.println("Arduino response: " + value);
+	    		System.out.println("Responses list size: " + responses.size());
 	    		
 	    		int idx = Integer.parseInt(data[2]);
 			    response = responses.get(idx);
@@ -58,7 +59,6 @@ public class ArduinoListener implements SerialPortDataListener
 			    if(response == null) return;
 		    
 			    JSONObject message = new JSONObject();
-		    
 		    	
 		    	responses.remove(idx);
 		    	
