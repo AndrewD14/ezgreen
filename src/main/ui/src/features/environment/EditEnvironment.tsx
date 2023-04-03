@@ -374,7 +374,7 @@ function EditEnvironment(props: any) {
 
    const filterLeftPlant = () => {      
       let available: any[] = [];
-      
+
       if(options?.plants !== undefined)
       {
          available = options.plants.filter((plant: any) => plant.environmentId === undefined);
@@ -484,6 +484,13 @@ function EditEnvironment(props: any) {
          }
       });
 
+      filterLeftSensors();
+      filterRightSensors();
+      filterLeftRelays();
+      filterRightRelays();
+      filterLeftPlant();
+      filterRightPlant();
+
       setError([]);
       setPageError("");
    };
@@ -571,6 +578,7 @@ function EditEnvironment(props: any) {
 
       if(!_.isEqual(environment.sensors, initEnvironment.sensors)) return true;
       if(!_.isEqual(environment.relays, initEnvironment.relays)) return true;
+      if(!_.isEqual(environment.plants, initEnvironment.plants)) return true;
 
       return false;
    }
@@ -1050,7 +1058,7 @@ function EditEnvironment(props: any) {
                      <Grid2 xs={3} style={{width: '100%'}}>
                         <Grid2 justifyContent="center">
                            <Grid2 container direction="row" className="error-text">
-                              <Link to={{pathname:`/`}} style={{ textDecoration: 'none' }}>
+                              <Link to={{pathname:`/environment`}} style={{ textDecoration: 'none' }}>
                                  <Fab variant='extended' value="178">Cancel</Fab>
                               </Link>
                               <Grid2 style={{ flex: 1 }}>
