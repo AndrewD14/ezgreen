@@ -72,7 +72,8 @@ public class PlantService
 		{
 			plantRepository.save(plant);
 			
-			if(plant.getMonitor() == 1) command.processPlant(plant);
+			if(plant.getMonitor() == 1) command.processPlant(plant, false);
+			else if(plant.getMonitor() == 1 && currentMonitor == 1 && plantId != null && plantId != 0) command.processPlant(plant, true);
 			else if(currentMonitor == 1 && plant.getMonitor() == 0) command.removePlant(plant);
 			
 			response.setStatusCode(HttpStatus.OK);

@@ -106,7 +106,7 @@ public class ArduinoCommand
 		{
 			Plant plant = itr.next();
 			
-			processPlant(plant);
+			processPlant(plant, false);
 		}
 	}
 	
@@ -158,7 +158,7 @@ public class ArduinoCommand
 		else System.out.println("Arduino port is not working.");
 	}
 	
-	public void processPlant(Plant plant) throws Exception
+	public void processPlant(Plant plant, boolean update) throws Exception
 	{	
 		if(plant.getMonitor() == 0) return;
 		
@@ -201,7 +201,8 @@ public class ArduinoCommand
 		sensorBoard = sensorBoardJob.get();
 		waterValveBoard = waterValveBoardJob.get();
 		
-		String command = sendPlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump);
+		String command = (update) ? sendPlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump)
+				: updatePlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump);
 		
 		System.out.print(command);
 		if(arduino.checkGood()) arduino.write(command);
