@@ -130,7 +130,7 @@ console.log(data)
                            <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" minWidth="100%">
                               <Grid2 xs={12} justifyContent="space-between" alignItems="flex-start" display="inline-flex">
                                  <Grid2 xs={5}><label className='labels'>Environment type</label></Grid2>
-                                 <Grid2 xs={7}>{environment?.plants.length > 0 ? 'Plants' : environment?.sensorType.type}</Grid2>
+                                 <Grid2 xs={7}>{environment?.plants.length > 0 ? 'Plants' : environment?.sensorType?.type}</Grid2>
                               </Grid2>
                               {
                                  environment?.sensors.length > 0
