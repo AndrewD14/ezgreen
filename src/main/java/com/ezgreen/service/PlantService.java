@@ -123,6 +123,7 @@ public class PlantService
 		EZGreenResponse response = new EZGreenResponse();
 		Plant plant = plantRepository.fetchPlantById(plantId);
 		JSONObject requestJson = new JSONObject(request);
+		Integer currentMonitor = (plant.getMonitor() != null ? plant.getMonitor() : 0);
 		
 		plant.setMonitor(1);
 		plant.setUpdateTs(LocalDateTime.now());
@@ -132,7 +133,7 @@ public class PlantService
 		{
 			plantRepository.save(plant);
 			
-			command.processPlant(plant);
+			command.processPlant(plant, false);
 			
 			response.setStatusCode(HttpStatus.OK);
 			response.setResponseMessage(Long.toString(plant.getId()));
