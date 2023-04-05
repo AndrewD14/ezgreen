@@ -820,7 +820,7 @@ function EditEnvironment(props: any) {
                      <Grid2 xs>
                         <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={0.5} minWidth="100%">
                            <FormControl key={'name'}>
-                              <FormLabel required>Enviornment name</FormLabel>
+                              <FormLabel required>Environment name</FormLabel>
                               <TextField
                                  id="setName"
                                  value={environment.name}
@@ -832,7 +832,7 @@ function EditEnvironment(props: any) {
                               {(errors.indexOf("name") !== -1) ? <span>Name for the environment is required.</span> : null}
                            </Grid2>
                            <FormControl key={'sensorType'}>
-                              <FormLabel required>Envionment type</FormLabel>
+                              <FormLabel required>Environment type</FormLabel>
                               <Select
                                  onChange={onSensorTypeChange}
                                  value={environment.sensorTypeId}
