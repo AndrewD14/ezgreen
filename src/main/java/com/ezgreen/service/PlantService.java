@@ -72,8 +72,8 @@ public class PlantService
 		{
 			plantRepository.save(plant);
 			
-			if(plant.getMonitor() == 1) command.processPlant(plant, false);
-			else if(plant.getMonitor() == 1 && currentMonitor == 1 && plantId != null && plantId != 0) command.processPlant(plant, true);
+			if(plant.getMonitor() == 1 && currentMonitor == 1 && plantId != null && plantId != 0) command.processPlant(plant, true);
+			else if(plant.getMonitor() == 1) command.processPlant(plant, false);
 			else if(currentMonitor == 1 && plant.getMonitor() == 0) command.removePlant(plant);
 			
 			response.setStatusCode(HttpStatus.OK);
@@ -123,7 +123,6 @@ public class PlantService
 		EZGreenResponse response = new EZGreenResponse();
 		Plant plant = plantRepository.fetchPlantById(plantId);
 		JSONObject requestJson = new JSONObject(request);
-		Integer currentMonitor = (plant.getMonitor() != null ? plant.getMonitor() : 0);
 		
 		plant.setMonitor(1);
 		plant.setUpdateTs(LocalDateTime.now());

@@ -201,8 +201,8 @@ public class ArduinoCommand
 		sensorBoard = sensorBoardJob.get();
 		waterValveBoard = waterValveBoardJob.get();
 		
-		String command = (update) ? sendPlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump)
-				: updatePlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump);
+		String command = (update) ? updatePlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump)
+				: sendPlant(plant, plantType, potSize, sensorBoard, sensor, waterValve, waterValveBoard, waterPump);
 		
 		System.out.print(command);
 		if(arduino.checkGood()) arduino.write(command);
