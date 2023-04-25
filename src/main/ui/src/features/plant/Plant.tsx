@@ -43,13 +43,13 @@ function Plant() {
       stompClient.connect({}, (frame: any) => {
          setStomp(stompClient);
 
-         stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant' + plant.id});
+         stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
       });
    };
 
    const unsubscribe = () => {
       if (stompClient !== undefined) {
-         stompClient.unsubscribe('plant' + plant.id);
+         stompClient.unsubscribe('plant');
          stompClient.disconnect();
       }
    };
