@@ -50,6 +50,7 @@ function Plant() {
    const unsubscribe = () => {
       if (stompClient !== undefined) {
          stompClient.unsubscribe('plant' + plant.id);
+         stompClient.disconnect();
       }
    };
 
