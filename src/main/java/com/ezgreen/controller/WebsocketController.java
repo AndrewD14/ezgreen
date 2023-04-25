@@ -20,6 +20,14 @@ public class WebsocketController
 
 		message.put("message", "New soil reading for plant " + id);
 		
-		simpMessageSendingOperations.convertAndSend("/topic/plant/" + id, message);
+		try
+		{
+			simpMessageSendingOperations.convertAndSend("/topic/plant/" + id, message);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+		}
 	}
 }
