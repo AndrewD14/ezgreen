@@ -59,13 +59,15 @@ public class ArduinoListener implements SerialPortDataListener
 		System.out.println("Bytes read: " + bytesRead);
 		value = (new String(buffer, StandardCharsets.UTF_8)).trim();
 		
+		System.out.println("Arduino response: " + value);
+		
 	    String[] data = value.split(";");
 
 	    if(data[0].equals("cs")) sendSoilMoistureCalibration(data);
 	    else if(data[0].equals("pm")) sendSoilMoistureUpdate(data);
 //	    else
 //	    {
-	    	System.out.println("Arduino response: " + value);
+//	    	System.out.println("Arduino response: " + value);
 //	    }
 	}
 	
