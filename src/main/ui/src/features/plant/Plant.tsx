@@ -19,7 +19,7 @@ function Plant(props: any) {
    let xaxis: any  = {
       type: "datetime",
       labels: {
-         format: 'MM/dd/yyyy HH:mm',
+         format: 'MM/dd/yyyy hh:mm',
        }
    };
    
