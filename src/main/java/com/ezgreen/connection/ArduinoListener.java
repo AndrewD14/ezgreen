@@ -46,7 +46,7 @@ public class ArduinoListener implements SerialPortDataListener
 	public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_AVAILABLE; }
 	   
 	@Override
-	public void serialEvent(SerialPortEvent event)
+	synchronized public void serialEvent(SerialPortEvent event)
 	{
 		if(event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) return;
 		String value = "";
@@ -116,7 +116,7 @@ public class ArduinoListener implements SerialPortDataListener
 		}
 	}
 	
-	public void sendSoilMoistureUpdate(String[] data)
+	synchronized public void sendSoilMoistureUpdate(String[] data)
 	{
 		HistorySoilMoisture hsm = new HistorySoilMoisture();
 		
