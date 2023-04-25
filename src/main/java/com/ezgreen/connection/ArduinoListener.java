@@ -63,10 +63,10 @@ public class ArduinoListener implements SerialPortDataListener
 
 	    if(data[0].equals("cs")) sendSoilMoistureCalibration(data);
 	    else if(data[0].equals("pm")) sendSoilMoistureUpdate(data);
-	    else
-	    {
+//	    else
+//	    {
 	    	System.out.println("Arduino response: " + value);
-	    }
+//	    }
 	}
 	
 	public List<EZGreenResponse> getResponses()
@@ -124,27 +124,27 @@ public class ArduinoListener implements SerialPortDataListener
 		LocalDateTime timestamp = LocalDateTime.ofEpochSecond(Long.parseLong(data[4]), 0, ZoneOffset.UTC); //unix time
 		LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 		
-		Plant plant = plantRepository.fetchPlantById(id);
-		Sensor sensor = sensorRepository.fetchSensorWithPlantId(plant.getSensorId());
-		
-		Double percentage = (sensor.getLowCalibration() - voltage) / (sensor.getLowCalibration() - sensor.getHighCalibration()) * 100;
-
-		hsm.setHighCalibration(sensor.getHighCalibration());
-		hsm.setHighDesire(plant.getHighMoisture());
-		hsm.setLowCalibration(sensor.getLowCalibration());
-		hsm.setLowDesire(plant.getLowMoisture());
-		hsm.setPercentage(percentage);
-		hsm.setPlantId(id);
-		hsm.setRead(timestamp);
-		hsm.setSensorId(sensor.getId());
-		hsm.setVolt(voltage);
-		hsm.setCreateBy("system");
-		hsm.setCreateTs(now);
-		hsm.setUpdateBy("system");
-		hsm.setUpdateTs(now);
-		
 		try
 		{
+			Plant plant = plantRepository.fetchPlantById(id);
+			Sensor sensor = sensorRepository.fetchSensorWithPlantId(plant.getSensorId());
+			
+			Double percentage = (sensor.getLowCalibration() - voltage) / (sensor.getLowCalibration() - sensor.getHighCalibration()) * 100;
+
+			hsm.setHighCalibration(sensor.getHighCalibration());
+			hsm.setHighDesire(plant.getHighMoisture());
+			hsm.setLowCalibration(sensor.getLowCalibration());
+			hsm.setLowDesire(plant.getLowMoisture());
+			hsm.setPercentage(percentage);
+			hsm.setPlantId(id);
+			hsm.setRead(timestamp);
+			hsm.setSensorId(sensor.getId());
+			hsm.setVolt(voltage);
+			hsm.setCreateBy("system");
+			hsm.setCreateTs(now);
+			hsm.setUpdateBy("system");
+			hsm.setUpdateTs(now);
+			
 			historySoilMoistureRepository.save(hsm);
 
 			websocket.sendSpecificPlant(id);

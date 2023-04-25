@@ -123,7 +123,7 @@ public class ArduinoCommand
 		List<Environment> environments = environmentRepository.findAll();
 		Iterator<Environment> itr = environments.iterator();
 		
-		processEnvironmentCount(environments);
+		//processEnvironmentCount(environments);
 		
 		while(itr.hasNext())
 		{
