@@ -35,6 +35,7 @@ function App() {
          disconnect();
       });
    },
+   // eslint-disable-next-line
    []);
 
    return (
