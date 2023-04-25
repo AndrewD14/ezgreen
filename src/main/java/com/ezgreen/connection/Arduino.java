@@ -1,66 +1,55 @@
 package com.ezgreen.connection;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
-import com.fazecast.jSerialComm.SerialPortMessageListener;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.ezgreen.responses.EZGreenResponse;
+import com.fazecast.jSerialComm.SerialPort;
+import jakarta.annotation.PostConstruct;
+
+@Component
 public class Arduino
 {
-	private SerialPort port;
+	@Value("${arduino.serial.port}")
+	private String commPort;
 	
-	public Arduino()
+	private SerialPort port;
+	private ArduinoListener listener;
+	
+	public Arduino(ArduinoListener listener)
 	{
-
+		this.listener = listener;
 	}
 	
+	@PostConstruct
 	public void open() throws InterruptedException
-	{
+	{		
 		if(port == null)
 		{
-			port = SerialPort.getCommPort("COM6");
+			System.out.println("Using comm port: " + commPort);
+			
+			port = SerialPort.getCommPort(commPort);
 			
 			port.openPort();
 			port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 			port.setComPortParameters(115200, 8, 1, 0);
+			
 			Thread.sleep(1000);
 			
+			listener.setPort(port);
 			
-			port.addDataListener(new SerialPortDataListener()
-			{
-				@Override
-				public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_AVAILABLE; }
-				   
-				@Override
-				public void serialEvent(SerialPortEvent event)
-				{
-					if(event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) return;
-				      
-					byte[] newData = new byte[port.bytesAvailable()];
-				    port.readBytes(newData, newData.length);
-				    System.out.println();
-				    System.out.println(new String(newData, StandardCharsets.UTF_8));
-				}
-			});
-			
-			/*
-			port.addDataListener(new SerialPortDataListener() {				   
-				   @Override
-				   public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_WRITTEN; }
-				   
-				   @Override
-				   public void serialEvent(SerialPortEvent event)
-				   {
-				      if (event.getEventType() == SerialPort.LISTENING_EVENT_DATA_WRITTEN)
-				         System.out.println("All bytes were successfully transmitted!");
-				   }
-			});
-			*/
-			//port.addDataListener(new ArduinoListener());
-		}	
+			port.addDataListener(listener);
+		}
+	}
+	
+	public boolean checkGood()
+	{
+		if(port == null) return false;
+		
+		return port.isOpen();
 	}
 	
 	public void close()
@@ -75,20 +64,14 @@ public class Arduino
 	    port.writeBytes(bytes, bytes.length);
 	}
 	
-	public String read() throws IOException
+	public void writeCallCalibration(String command, EZGreenResponse response) throws IOException
 	{
-		String value = "";
-		int bytesAvailable = port.bytesAvailable();
+		int idx = listener.addResponse(response);
 		
-		if(bytesAvailable == -1) return null;
-		
-		byte[] buffer = new byte[bytesAvailable];
-		System.out.println("Bytes available: " + bytesAvailable);
-		
-		int bytesRead = port.readBytes(buffer, buffer.length);
-		System.out.println("Bytes read: " + bytesRead);
-		value = new String(buffer, StandardCharsets.UTF_8);
-		
-		return value;
+		command =  "cs;" + command + idx + "\n";
+		System.out.println("Command sent is: " + command);
+	    byte[] bytes = command.getBytes(StandardCharsets.UTF_8);
+
+	    port.writeBytes(bytes, bytes.length);
 	}
 }

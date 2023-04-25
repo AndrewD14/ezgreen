@@ -30,4 +30,24 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+/src/main/ui/.vscode/
+
+# dependencies
+/src/main/ui/node_modules
+/src/main/ui/.pnp
+/src/main/ui/.pnp.js
+/src/main/ui/package-lock.json
+
+# testing
+/src/main/ui/coverage
+
+# production
+/src/main/ui/build
+
+# misc
+/src/main/ui/.DS_Store
+/src/main/ui/.env
+
+/src/main/ui/npm-debug.log*
+/src/main/ui/yarn-debug.log*
+/src/main/ui/yarn-error.log*

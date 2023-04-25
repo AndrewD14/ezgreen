@@ -1,0 +1,22 @@
+.labels {
+   /* font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', */
+   font-weight: bold;
+}
+
+.labels::after {
+   content: ":";
+}
+
+.alert-label {
+   margin-right: 0.5em;
+}
+
+.disabled-link {
+   color: grey;
+   opacity: 50%;
+}
+
+.error-text {
+   color: red;
+   min-height: 1.5rem;
+}
