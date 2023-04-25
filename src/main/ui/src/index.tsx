@@ -79,7 +79,7 @@ const router = createBrowserRouter([
          },
        ],
    },
-   ]);
+]);
 
 root.render(
   <React.StrictMode>

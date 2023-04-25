@@ -25,50 +25,12 @@ const options: ApexOptions = {
          }
      },
    },
-   annotations: {
-      yaxis: [
-         {
-            y: 75,
-            borderColor: '#e81010',
-            label: {
-               borderColor: '#e81010',
-               style: {
-                  color: '#fff',
-                  background: '#e81010',
-               },
-               text: 'Over watered',
-            }
-         },
-         {
-            y: 35,
-            borderColor: '#e81010',
-            label: {
-               borderColor: '#e81010',
-               style: {
-                  color: '#fff',
-                  background: '#e81010',
-               },
-               text: 'Under watered',
-            }
-         },
-      ],
-   },
    dataLabels: {
       enabled: true
    },
    markers: {
       size: 7,
-   },
-   xaxis: {
-      type: "datetime",
-      labels: {
-         format: 'MM/dd/yyyy HH:mm',
-       }
-   },
-   yaxis: {
-      min: 0,
-      max: 100
-   },
+   }
 };
 
 export default function LineChart(props: any)
@@ -93,7 +55,7 @@ export default function LineChart(props: any)
    return (
       <div id="chart">
          <Chart
-            options={options}
+            options={{...options, annotations: props.annotations, xaxis: props.xaxis, yaxis: props.yaxis} }
             type='line'
             series={value}
          />

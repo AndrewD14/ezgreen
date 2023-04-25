@@ -1,31 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useOutletContext } from 'react-router-dom';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Stack } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import moment from 'moment-timezone';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
 import { plantRoutes } from '../../service/ApiService';
 import { formatOne } from '../../service/utils/plantFormat';
 import LineChart from '../common/chart/LineChart';
 
-function Plant() {
+function Plant(props: any) {
    const [plant, setPlant] = useState<any>();
-   const [stompClient, setStomp] = useState<any>();
+   const [annotations, setAnnotations] = useState<any>({});
    const [subscription, setSub] = useState<any>();
+   const stompClient: any = useOutletContext();
    let { state } = useLocation();
 
+   let xaxis: any  = {
+      type: "datetime",
+      labels: {
+         format: 'MM/dd/yyyy HH:mm',
+       }
+   };
+   
+   let yaxis: any = {
+      min: 0,
+      max: 100
+   };
+
    const fetchData = async () => {
-      let data = {};
+      let data:any = {};
       
       try
       {
-         data = await plantRoutes.fetchOnePlantWithDetails(state.plantId);
+         data = formatOne(await plantRoutes.fetchOnePlantWithDetails(state.plantId));
 
-         console.log(formatOne(data))
-         setPlant(formatOne(data));
+         setAnnotations({
+            yaxis: [
+               {
+                  y: data.highMoisture,
+                  borderColor: '#e81010',
+                  label: {
+                     borderColor: '#e81010',
+                     style: {
+                        color: '#fff',
+                        background: '#e81010',
+                     },
+                     text: 'Over watered',
+                  }
+               },
+               {
+                  y: data.lowMoisture,
+                  borderColor: '#e81010',
+                  label: {
+                     borderColor: '#e81010',
+                     style: {
+                        color: '#fff',
+                        background: '#e81010',
+                     },
+                     text: 'Under watered',
+                  }
+               },
+            ],
+         });
+
+         console.log(data)
+         setPlant(data);
       }
       catch(error: any)
       {
@@ -35,29 +75,17 @@ function Plant() {
    };
 
    const subscribe = () => {
-      console.log(plant)
       if(plant === undefined || plant.id === undefined) return;
+      if(stompClient === undefined) return;
 
-      let socket = new SockJS('http:localhost:5000/ezgreen');
-      let stompClient = Stomp.over(socket);
-      
-      setStomp(stompClient);
+      let sub = stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
 
-      stompClient.connect({}, (frame: any) => {
-         let sub = stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
-
-         setSub(sub);
-      });
+      setSub(sub);
    };
 
    const unsubscribe = () => {
       if(subscription !== undefined) subscription.unsubscribe();
-
-      if(stompClient !== undefined)
-      {
-         stompClient.unsubscribe('plant');
-         stompClient.disconnect();
-      }
+      if(stompClient !== undefined) stompClient.unsubscribe('plant');
    };
 
    const updateData = (data: any) => {
@@ -127,7 +155,13 @@ function Plant() {
             </Grid2>
             <Grid2 container xs={12} lg={8}>
                <Grid2 xs>
-                  {plant?.histories !== undefined && plant?.histories.length > 0 ? <LineChart readings={plant?.histories}/> : null}
+                  {plant?.histories !== undefined && plant?.histories.length > 0 ? 
+                     <LineChart readings={plant?.histories}
+                        annotations={annotations}
+                        xaxis={xaxis}
+                        yaxis={yaxis}
+                     />
+                  : null}
                </Grid2>
             </Grid2>
          </Grid2>
