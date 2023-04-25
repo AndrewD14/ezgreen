@@ -129,6 +129,8 @@ public class ArduinoListener implements SerialPortDataListener
 		try
 		{
 			Plant plant = plantRepository.fetchPlantById(id);
+			System.out.println("Plant ID: " + plant.getId());
+			System.out.println("Sensor ID: " + plant.getSensorId());
 			Sensor sensor = sensorRepository.fetchById(plant.getSensorId());
 			
 			Double percentage = (sensor.getLowCalibration() - voltage) / (sensor.getLowCalibration() - sensor.getHighCalibration()) * 100;
