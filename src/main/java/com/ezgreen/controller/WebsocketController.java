@@ -2,18 +2,17 @@ package com.ezgreen.controller;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class WebsocketController
 {
 	@Autowired
-	private SimpMessageSendingOperations simpMessageSendingOperations;
+	private SimpMessagingTemplate simpMessagingTemplate;
 	
 	@SuppressWarnings("unchecked")
-	@MessageMapping("/subscribe")
+	//@SubscribeMapping("/topic/plant/{plantId}")
 	public void sendSpecificPlant(Long id)
 	{
 		JSONObject message = new JSONObject();
@@ -22,7 +21,8 @@ public class WebsocketController
 		
 		try
 		{
-			simpMessageSendingOperations.convertAndSend("/topic/plant/" + id, message);
+			System.out.println("Sending message");
+			simpMessagingTemplate.convertAndSend("/topic/plant/" + id, message);
 		}
 		catch(Exception e)
 		{

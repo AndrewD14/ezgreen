@@ -36,12 +36,13 @@ public class Arduino
 			port.openPort();
 			port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 			port.setComPortParameters(115200, 8, 1, 0);
+			
 			Thread.sleep(1000);
 			
 			listener.setPort(port);
 			
 			port.addDataListener(listener);
-		}	
+		}
 	}
 	
 	public boolean checkGood()

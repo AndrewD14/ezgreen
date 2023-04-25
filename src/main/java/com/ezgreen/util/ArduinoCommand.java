@@ -92,6 +92,7 @@ public class ArduinoCommand
 		System.out.print("done\n");
 		if(arduino.checkGood()) arduino.write("done\n");
 		else System.out.println("Arduino port is not working.");
+	
 	}
 	
 	public void initPlants() throws Exception

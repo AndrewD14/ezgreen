@@ -43,7 +43,7 @@ function Plant() {
       stompClient.connect({}, (frame: any) => {
          setStomp(stompClient);
 
-         stompClient.subscribe('http:localhost:5000/topic/plant/' + plant.id, updateData);
+         stompClient.subscribe('/topic/plant/' + plant.id, updateData);
       });
    };
 
@@ -54,8 +54,8 @@ function Plant() {
    };
 
    const updateData = (data: any) => {
-      console.log(formatOne(data))
-      setPlant(formatOne(data));
+      console.log(data)
+      fetchData();
    };
 
    useEffect(() => {
