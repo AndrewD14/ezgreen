@@ -8,7 +8,8 @@ INSERT INTO public.board
 VALUES
 (1,1,1),
 (2,1,2),
-(3,1,3);
+(3,1,3),
+(4,1,4);
 
 INSERT INTO public.sensor
 (id,type_id,number,board_id,port,low_calibration,high_calibration,environment_id,delete,created_by,updated_by,created_ts,updated_ts)
@@ -67,11 +68,22 @@ VALUES
 (5,'South Lights',3,NULL,NULL,80,NULL,'14:00','02:00',0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 
 INSERT INTO public.plant
-(name,number,pot_size_id,plant_type_id,high_moisture,low_moisture,sensor_id,environment_id,valve_id,date_obtain,monitor,dead,delete,created_by,updated_by,created_ts,updated_ts)
+(id,name,number,pot_size_id,plant_type_id,high_moisture,low_moisture,sensor_id,environment_id,valve_id,date_obtain,monitor,dead,delete,created_by,updated_by,created_ts,updated_ts)
 VALUES
-('Fiddle-Leaf Fig',NULL,3,3,75,35,9,NULL,NULL,NULL,1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('Philodendron',1,2,2,70,30,10,NULL,NULL,'2023-01-10',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('Philodendron',2,2,2,70,30,11,NULL,NULL,'2023-02-02',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('Orchid',1,2,10,65,30,NULL,NULL,NULL,NULL,0,1,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('Orchid',2,2,10,65,30,13,NULL,NULL,'2023-02-02',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('African Mask',NULL,2,2,60,20,NULL,NULL,NULL,'2022-11-12',0,1,1,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+(1,'Fiddle-Leaf Fig',NULL,3,3,75,35,9,NULL,NULL,NULL,1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(2,'Philodendron',1,2,2,70,30,10,NULL,NULL,'2023-01-10',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(3,'Philodendron',2,2,2,70,30,11,NULL,NULL,'2023-02-02',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(4,'Orchid',1,2,10,65,30,NULL,NULL,NULL,NULL,0,1,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(5,'Orchid',2,2,10,65,30,13,NULL,NULL,'2023-02-02',1,0,0,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(6,'African Mask',NULL,2,2,60,20,NULL,NULL,NULL,'2022-11-12',0,1,1,'a.damico','a.damico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+
+INSERT INTO public.history_soil_moisture
+(plant_id,sensor_id,read,volt,percentage,low_calibration,high_calibration,low_desire,high_desire,created_by,updated_by,created_ts,updated_ts)
+VALUES
+(1,9,'2023-04-17 12:30:00',2.2,66.67,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 13:02:00',2.4,58.33,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 13:33:00',2.0,75,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 13:59:00',2.8,41.67,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 14:29:00',3.4,16.67,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 15:00:00',2.6,50,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+(1,9,'2023-04-17 15:30:00',1.6,91.67,3.8,1.4,75,35,'adamico','adamico',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);

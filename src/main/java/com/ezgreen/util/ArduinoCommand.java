@@ -23,7 +23,6 @@ import com.ezgreen.repository.BoardRepository;
 import com.ezgreen.repository.EnvironmentRepository;
 import com.ezgreen.repository.PlantRepository;
 import com.ezgreen.repository.RelayRepository;
-import com.ezgreen.repository.RelayTypeRepository;
 import com.ezgreen.service.BoardService;
 import com.ezgreen.service.EnvironmentService;
 import com.ezgreen.service.PlantService;
@@ -42,7 +41,6 @@ public class ArduinoCommand
 	private EnvironmentRepository environmentRepository;
 	private EnvironmentService environmentService;
 	private PlantRepository plantRepository;
-	private PlantService plantService;
 	private PlantTypeService plantTypeService;
 	private PotSizeService potSizeService;
 	private SensorService sensorService;
@@ -65,7 +63,6 @@ public class ArduinoCommand
 		this.environmentService = environmentService;
 		this.environmentRepository = environmentRepository;
 		this.plantRepository = plantRepository;
-		this.plantService = plantService;
 		this.plantTypeService = plantTypeService;
 		this.potSizeService = potSizeService;
 		this.sensorService = sensorService;

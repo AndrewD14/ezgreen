@@ -26,7 +26,10 @@ public class HistorySoilMoisture implements Serializable
 	private Long id;
 	
 	@Column(name="plant_id", nullable = false)
-	private Integer plantId;
+	private Long plantId;
+	
+	@Column(name="sensor_id", nullable = false)
+	private Long sensorId;
 	
 	@Column(name = "read", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
 	private LocalDateTime read;
@@ -34,11 +37,20 @@ public class HistorySoilMoisture implements Serializable
 	@Column(name="volt", nullable = false)
 	private Double volt;
 	
+	@Column(name="percentage", nullable = false)
+	private Double percentage;
+	
 	@Column(name="low_calibration", nullable = false)
 	private Double lowCalibration;
 	
 	@Column(name="high_calibration", nullable = false)
 	private Double highCalibration;
+	
+	@Column(name="low_desire", nullable = false)
+	private Double lowDesire;
+	
+	@Column(name="high_desire", nullable = false)
+	private Double highDesire;
 
 	@Column(name = "created_by", nullable = false)
 	private String createBy;
@@ -57,17 +69,22 @@ public class HistorySoilMoisture implements Serializable
 		
 	}
 	
-	public HistorySoilMoisture(Long id, Integer plantId, LocalDateTime read, Double volt, Double lowCalibration,
-			Double highCalibration, String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
+	public HistorySoilMoisture(Long id, Long plantId, Long sensorId, LocalDateTime read, Double volt, Double percentage,
+			Double lowCalibration, Double highCalibration, Double lowDesire, Double highDesire,
+			String createBy, String updateBy, LocalDateTime createTs, LocalDateTime updateTs)
 	{
 		super();
 
 		this.id = id;
 		this.plantId = plantId;
+		this.sensorId = sensorId;
 		this.read = read;
 		this.volt = volt;
+		this.percentage = percentage;
 		this.lowCalibration = lowCalibration;
 		this.highCalibration = highCalibration;
+		this.lowDesire = lowDesire;
+		this.highDesire = highDesire;
 		this.createBy = createBy;
 		this.updateBy = updateBy;
 		this.createTs = createTs;

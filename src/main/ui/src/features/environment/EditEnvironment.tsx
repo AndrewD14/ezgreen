@@ -406,6 +406,7 @@ function EditEnvironment(props: any) {
       filterLeftPlant();
       filterRightPlant();
    },
+   // eslint-disable-next-line
    [environment.sensorTypeId]);
 
    const onChange = (event: any) => {
@@ -601,7 +602,7 @@ function EditEnvironment(props: any) {
 
             edit = {
                ...edit,
-               sensorTypeId: (edit.sensorType == undefined ? '0' : edit.sensorType.id),
+               sensorTypeId: (edit.sensorType === undefined ? '0' : edit.sensorType.id),
                sensors: (edit.sensors !== undefined ? [...edit.sensors] : []),
                relays: (edit.relays !== undefined ? [...edit.relays] : []),
                plants: (edit.plants !== undefined ? [...edit.plants] : [])
@@ -943,6 +944,7 @@ function EditEnvironment(props: any) {
                               null
                            }
                            {
+                              // eslint-disable-next-line
                               environment.sensorTypeId == 2 || environment.sensorTypeId == 3
                            ?
                               <React.Fragment>

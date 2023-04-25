@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.ezgreen.models.Plant;
-import com.ezgreen.repository.HistorySoilMoistureRepository;
 import com.ezgreen.repository.PlantRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.util.ArduinoCommand;
@@ -30,9 +29,6 @@ public class PlantService
 	
 	@Autowired
 	private PlantRepository plantRepository;
-	
-	@Autowired
-	private HistorySoilMoistureRepository historySoilMoisterRepository;
 	
 	public EZGreenResponse saveAndEditPlant(String request, Long plantId) throws IOException
 	{
@@ -236,5 +232,13 @@ public class PlantService
 		List<Plant> plants = plantRepository.findBySensorIdIsNotNull();
 
 		return CompletableFuture.completedFuture(plants);
+	}
+	
+	@Async
+	public CompletableFuture<Plant> fetchPlantById(Long plantId)
+	{
+		Plant plant = plantRepository.findById(plantId).get();
+
+		return CompletableFuture.completedFuture(plant);
 	}
 }

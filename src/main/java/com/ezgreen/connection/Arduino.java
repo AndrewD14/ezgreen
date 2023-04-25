@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.ezgreen.responses.EZGreenResponse;
 import com.fazecast.jSerialComm.SerialPort;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class Arduino

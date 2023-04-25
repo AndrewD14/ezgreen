@@ -17,8 +17,6 @@ import com.ezgreen.models.Sensor;
 import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 @Service
 public class SensorService
 {	

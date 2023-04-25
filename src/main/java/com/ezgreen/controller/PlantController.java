@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ezgreen.models.Board;
+import com.ezgreen.models.HistorySoilMoisture;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
@@ -32,6 +33,7 @@ import com.ezgreen.responses.EZGreenResponse;
 import com.ezgreen.responses.MultipleDetailResponse;
 import com.ezgreen.responses.SingleDetailResponse;
 import com.ezgreen.service.BoardService;
+import com.ezgreen.service.HistorySoilMoistureService;
 import com.ezgreen.service.PlantService;
 import com.ezgreen.service.PlantTypeService;
 import com.ezgreen.service.PotSizeService;
@@ -45,6 +47,7 @@ import com.ezgreen.service.SensorTypeService;
 public class PlantController
 {
 	private BoardService boardService;
+	private HistorySoilMoistureService historySoilMoistureService;
 	private PlantRepository plantRepository;
 	private PlantService plantService;
 	private PlantTypeRepository plantTypeRepository;
@@ -61,6 +64,7 @@ public class PlantController
 	private SensorTypeService sensorTypeService;
 	
 	public PlantController(BoardService boardService,
+			HistorySoilMoistureService historySoilMoistureService,
 			PlantRepository plantRepository, PlantService plantService,
 			PlantTypeRepository plantTypeRepository, PlantTypeService plantTypeService,
 			PotSizeService potSizeService, PotSizeRepository potSizeRepository,
@@ -70,6 +74,7 @@ public class PlantController
 			SensorTypeRepository sensorTypeRepository, SensorTypeService sensorTypeService)
 	{
 		this.boardService = boardService;
+		this.historySoilMoistureService = historySoilMoistureService;
 		this.plantRepository = plantRepository;
 		this.plantService = plantService;
 		this.plantTypeRepository = plantTypeRepository;
@@ -204,6 +209,7 @@ public class PlantController
 
 		try
 		{
+			CompletableFuture<List<HistorySoilMoisture>> histories = historySoilMoistureService.fetchByPlant(plantId);
 			Plant plant = plantRepository.fetchPlantById(plantId);
 			PlantType plantType = plantTypeRepository.fetchPlantTypeWithPlantId(plantId);
 			PotSize potSize = potSizeRepository.fetchPotSizeWithPlantId(plantId);
@@ -211,7 +217,12 @@ public class PlantController
 			RelayType relayType = relayTypeRepository.fetchRelayTypeByPlant(plantId);
 			Sensor sensor = sensorRepository.fetchSensorWithPlantId(plantId);
 			SensorType sensorType = sensorTypeRepository.fetchSensorTypeWithPlantId(plantId);
+			
+			CompletableFuture.allOf(
+					histories
+			).join();
 
+			response.setHistorySoilMoistures(histories.get());
 			if(plant != null) response.setPlant(plant);
 			if(plantType != null) response.setPlantType(plantType);
 			if(potSize != null) response.setPotSize(potSize);

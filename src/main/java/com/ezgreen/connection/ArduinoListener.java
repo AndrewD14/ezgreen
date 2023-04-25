@@ -1,27 +1,44 @@
 package com.ezgreen.connection;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.ezgreen.controller.WebsocketController;
+import com.ezgreen.models.HistorySoilMoisture;
+import com.ezgreen.models.Plant;
+import com.ezgreen.models.Sensor;
+import com.ezgreen.repository.HistorySoilMoistureRepository;
+import com.ezgreen.repository.PlantRepository;
+import com.ezgreen.repository.SensorRepository;
 import com.ezgreen.responses.EZGreenResponse;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 @Component
 public class ArduinoListener implements SerialPortDataListener
 {
+	private WebsocketController websocket;
+	private HistorySoilMoistureRepository historySoilMoistureRepository;
+	private PlantRepository plantRepository;
+	private SensorRepository sensorRepository;
+	
 	private SerialPort port;
 	private List<EZGreenResponse> responses;
 	
-	public ArduinoListener()
+	public ArduinoListener(WebsocketController websocket, HistorySoilMoistureRepository historySoilMoistureRepository,
+			PlantRepository plantRepository, SensorRepository sensorRepository)
 	{
+		this.websocket = websocket;
+		this.historySoilMoistureRepository = historySoilMoistureRepository;
+		this.plantRepository = plantRepository;
+		this.sensorRepository = sensorRepository;
+		
 		responses = new ArrayList<EZGreenResponse>();
 	}
 	
@@ -44,38 +61,8 @@ public class ArduinoListener implements SerialPortDataListener
 		
 	    String[] data = value.split(";");
 
-	    if(data[0].equals("cs"))
-	    {
-	    	EZGreenResponse response = null;
-	    	
-	    	try
-		    {
-	    		System.out.println("Arduino response: " + value);
-	    		System.out.println("Responses list size: " + responses.size());
-	    		System.out.println("Response index returned: " + data[2]);
-	    		System.out.println("Response value returned: " + data[1]);
-	    		
-	    		int idx = Integer.parseInt(data[2].trim());
-	    		System.out.println("Parsed index: " + idx);
-			    response = responses.get(idx);
-		    	
-		    	responses.remove(idx);
-		    	
-		    	response.setResponseMessage("{\"responseMessage\": " + (Double.parseDouble(data[1].trim()) / 100.00) + "}");
-		    	response.setStatusCode(HttpStatus.OK);
-		    }
-		    catch(Exception e)
-			{
-		    	System.out.println("Error!!! " + e.getMessage());
-				System.out.println("Error!!! " + e.getCause());
-				
-				if(response != null)
-				{
-					response.setResponseMessage("Error formatting message from Arduino.");
-					response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-			}
-	    }
+	    if(data[0].equals("cs")) sendSoilMoistureCalibration(data);
+	    else if(data[0].equals("pm")) sendSoilMoistureUpdate(data);
 	    else
 	    {
 	    	System.out.println("Arduino response: " + value);
@@ -97,5 +84,75 @@ public class ArduinoListener implements SerialPortDataListener
 		responses.add(response);
 		
 		return responses.size() - 1;
+	}
+	
+	public void sendSoilMoistureCalibration(String[] data)
+	{
+		EZGreenResponse response = null;
+    	
+    	try
+	    {	    		
+    		int idx = Integer.parseInt(data[2].trim());
+
+		    response = responses.get(idx);
+	    	
+	    	responses.remove(idx);
+	    	
+	    	response.setResponseMessage("{\"responseMessage\": " + (Double.parseDouble(data[1].trim()) / 100.00) + "}");
+	    	response.setStatusCode(HttpStatus.OK);
+	    }
+	    catch(Exception e)
+		{
+	    	System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+			
+			if(response != null)
+			{
+				response.setResponseMessage("Error formatting message from Arduino.");
+				response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+	
+	public void sendSoilMoistureUpdate(String[] data)
+	{
+		HistorySoilMoisture hsm = new HistorySoilMoisture();
+		
+		long id = Long.parseLong(data[1]); //plant id
+		Double voltage = Double.valueOf(data[2]) / 100; //soil moisture (volts) (int)
+		//int waterAttempts = Integer.parseInt(data[3]); //how many water attempts (int)
+		LocalDateTime timestamp = LocalDateTime.ofEpochSecond(Long.parseLong(data[4]), 0, ZoneOffset.UTC); //unix time
+		LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+		
+		Plant plant = plantRepository.fetchPlantById(id);
+		Sensor sensor = sensorRepository.fetchSensorWithPlantId(plant.getSensorId());
+		
+		Double percentage = (sensor.getLowCalibration() - voltage) / (sensor.getLowCalibration() - sensor.getHighCalibration()) * 100;
+
+		hsm.setHighCalibration(sensor.getHighCalibration());
+		hsm.setHighDesire(plant.getHighMoisture());
+		hsm.setLowCalibration(sensor.getLowCalibration());
+		hsm.setLowDesire(plant.getLowMoisture());
+		hsm.setPercentage(percentage);
+		hsm.setPlantId(id);
+		hsm.setRead(timestamp);
+		hsm.setSensorId(sensor.getId());
+		hsm.setVolt(voltage);
+		hsm.setCreateBy("system");
+		hsm.setCreateTs(now);
+		hsm.setUpdateBy("system");
+		hsm.setUpdateTs(now);
+		
+		try
+		{
+			historySoilMoistureRepository.save(hsm);
+
+			websocket.sendSpecificPlant(id);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error!!! " + e.getMessage());
+			System.out.println("Error!!! " + e.getCause());
+		}
 	}
 }

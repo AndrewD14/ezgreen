@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ezgreen.models.Board;
 import com.ezgreen.models.Environment;
+import com.ezgreen.models.HistorySoilMoisture;
 import com.ezgreen.models.Plant;
 import com.ezgreen.models.PlantType;
 import com.ezgreen.models.PotSize;
@@ -22,6 +23,7 @@ import lombok.Setter;
 public class SingleDetailResponse extends EZGreenResponse
 {
 	Board board;
+	List<HistorySoilMoisture> historySoilMoistures;
 	Environment environment;
 	Plant plant;
 	List<Plant> plants;
