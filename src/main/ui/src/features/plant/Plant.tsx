@@ -39,10 +39,9 @@ function Plant() {
 
       let socket = new SockJS('http:localhost:5000/ezgreen');
       let stompClient = Stomp.over(socket);
+      setStomp(stompClient);
 
       stompClient.connect({}, (frame: any) => {
-         setStomp(stompClient);
-
          stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
       });
    };
