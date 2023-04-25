@@ -14,6 +14,7 @@ import LineChart from '../common/chart/LineChart';
 function Plant() {
    const [plant, setPlant] = useState<any>();
    const [stompClient, setStomp] = useState<any>();
+   const [subscription, setSub] = useState<any>();
    let { state } = useLocation();
 
    const fetchData = async () => {
@@ -39,15 +40,21 @@ function Plant() {
 
       let socket = new SockJS('http:localhost:5000/ezgreen');
       let stompClient = Stomp.over(socket);
+      
       setStomp(stompClient);
 
       stompClient.connect({}, (frame: any) => {
-         stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
+         let sub = stompClient.subscribe('/topic/plant/' + plant.id, updateData, {id: 'plant'});
+
+         setSub(sub);
       });
    };
 
    const unsubscribe = () => {
-      if (stompClient !== undefined) {
+      if(subscription !== undefined) subscription.unsubscribe();
+
+      if(stompClient !== undefined)
+      {
          stompClient.unsubscribe('plant');
          stompClient.disconnect();
       }
