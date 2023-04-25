@@ -14,6 +14,7 @@ import LineChart from '../common/chart/LineChart';
 function Plant() {
    const [plant, setPlant] = useState<any>();
    const [stompClient, setStomp] = useState<any>();
+   const [subscription, setSubscription] = useState<any>();
    let { state } = useLocation();
 
    const fetchData = async () => {
@@ -43,14 +44,15 @@ function Plant() {
       stompClient.connect({}, (frame: any) => {
          setStomp(stompClient);
 
-         stompClient.subscribe('/topic/plant/' + plant.id, updateData);
+         let sub = stompClient.subscribe('/topic/plant/' + plant.id, updateData);
+         setSubscription(sub);
       });
    };
 
    const unsubscribe = () => {
-      if (stompClient !== undefined) {
-         stompClient.disconnect();
-     }
+      if (subscription !== undefined) {
+         subscription.unsubscribe();
+      }
    };
 
    const updateData = (data: any) => {
