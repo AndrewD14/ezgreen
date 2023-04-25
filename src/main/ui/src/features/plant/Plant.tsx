@@ -34,7 +34,10 @@ function Plant() {
    };
 
    const subscribe = () => {
-      let socket = new SockJS('http:localhost:5000/gs-guide-websocket');
+      console.log(plant)
+      if(plant === undefined || plant.id === undefined) return;
+
+      let socket = new SockJS('http:localhost:5000/ezgreen');
       let stompClient = Stomp.over(socket);
 
       stompClient.connect({}, (frame: any) => {
@@ -57,7 +60,6 @@ function Plant() {
 
    useEffect(() => {
       fetchData();
-      subscribe();
 
       return () => {
          unsubscribe()
@@ -65,6 +67,12 @@ function Plant() {
    },
    //eslint-disable-next-line
    []);
+
+   useEffect(() => {
+      subscribe();
+   },
+   //eslint-disable-next-line
+   [plant?.id]);
 
    return (
       <div>
