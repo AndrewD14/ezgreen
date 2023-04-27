@@ -648,7 +648,7 @@ public class ArduinoCommand
 		LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
 		String command = "ts;";
 		
-		command = command + now.format(timeFormatter) + "\n";
+		command = command + now.format(DateTimeFormatter.ofPattern("uuuu;MM;dd;HH;mm;ss")) + "\n";
 
 		return command;
 	}
