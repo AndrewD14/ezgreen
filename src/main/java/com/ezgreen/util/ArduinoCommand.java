@@ -49,7 +49,7 @@ public class ArduinoCommand
 	private RelayTypeService relayTypeService;
 	
 	private static DateTimeFormatter lightFormatter = DateTimeFormatter.ofPattern("hh;mm");
-	private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("YYYY;MM;dd;hh;mm;ss");
+	private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("YYYY;MM;dd;HH;mm;ss");
 	
 	public ArduinoCommand(Arduino arduino, BoardRepository boardRepository, BoardService boardService,
 			EnvironmentRepository environmentRepository, EnvironmentService environmentService,
@@ -648,7 +648,7 @@ public class ArduinoCommand
 		LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
 		String command = "ts;";
 		
-		command = command + now.format(DateTimeFormatter.ofPattern("uuuu;MM;dd;HH;mm;ss")) + "\n";
+		command = command + now.format(timeFormatter) + "\n";
 
 		return command;
 	}
